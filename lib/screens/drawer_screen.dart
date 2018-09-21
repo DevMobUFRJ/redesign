@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teste/screens/redes_screen.dart';
 
   class DrawerScreen extends StatelessWidget  {
   @override
@@ -13,11 +14,13 @@ import 'package:flutter/material.dart';
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                new RoundIconButton(
-                  icon: Icons.favorite,
-                  iconColor: Colors.white,
-                  circleColor: new Color(0xffffffff),
-                  size: 80.0,
+                new Container(
+                width: 80.0,
+                  height: 80.0,
+                  decoration: new BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white,
+                  ),
                 ),
                 new Container(
                   width:160.0 ,
@@ -41,22 +44,22 @@ import 'package:flutter/material.dart';
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget> [
                             new RoundIconButton(
-                              icon: Icons.favorite,
+                              icon: new Icon(Icons.person),
                               iconColor: Colors.white,
                               circleColor: new Color(0xff00838f),
-                              size: 30.0,
+                              size: 40.0,
                             ),
                             new RoundIconButton(
-                              icon: Icons.favorite,
+                              icon: new Icon(Icons.chat_bubble),
                               iconColor: Colors.white,
                               circleColor: new Color(0xff00838f),
-                              size: 30.0,
+                              size: 40.0,
                             ),
                             new RoundIconButton(
-                              icon: Icons.favorite,
+                              icon: new Icon(Icons.exit_to_app),
                               iconColor: Colors.white,
                               circleColor: new Color(0xff00838f),
-                              size: 30.0,
+                              size: 40.0,
                             ),
                           ],
                         ),
@@ -75,26 +78,36 @@ import 'package:flutter/material.dart';
           icon: Icons.directions,
           iconColor: new Color(0xff00838f),
           text: 'Mapa',
+          onPressed: () {}
         ),
         new ListaDrawer(
           icon: Icons.people,
           iconColor: new Color(0xff00838f),
           text: 'Rede',
+          onPressed: () {
+            Navigator.push(
+                context,
+                new MaterialPageRoute(builder: (context) => new Redes_screen())
+            );
+          }
         ),
         new ListaDrawer(
           icon: Icons.chat_bubble,
           iconColor: new Color(0xff00838f),
           text: 'Fórum',
+          onPressed: () {}
         ),
         new ListaDrawer(
           icon: Icons.collections_bookmark,
           iconColor: new Color(0xff00838f),
           text: 'Materiais',
+          onPressed: () {}
         ),
         new ListaDrawer(
           icon: Icons.calendar_today,
           iconColor: new Color(0xff00838f),
           text: 'Eventos',
+          onPressed: () {}
         ),
       ],
     ),
@@ -102,7 +115,7 @@ import 'package:flutter/material.dart';
   }
   }
 class RoundIconButton extends StatelessWidget {
-  final IconData icon;
+  final Icon icon;
   final Color iconColor;
   final Color circleColor;
   final double size;
@@ -125,6 +138,11 @@ class RoundIconButton extends StatelessWidget {
         shape: BoxShape.circle,
         color: circleColor,
       ),
+      child: new IconButton(alignment: Alignment.center,
+            icon: icon,
+            disabledColor: iconColor,
+          onPressed: null
+      ),
     );
   }
 }
@@ -133,11 +151,13 @@ class ListaDrawer extends StatelessWidget{
   final IconData icon;
   final Color iconColor;
   final String text;
+  final VoidCallback onPressed;
 
   ListaDrawer({
     this.icon,
     this.iconColor,
     this.text,
+    this.onPressed,
 });
 
   @override
@@ -149,6 +169,7 @@ class ListaDrawer extends StatelessWidget{
         style: new TextStyle(
           color: Colors.black45),
       ),
+      onTap: onPressed,
     );
   }
 }
