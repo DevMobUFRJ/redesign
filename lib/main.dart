@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
       theme: new ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: new MyHomePage(title: 'REDEsing'),
+      home: new MyHomePage(title: 'REDEsign'),
     );
   }
 }
@@ -36,32 +36,18 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: new AppBar(
         title: new Text(widget.title),
         backgroundColor: new Color.fromARGB(255, 55, 116, 127),
-        actions: <Widget>[
-          new IconButton(
-              icon: new Icon(
-                Icons.star_border,
-                color: Colors.white,),
-              onPressed: () => _scaffoldKey.currentState.openEndDrawer(),
-          ),
-        ],
+//        actions: <Widget>[
+//          new IconButton(
+//              icon: new Icon(
+//                Icons.star_border,
+//                color: Colors.white,),
+//              onPressed: () => _scaffoldKey.currentState.openEndDrawer
+//          ),
+//        ],
       ),
       endDrawer: new FavoriteDrawer(),
-      body: new Center(
-        child: new Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            new Text(
-              'You have pushed the button this many times:',
-            ),
-          ],
-        ),
-      ),
-
-      floatingActionButton: new FloatingActionButton(
-        onPressed: null,
-        backgroundColor: new Color(0xff00838f)           ,
-        tooltip: 'Increment',
-        child: new Icon(Icons.people),
+      body: new Container(
+        child: new Text("alguma coisa escrita aqui ", style: new TextStyle(fontSize: 35.0),),
       ),
     );
   }
