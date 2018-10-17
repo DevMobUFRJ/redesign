@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:teste/screens/drawer_screen.dart';
 import 'package:teste/screens/favorite_drawer.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 void main() => runApp(new MyApp());
 
@@ -29,6 +30,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  GoogleMapController mapController;
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -46,9 +49,21 @@ class _MyHomePageState extends State<MyHomePage> {
 //        ],
       ),
       endDrawer: new FavoriteDrawer(),
-      body: new Container(
-        child: new Text("alguma coisa escrita aqui ", style: new TextStyle(fontSize: 35.0),),
+      body: new  GoogleMap(
+          onMapCreated: _onMapCreated,
       ),
     );
+  }
+
+  void _onMapCreated(GoogleMapController controller) {
+    setState(() {
+      controller.moveCamera(CameraUpdate.newCameraPosition(
+        const CameraPosition(
+          target: LatLng(-22.8544375, -43.2296038),
+          zoom: 12.0,
+        ),
+      ));
+      mapController = controller;
+    });
   }
 }
