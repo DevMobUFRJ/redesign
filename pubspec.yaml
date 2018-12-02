@@ -11,9 +11,11 @@ dependencies:
 
   google_maps_flutter:
     git:
-      url: git://github.com/georgerappel/plugins/
+      url: git://github.com/flutter/plugins/
       path: packages/google_maps_flutter
 
+  firebase_core: ^0.2.5
+  firebase_analytics: ^1.0.4
 
 dev_dependencies:
   flutter_test:

@@ -9,3 +9,8 @@ ios/.generated/
 packages
 pubspec.lock
 .flutter-plugins
+
+# Generated files
+bin/
+gen/
+out/

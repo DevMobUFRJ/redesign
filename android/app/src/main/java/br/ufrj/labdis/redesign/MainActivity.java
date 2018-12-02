@@ -1,4 +1,4 @@
-package com.yourcompany.teste;
+package br.ufrj.labdis.redesign;
 
 import android.os.Bundle;
 
