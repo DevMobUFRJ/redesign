@@ -50,7 +50,11 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       endDrawer: new FavoriteDrawer(),
       body: new  GoogleMap(
-          onMapCreated: _onMapCreated,
+        initialCameraPosition: CameraPosition(
+          target: LatLng(-22.8544375, -43.2296038),
+          zoom: 12.0,
+        ),
+        onMapCreated: _onMapCreated,
       ),
     );
   }

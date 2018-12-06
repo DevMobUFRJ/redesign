@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teste/screens/redes_screen.dart';
+import 'package:teste/screens/eventos/eventos_screen.dart';
 
   class DrawerScreen extends StatelessWidget  {
   @override
@@ -107,7 +108,12 @@ import 'package:teste/screens/redes_screen.dart';
           icon: Icons.calendar_today,
           iconColor: new Color(0xff00838f),
           text: 'Eventos',
-          onPressed: () {}
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  new MaterialPageRoute(builder: (context) => new EventosScreen())
+              );
+            }
         ),
       ],
     ),

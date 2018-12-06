@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "197615459385",
+    "firebase_url": "https://redesign-labdis.firebaseio.com",
+    "project_id": "redesign-labdis",
+    "storage_bucket": "redesign-labdis.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:197615459385:android:17d1b91d70cdbf07",
+        "android_client_info": {
+          "package_name": "br.ufrj.labdis.redesign"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "197615459385-lrnhc3nsiicdpnokcseb822sccf4bh0n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "***REMOVED***"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

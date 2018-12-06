@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:teste/screens/widgets/padrao_screen.dart';
 
 class Redes_screen extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text('Rede'),
-        backgroundColor: new Color.fromARGB(255, 55, 116, 127),
-      ),
-      body: new Center(
+    return PadraoScreen (
+      title: "Rede",
+      body: Center(
         child: new Container(
           margin: new EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
           child: new Column(
