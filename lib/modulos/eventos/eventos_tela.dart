@@ -59,8 +59,9 @@ class _EventosListaState extends State<EventosLista> {
         ),
         child: ListTile(
           title: Text(record.nome),
-          trailing: Text(record.local.toString()),
-          onTap: () => print(record),
+          subtitle: Text(record.local),
+          trailing: Text(record.count.toString()),
+          onTap: () => record.reference.updateData({'count': record.count + 1}),
         ),
       ),
     );
