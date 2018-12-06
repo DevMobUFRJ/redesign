@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class PadraoScreen extends StatelessWidget {
+class TelaBase extends StatelessWidget {
 
   final String title;
   final Widget body;
 
-  PadraoScreen({this.title, this.body});
+  TelaBase({this.title, this.body});
 
   @override
   Widget build(BuildContext context) {

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:redesign/screens/widgets/padrao_screen.dart';
+import 'package:redesign/widgets/tela_base.dart';
 
-class Redes_screen extends StatelessWidget{
+class RedeTela extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
-    return PadraoScreen (
+    return TelaBase (
       title: "Rede",
       body: Center(
         child: new Container(

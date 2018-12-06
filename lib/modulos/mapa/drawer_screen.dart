@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:redesign/screens/redes_screen.dart';
-import 'package:redesign/screens/eventos/eventos_screen.dart';
+import 'package:redesign/modulos/rede/rede_tela.dart';
+import 'package:redesign/modulos/eventos/eventos_tela.dart';
 
   class DrawerScreen extends StatelessWidget  {
   @override
@@ -88,7 +88,7 @@ import 'package:redesign/screens/eventos/eventos_screen.dart';
           onPressed: () {
             Navigator.push(
                 context,
-                new MaterialPageRoute(builder: (context) => new Redes_screen())
+                new MaterialPageRoute(builder: (context) => new RedeTela())
             );
           }
         ),
@@ -111,7 +111,7 @@ import 'package:redesign/screens/eventos/eventos_screen.dart';
             onPressed: () {
               Navigator.push(
                   context,
-                  new MaterialPageRoute(builder: (context) => new EventosScreen())
+                  new MaterialPageRoute(builder: (context) => new EventosTela())
               );
             }
         ),

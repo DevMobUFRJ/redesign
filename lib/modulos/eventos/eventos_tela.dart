@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:redesign/screens/widgets/padrao_screen.dart';
+import 'package:redesign/modulos/eventos/evento.dart';
+import 'package:redesign/widgets/tela_base.dart';
 
-class EventosScreen extends StatelessWidget {
+class EventosTela extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return PadraoScreen(
-      title: 'Baby Names',
+    return TelaBase(
+      title: 'Eventos',
       body: EventosLista(),
     );
   }
@@ -64,22 +65,4 @@ class _EventosListaState extends State<EventosLista> {
       ),
     );
   }
-}
-
-class Evento {
-  final String nome;
-  final String local;
-  final DocumentReference reference;
-
-  Evento.fromMap(Map<String, dynamic> map, {this.reference})
-      : assert(map['nome'] != null),
-        assert(map['local'] != null),
-        nome = map['nome'],
-        local = map['local'];
-
-  Evento.fromSnapshot(DocumentSnapshot snapshot)
-      : this.fromMap(snapshot.data, reference: snapshot.reference);
-
-  @override
-  String toString() => "Evento<$nome:$local>";
 }
