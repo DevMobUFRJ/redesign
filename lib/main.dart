@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:teste/screens/drawer_screen.dart';
-import 'package:teste/screens/favorite_drawer.dart';
+import 'package:redesign/screens/drawer_screen.dart';
+import 'package:redesign/screens/favorite_drawer.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 void main() => runApp(new MyApp());

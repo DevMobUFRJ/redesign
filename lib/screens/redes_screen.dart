@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:teste/screens/widgets/padrao_screen.dart';
+import 'package:redesign/screens/widgets/padrao_screen.dart';
 
 class Redes_screen extends StatelessWidget{
   @override

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:teste/screens/redes_screen.dart';
-import 'package:teste/screens/eventos/eventos_screen.dart';
+import 'package:redesign/screens/redes_screen.dart';
+import 'package:redesign/screens/eventos/eventos_screen.dart';
 
   class DrawerScreen extends StatelessWidget  {
   @override

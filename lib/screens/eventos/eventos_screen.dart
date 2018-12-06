@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:teste/screens/widgets/padrao_screen.dart';
+import 'package:redesign/screens/widgets/padrao_screen.dart';
 
 class EventosScreen extends StatelessWidget {
   @override
