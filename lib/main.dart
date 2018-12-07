@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:redesign/estilos/tema.dart';
 import 'package:redesign/modulos/mapa/mapa_tela.dart';
 
 void main() => runApp(new MyApp());
@@ -7,11 +8,9 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
+    return MaterialApp(
       title: 'Flutter Demo',
-      theme: new ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: Tema.principal,
       home: MapaTela(title: 'REDEsign'),
     );
   }

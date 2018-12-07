@@ -22,7 +22,7 @@ class _MapaTelaState extends State<MapaTela> {
       drawer: new DrawerScreen(),
       appBar: new AppBar(
         title: new Text(widget.title),
-        backgroundColor: new Color.fromARGB(255, 55, 116, 127),
+        backgroundColor: Theme.of(context).primaryColor,
 //        actions: <Widget>[
 //          new IconButton(
 //              icon: new Icon(

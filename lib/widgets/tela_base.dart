@@ -12,7 +12,7 @@ class TelaBase extends StatelessWidget {
     return Scaffold(
       appBar:  AppBar(
         title: Text(title),
-        backgroundColor: Color.fromARGB(255, 55, 116, 127),
+        backgroundColor: Theme.of(context).primaryColor,
       ),
       body: body
     );
