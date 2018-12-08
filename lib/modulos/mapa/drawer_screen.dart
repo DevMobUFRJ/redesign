@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:redesign/modulos/rede/rede_tela.dart';
-import 'package:redesign/modulos/eventos/eventos_tela.dart';
+import 'package:redesign/modulos/eventos/eventos_lista.dart';
 
   class DrawerScreen extends StatelessWidget  {
   @override

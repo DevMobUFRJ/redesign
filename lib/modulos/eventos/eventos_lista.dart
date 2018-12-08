@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:redesign/estilos/tema.dart';
 import 'package:redesign/modulos/eventos/evento.dart';
+import 'package:redesign/modulos/eventos/evento_criar.dart';
+import 'package:redesign/modulos/eventos/evento_exibir.dart';
 import 'package:redesign/widgets/tela_base.dart';
 
 class EventosTela extends StatelessWidget {
@@ -8,7 +11,19 @@ class EventosTela extends StatelessWidget {
   Widget build(BuildContext context) {
     return TelaBase(
       title: 'Eventos',
-      body: EventosLista(),
+      body: Container(
+        child: EventosLista()
+      ),
+      fab: FloatingActionButton(
+        onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EventoCriar(),
+            ),
+          ),
+        child: Icon(Icons.add),
+        backgroundColor: Tema.principal.primaryColor,
+      ),
     );
   }
 }
@@ -60,8 +75,14 @@ class _EventosListaState extends State<EventosLista> {
         child: ListTile(
           title: Text(record.nome),
           subtitle: Text(record.local),
-          trailing: Text(record.count.toString()),
-          onTap: () => record.reference.updateData({'count': record.count + 1}),
+          trailing: Text(">"),
+          onTap: () =>
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EventoExibir(evento: record),
+                ),
+              ),
         ),
       ),
     );
