@@ -21,7 +21,7 @@ class EventoExibir extends StatelessWidget {
           Text("Local: " + evento.local),
           Text("Dados completos: " + evento.toJson().toString())
         ],
-      )
+      ),
     );
   }
 }
