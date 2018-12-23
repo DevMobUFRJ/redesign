@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: Tema.principal,
-      home: MapaTela(title: 'REDEsign'),
+      home: MapaTela(),
     );
   }
 }

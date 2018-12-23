@@ -4,36 +4,38 @@ import 'package:redesign/modulos/mapa/drawer_screen.dart';
 import 'package:redesign/modulos/mapa/filter_drawer.dart';
 
 class MapaTela extends StatefulWidget {
-  MapaTela({Key key, this.title}) : super(key: key);
-
-  final String title;
+  MapaTela({Key key}) : super(key: key);
 
   @override
-  _MapaTelaState createState() => new _MapaTelaState();
+  _MapaTelaState createState() => _MapaTelaState();
 }
 
 class _MapaTelaState extends State<MapaTela> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   GoogleMapController mapController;
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      drawer: new DrawerScreen(),
-      appBar: new AppBar(
-        title: new Text(widget.title),
+    return Scaffold(
+      drawer: DrawerScreen(),
+      appBar: AppBar(
+        title: Text("REDEsign"),
         backgroundColor: Theme.of(context).primaryColor,
-//        actions: <Widget>[
-//          new IconButton(
-//              icon: new Icon(
-//                Icons.star_border,
-//                color: Colors.white,),
-//              onPressed: () => _scaffoldKey.currentState.openEndDrawer
-//          ),
-//        ],
+        actions: [
+          Builder(
+            builder: (context) => IconButton(
+              icon: Icon(
+                Icons.more_vert,
+                color: Colors.white,
+              ),
+              onPressed: () => Scaffold.of(context).openEndDrawer(),
+              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+            ),
+          ),
+        ],
       ),
-      endDrawer: new FavoriteDrawer(),
-      body: new  GoogleMap(
+      endDrawer: FavoriteDrawer(),
+      body: GoogleMap(
         initialCameraPosition: CameraPosition(
           target: LatLng(-22.8544375, -43.2296038),
           zoom: 12.0,
