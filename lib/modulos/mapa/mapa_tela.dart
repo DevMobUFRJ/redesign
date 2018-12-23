@@ -34,7 +34,7 @@ class _MapaTelaState extends State<MapaTela> {
           ),
         ],
       ),
-      endDrawer: FavoriteDrawer(),
+      endDrawer: FiltroDrawer(),
       body: GoogleMap(
         initialCameraPosition: CameraPosition(
           target: LatLng(-22.8544375, -43.2296038),
