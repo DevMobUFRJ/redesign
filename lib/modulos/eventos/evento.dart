@@ -2,20 +2,23 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Evento {
 
-  final DocumentReference reference;
-  final String nome;
-  final String descricao;
-  final DateTime data;
-  final String criadoPor;
-  final String facebookUrl;
-  final String local;
-  final String endereco;
-  final String cidade;
-  final String cep;
+  static final String collectionName = 'evento';
 
-  Evento(this.nome, this.descricao, this.data, this.criadoPor,
+  DocumentReference reference;
+  String nome;
+  String descricao;
+  DateTime data;
+  /// ID do usuário
+  String criadoPor;
+  String facebookUrl;
+  String local;
+  String endereco;
+  String cidade;
+  String cep;
+
+  Evento({this.nome, this.descricao, this.data, this.criadoPor,
       this.facebookUrl, this.local, this.endereco, this.cidade,
-      this.cep, {this.reference});
+      this.cep, this.reference});
 
   Evento.fromMap(Map<String, dynamic> map, {this.reference})
       : nome = map['nome'] ?? '',
@@ -45,6 +48,6 @@ class Evento {
       };
 
   @override
-  String toString() => "Evento<$nome:$local>";
+  String toString() => this.toJson().toString();
 
 }

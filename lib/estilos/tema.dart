@@ -5,7 +5,7 @@ class Tema {
   static ThemeData principal = ThemeData(
     // Define the default Brightness and Colors
     brightness: Brightness.light,
-    primaryColor: Color.fromARGB(255, 55, 116, 127),
+    primaryColor: const Color.fromARGB(255, 55, 116, 127),
     accentColor: Colors.cyan[600],
     primarySwatch: Colors.blue,
 
@@ -20,4 +20,6 @@ class Tema {
 //      body1: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
 //    ),
   );
+
+  static const Color cinzaClaro = const Color.fromARGB(255, 240, 240, 240);
 }
