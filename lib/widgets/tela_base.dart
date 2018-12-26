@@ -29,7 +29,8 @@ class TelaBase extends StatelessWidget {
         ].where(notNull).toList(),//permite que searchButton seja null
       ),
       body: Padding(
-          padding: EdgeInsets.all(16),
+          padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+          //padding: EdgeInsets.all(16),
           child: body
       ),
       floatingActionButton: fab,
