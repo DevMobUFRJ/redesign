@@ -6,8 +6,9 @@ class Tema {
     // Define the default Brightness and Colors
     brightness: Brightness.light,
     primaryColor: const Color.fromARGB(255, 55, 116, 127),
-    accentColor: Colors.cyan[600],
+    accentColor: const Color.fromARGB(255, 27, 60, 65),
     primarySwatch: Colors.blue,
+    primaryColorDark: const Color.fromARGB(255, 16, 36, 40),
 
     // Define the default Font Family
     fontFamily: 'Montserrat',
@@ -22,4 +23,9 @@ class Tema {
   );
 
   static const Color cinzaClaro = const Color.fromARGB(255, 240, 240, 240);
+
+  static const Color buttonDarkGrey = const Color.fromARGB(255, 20, 45, 50);
+  static const Color buttonYellow = const Color.fromARGB(255, 62, 53, 24);
+  static const Color buttonPurple = const Color.fromARGB(255, 38, 28, 54);
+
 }

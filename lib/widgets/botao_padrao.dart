@@ -9,25 +9,48 @@ class BotaoPadrao extends StatelessWidget {
   final Color corTexto;
   final VoidCallback callback;
 
-  BotaoPadrao( this.titulo, this.callback, this.corFundo, this.corTexto);
+  BotaoPadrao(this.titulo, this.callback, this.corFundo, this.corTexto);
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return RaisedButton(
-      child: Text(
-        this.titulo,
-        style: TextStyle(
-          color: corTexto,
-          fontSize: 16,
+    return Row(
+      children: <Widget>[
+        Expanded(
+            child: GestureDetector(
+              child: Container(
+                padding: EdgeInsets.all(8.0),
+                child: Container(
+                  alignment: Alignment.center,
+                  height: 50.0,
+                  decoration: BoxDecoration(
+                      color: corFundo,
+                      borderRadius: BorderRadius.circular(100.0)
+                  ),
+                  child: Text(
+                    titulo,
+                    style: TextStyle(
+                        color: corTexto, fontSize: 15
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ), onTap: callback,
+            )
         ),
-      ),
-      color: corFundo,
-      textColor: corTexto,
-      onPressed: callback,
-      shape: StadiumBorder(),
-      padding: EdgeInsets.all(16),
+      ],
     );
   }
-
 }
+//return RaisedButton(
+//child: Text(
+//this.titulo,
+//style: TextStyle(
+//color: corTexto,
+//fontSize: 16,
+//),
+//),
+//color: corFundo,
+//textColor: corTexto,
+//onPressed: callback,
+//shape: StadiumBorder(),
+//padding: EdgeInsets.all(16),

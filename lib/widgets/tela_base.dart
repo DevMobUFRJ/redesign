@@ -38,7 +38,9 @@ class TelaBase extends StatelessWidget {
   }
 
   void homePressed(context){
-    Navigator.popUntil(context, ModalRoute.withName(Navigator.defaultRouteName));
+    Navigator.popUntil(context,
+        ModalRoute.withName('/mapa')
+    );
   }
 
 }

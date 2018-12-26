@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:redesign/widgets/botao_padrao.dart';
 
 class PaginaOpcoes extends StatelessWidget {
   @override
@@ -15,9 +16,9 @@ class PaginaOpcoes extends StatelessWidget {
                   width: 200.0,
                   height: 200.0,
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(125.0),
+                      //borderRadius: BorderRadius.circular(125.0),
                       image: DecorationImage(
-                          image: AssetImage('images/logo_novo.png')
+                          image: AssetImage('images/rede_logo.png')
                       )
                   ),
                 ),
@@ -39,10 +40,10 @@ class PaginaOpcoes extends StatelessWidget {
                   padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
                   child: Column(
                     children: <Widget>[
-                      Botao("Universidade", "azul"),
-                      Botao("Escola", "azul"),
-                      Botao("Incubadora", "azul"),
-                      Botao("Outra", "cinza"),
+                      BotaoPadrao("Universidade", null, Color.fromARGB(255, 52, 116, 128), Colors.white),
+                      BotaoPadrao("Escola", null, Color.fromARGB(255, 52, 116, 128), Colors.white),
+                      BotaoPadrao("Incubadora", null, Color.fromARGB(255, 52, 116, 128), Colors.white),
+                      BotaoPadrao("Incubadora", null, Color.fromARGB(255, 48, 67, 76), Colors.white),
                     ],
                   ),
                 )
