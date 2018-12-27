@@ -14,11 +14,9 @@ class Evento {
   String local;
   String endereco;
   String cidade;
-  String cep;
 
   Evento({this.nome, this.descricao, this.data, this.criadoPor,
-      this.facebookUrl, this.local, this.endereco, this.cidade,
-      this.cep, this.reference});
+      this.facebookUrl, this.local, this.endereco, this.cidade, this.reference});
 
   Evento.fromMap(Map<String, dynamic> map, {this.reference})
       : nome = map['nome'] ?? '',
@@ -28,8 +26,7 @@ class Evento {
         facebookUrl = map['facebookUrl'] ?? '',
         local = map['local'] ?? '',
         endereco = map['endereco'] ?? '',
-        cidade = map['cidade'] ?? '',
-        cep = map['cep'] ?? '';
+        cidade = map['cidade'] ?? '';
 
   Evento.fromSnapshot(DocumentSnapshot snapshot)
       : this.fromMap(snapshot.data, reference: snapshot.reference);
@@ -43,11 +40,9 @@ class Evento {
         'facebookUrl': facebookUrl ?? '',
         'local': local ?? '',
         'endereco': endereco ?? '',
-        'cidade': cidade ?? '',
-        'cep': cep
+        'cidade': cidade ?? ''
       };
 
   @override
   String toString() => this.toJson().toString();
-
 }

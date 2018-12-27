@@ -8,18 +8,28 @@ import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EventoCriar extends StatelessWidget {
+
+  final Evento evento;
+
+  EventoCriar({this.evento});
+
   @override
   Widget build(BuildContext context) {
     return TelaBase(
-        title: "Novo Evento",
-        body: EventoCriarPage()
+        title: evento == null || evento.reference == null ? "Novo Evento" : "Editar Evento",
+        body: EventoCriarPage(evento: this.evento)
     );
   }
 }
 
 class EventoCriarPage extends StatefulWidget{
+
+  final Evento evento;
+
+  EventoCriarPage({this.evento});
+
   @override
-  _EventoCriarState createState() => _EventoCriarState();
+  _EventoCriarState createState() => _EventoCriarState(this.evento);
 }
 
 class _EventoCriarState extends State<EventoCriarPage>{
@@ -27,11 +37,14 @@ class _EventoCriarState extends State<EventoCriarPage>{
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  Evento evento = new Evento();
+  Evento evento;
   bool blocked = false;
+
+  _EventoCriarState(evento) : this.evento = evento ?? new Evento();
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       key: _scaffoldKey,
       resizeToAvoidBottomPadding: false,
@@ -45,6 +58,7 @@ class _EventoCriarState extends State<EventoCriarPage>{
                   icon: const Icon(Icons.person),
                   labelText: 'Nome do Evento',
                 ),
+                initialValue: evento.nome,
                 validator: (val) => val.isEmpty ? 'Nome é obrigatório' : null,
                 inputFormatters: [new LengthLimitingTextInputFormatter(50)],
                 onSaved: (val) => evento.nome = val,
@@ -54,6 +68,7 @@ class _EventoCriarState extends State<EventoCriarPage>{
                   icon: const Icon(Icons.calendar_today),
                   labelText: 'Data (dd/mm/aaaa)',
                 ),
+                initialValue: convertToDMYString(evento.data),
                 keyboardType: TextInputType.datetime,
                 inputFormatters: [new LengthLimitingTextInputFormatter(10)],
                 validator: (val) =>
@@ -65,6 +80,7 @@ class _EventoCriarState extends State<EventoCriarPage>{
                   icon: const Icon(Icons.home),
                   labelText: 'Nome do Local',
                 ),
+                initialValue: evento.local,
                 validator: (val) => val.isEmpty ? 'Local é obrigatório' : null,
                 inputFormatters: [new LengthLimitingTextInputFormatter(50)],
                 onSaved: (val) => evento.local = val,
@@ -74,6 +90,7 @@ class _EventoCriarState extends State<EventoCriarPage>{
                   icon: const Icon(Icons.location_on),
                   labelText: 'Endereço',
                 ),
+                initialValue: evento.endereco,
                 validator: (val) => val.isEmpty ? 'Endereço é obrigatório' : null,
                 inputFormatters: [new LengthLimitingTextInputFormatter(100)],
                 onSaved: (val) => evento.endereco = val,
@@ -83,6 +100,7 @@ class _EventoCriarState extends State<EventoCriarPage>{
                   icon: const Icon(Icons.location_city),
                   labelText: 'Cidade',
                 ),
+                initialValue: evento.cidade,
                 validator: (val) => val.isEmpty ? 'Cidade é obrigatório' : null,
                 inputFormatters: [new LengthLimitingTextInputFormatter(20)],
                 onSaved: (val) => evento.cidade = val,
@@ -92,6 +110,7 @@ class _EventoCriarState extends State<EventoCriarPage>{
                   icon: const Icon(Icons.description),
                   labelText: 'Descrição',
                 ),
+                initialValue: evento.descricao,
                 keyboardType: TextInputType.multiline,
                 maxLines: 4,
                 validator: (val) => val.isEmpty ? 'Descrição é obrigatório' :
@@ -104,6 +123,7 @@ class _EventoCriarState extends State<EventoCriarPage>{
                   icon: const Icon(Icons.email),
                   labelText: 'Link do Evento no facebook',
                 ),
+                initialValue: evento.facebookUrl,
                 keyboardType: TextInputType.emailAddress,
                 inputFormatters: [new LengthLimitingTextInputFormatter(80)],
                 onSaved: (val) => evento.facebookUrl = val,
@@ -136,6 +156,14 @@ class _EventoCriarState extends State<EventoCriarPage>{
     }
   }
 
+  String convertToDMYString(DateTime d){
+    try{
+      return d.day.toString() + "/" + d.month.toString() + "/" + d.year.toString();
+    } catch (e) {
+      return null;
+    }
+  }
+
   void showMessage(String message, [MaterialColor color = Colors.red]) {
     blocked = false;
     _scaffoldKey.currentState
@@ -152,14 +180,26 @@ class _EventoCriarState extends State<EventoCriarPage>{
       showMessage('Por favor, complete todos os campos.');
     } else {
       form.save(); //This invokes each onSaved event
-      Firestore.instance.collection(Evento.collectionName)
-          .add(evento.toJson())
-      .then(onValue)
-      .catchError(showMessage);
+
+      //TODO Salvar usuário que criou o evento
+      //evento.criadoPor = MyApp.getUserId() or something;
+      if(evento.reference == null) {
+        Firestore.instance
+            .collection(Evento.collectionName)
+            .add(evento.toJson())
+            .then(onValue)
+            .catchError(showMessage);
+      } else {
+        evento.reference.setData(evento.toJson()).then(onUpdate).catchError(showMessage);
+      }
     }
   }
 
   void onValue(DocumentReference ref){
+    Navigator.pop(context);
+  }
+
+  void onUpdate(dynamic yo){
     Navigator.pop(context);
   }
 }

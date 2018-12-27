@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:redesign/estilos/tema.dart';
 import 'package:redesign/modulos/eventos/evento.dart';
-import 'package:redesign/modulos/eventos/evento_criar.dart';
+import 'package:redesign/modulos/eventos/evento_form.dart';
 import 'package:redesign/modulos/eventos/evento_exibir.dart';
 import 'package:redesign/widgets/tela_base.dart';
 
@@ -23,13 +23,14 @@ class EventosTela extends StatelessWidget {
         child: Icon(Icons.add),
         backgroundColor: Tema.principal.primaryColor,
       ),
-      searchButton: IconButton(
+      extraActions: <IconButton>[ IconButton(
         icon: Icon(
             Icons.search,
             color: Colors.white
         ),
         onPressed: () => {},
       ),
+    ]
     );
   }
 }
@@ -51,7 +52,10 @@ class _EventosListaState extends State<EventosLista> {
 
   Widget _buildBody(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance.collection('evento').snapshots(),
+      stream: Firestore.instance.collection('evento')
+          .where("data", isGreaterThan: DateTime.now().toIso8601String())
+          .orderBy("data")
+          .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return LinearProgressIndicator();
 
@@ -91,7 +95,7 @@ class _EventosListaState extends State<EventosLista> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => EventoExibir(evento: record),
+                  builder: (context) => EventoForm(evento: record),
                 ),
               ),
         ),
