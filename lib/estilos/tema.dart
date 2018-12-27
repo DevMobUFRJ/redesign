@@ -1,34 +1,26 @@
 import 'package:flutter/material.dart';
 
+/// Tema padrão do app, aplicado no MaterialApp no arquivo main.dart e
+/// ao longo do app quando são necessárias cores para botões, textos etc.
 class Tema {
 
+  // ===== TEMA PADRÃO ===== //
   static ThemeData principal = ThemeData(
-    // Define the default Brightness and Colors
     brightness: Brightness.light,
     primaryColor: const Color.fromARGB(255, 55, 116, 127),
     accentColor: const Color.fromARGB(255, 27, 60, 65),
     primarySwatch: Colors.blue,
     primaryColorDark: const Color.fromARGB(255, 16, 36, 40),
-
-    // Define the default Font Family
-    fontFamily: 'Montserrat',
-
-    // Define the default TextTheme. Use this to specify the default
-    // text styling for headlines, titles, bodies of text, and more.
-//    textTheme: TextTheme(
-//      headline: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
-//      title: TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
-//      body1: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
-//    ),
   );
 
-  static const Color cinzaClaro = const Color.fromARGB(255, 240, 240, 240);
-  static const Color buttonBlue = const Color.fromARGB(255, 52, 116, 128);
-  static const Color buttonGrey = const Color.fromARGB(255, 48, 67, 76);
-  static const Color purple = const Color.fromARGB(255, 96, 72, 137);
-  static const Color yellow = const Color.fromARGB(255, 159, 135, 60);
-  static const Color buttonDarkGrey = const Color.fromARGB(255, 20, 45, 50);
-  static const Color buttonYellow = const Color.fromARGB(255, 62, 53, 24);
-  static const Color buttonPurple = const Color.fromARGB(255, 38, 28, 54);
+  // ===== CORES EXTRAS ===== //
+  static const Color cinzaClaro = Color.fromARGB(255, 240, 240, 240);
+  static const Color buttonBlue = Color.fromARGB(255, 52, 116, 128);
+  static const Color buttonGrey = Color.fromARGB(255, 48, 67, 76);
+  static const Color purple = Color.fromARGB(255, 96, 72, 137);
+  static const Color yellow = Color.fromARGB(255, 159, 135, 60);
+  static const Color buttonDarkGrey = Color.fromARGB(255, 20, 45, 50);
+  static const Color buttonYellow = Color.fromARGB(255, 62, 53, 24);
+  static const Color buttonPurple = Color.fromARGB(255, 38, 28, 54);
 
 }

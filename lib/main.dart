@@ -4,10 +4,10 @@ import 'package:redesign/modulos/login/login.dart';
 import 'package:redesign/modulos/mapa/mapa_tela.dart';
 import 'package:redesign/modulos/cadastro/registroOpcoes.dart';
 
-void main() => runApp(new MyApp());
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -15,8 +15,9 @@ class MyApp extends StatelessWidget {
       theme: Tema.principal,
       //home: PaginaOpcoes(),
       home: Login(),
+
       routes: <String, WidgetBuilder>{
-        '/mapa': (context) => new MapaTela()
+        '/mapa': (context) => MapaTela()
       },
     );
   }
