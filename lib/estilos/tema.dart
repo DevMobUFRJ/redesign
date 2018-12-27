@@ -23,7 +23,10 @@ class Tema {
   );
 
   static const Color cinzaClaro = const Color.fromARGB(255, 240, 240, 240);
-
+  static const Color buttonBlue = const Color.fromARGB(255, 52, 116, 128);
+  static const Color buttonGrey = const Color.fromARGB(255, 48, 67, 76);
+  static const Color purple = const Color.fromARGB(255, 96, 72, 137);
+  static const Color yellow = const Color.fromARGB(255, 159, 135, 60);
   static const Color buttonDarkGrey = const Color.fromARGB(255, 20, 45, 50);
   static const Color buttonYellow = const Color.fromARGB(255, 62, 53, 24);
   static const Color buttonPurple = const Color.fromARGB(255, 38, 28, 54);

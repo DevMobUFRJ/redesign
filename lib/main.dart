@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:redesign/estilos/tema.dart';
 import 'package:redesign/modulos/login/login.dart';
 import 'package:redesign/modulos/mapa/mapa_tela.dart';
-import 'package:redesign/modulos/cadastro/PaginaOpcoes.dart';
+import 'package:redesign/modulos/cadastro/registroOpcoes.dart';
 
 void main() => runApp(new MyApp());
 
