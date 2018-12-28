@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:redesign/estilos/tema.dart';
 import 'package:redesign/modulos/cadastro/registroOpcoes.dart';
+import 'package:redesign/modulos/usuario/usuario.dart';
 import 'package:redesign/servicos/meu_app.dart';
 import 'package:redesign/widgets/botao_padrao.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -57,7 +59,7 @@ class _LoginState extends State<_LoginPage> {
   _getCurrentUser () async {
     mCurrentUser = await _auth.currentUser();
     if(mCurrentUser != null){
-      loginSucesso(mCurrentUser);
+      authSucesso(mCurrentUser);
     }
   }
 
@@ -85,12 +87,22 @@ class _LoginState extends State<_LoginPage> {
   }
 
   /// Usuario já estava em cache, então vai pro mapa.
-  void loginSucesso(FirebaseUser user){
+  void authSucesso(FirebaseUser user){
     MeuApp.firebaseUser = user;
+    Firestore.instance.collection(Usuario.collectionName).document(user.uid).get()
+        .then(encontrouUsuario).catchError(erroEncontrarUsuario);
+  }
+
+  void encontrouUsuario(DocumentSnapshot snapshot){
+    MeuApp.usuario = Usuario.fromMap(snapshot.data, reference: snapshot.reference);
     Navigator.pushNamed(
         context,
         '/mapa'
     );
+  }
+
+  void erroEncontrarUsuario(e){
+    print(e);
   }
 
   mostrarLogin() {
@@ -165,15 +177,25 @@ class _LoginFormState extends State<_LoginForm> {
 
     await _auth.signInWithEmailAndPassword(
         email: emailController.text, password: senhaController.text)
-        .then(loginSucesso)
+        .then(authSucesso)
         .catchError((e) => print(e));
   }
 
-  void loginSucesso(FirebaseUser user){
+  void authSucesso(FirebaseUser user){
     MeuApp.firebaseUser = user;
+    Firestore.instance.collection(Usuario.collectionName).document(user.uid).get()
+    .then(encontrouUsuario).catchError(erroEncontrarUsuario);
+  }
+
+  void encontrouUsuario(DocumentSnapshot snapshot){
+    MeuApp.usuario = Usuario.fromMap(snapshot.data, reference: snapshot.reference);
     Navigator.pushNamed(
         context,
         '/mapa'
     );
+  }
+  
+  void erroEncontrarUsuario(e){
+    print(e);
   }
 }

@@ -31,12 +31,12 @@ class DrawerScreen extends StatelessWidget  {
                   child: Column (
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text('Nome',
+                      Text(MeuApp.usuario.nome,
                         style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.normal, fontSize: 25.0),
                       ),
-                      Text('Ocupação',
+                      Text(MeuApp.usuario.ocupacao,
                         style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.normal, fontSize: 17.0),
