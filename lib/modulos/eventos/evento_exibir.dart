@@ -115,7 +115,7 @@ class _EventoExibir extends State<EventoForm> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            evento.local,
+                            evento.nome,
                             style: TextStyle(
                               fontSize: 17,
                             ),
