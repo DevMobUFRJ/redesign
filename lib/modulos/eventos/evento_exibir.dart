@@ -69,7 +69,6 @@ class _EventoExibir extends State<EventoForm> {
 
   Widget Corpo() {
     return Container(
-
       padding: EdgeInsets.only(top: 10),
       child: Column(
         children: <Widget>[
@@ -83,14 +82,14 @@ class _EventoExibir extends State<EventoForm> {
                 child: Column(
                   children: <Widget>[
                     Text(
-                      "10",
+                      evento.data.day.toString(),
                       style: TextStyle(
                         color: Tema.buttonBlue,
                         fontSize: 60,
                       ),
                     ),
                     Text(
-                      "OUT",
+                      initialsMonth(evento.data.month),
                       style: TextStyle(color: Tema.buttonBlue, fontSize: 30),
                     ),
                   ],
@@ -155,13 +154,13 @@ class _EventoExibir extends State<EventoForm> {
             ),
             ],
           ),
-          MyDivider(),
+          Divider(color: Colors.black45,),
           Container(alignment: Alignment.topLeft,
             padding: EdgeInsets.only(top: 10,bottom: 15),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text("Terça-feira, 10 de Outubro às 10:00"),
+                Text(dayOfWeekPortuguese(evento.data.weekday) +", " + evento.data.day.toString() +" de "+ monthPortuguese(evento.data.month)+" às " + evento.data.hour.toString(), style: TextStyle(color: Colors.black54),),
                 Padding(padding: EdgeInsets.only(bottom: 10)),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -172,8 +171,8 @@ class _EventoExibir extends State<EventoForm> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
-                        Text(evento.local,style: TextStyle(fontSize: 20),),
-                        Text(evento.endereco+" - "+ evento.cidade),
+                        Text(evento.local,style: TextStyle(fontSize: 20, color: Colors.black54),),
+                        Text(evento.endereco+" - "+ evento.cidade, style: TextStyle(color: Colors.black45),),
                       ],),
                     )
                   ],
@@ -189,8 +188,7 @@ class _EventoExibir extends State<EventoForm> {
                   Text("Descrição"),
                 ],
               )),
-
-          MyDivider(),
+          Divider(color: Colors.black45,),
           Container(
               padding: EdgeInsets.only(top: 10),
               child: Row(
@@ -204,12 +202,33 @@ class _EventoExibir extends State<EventoForm> {
     );
   }
 
-  Widget MyDivider(){
-    return Container(
-      padding: EdgeInsets.only(top: 10, bottom: 10),
-      height: 1.0,
-      width: 400.0,
-      color: Colors.black45,
-    );
+  // Retorna a nome do mês em portugues
+  String monthPortuguese ( int numMonth){
+    List<String> monthsPortuguese = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+    for(int i = 0 ; i < monthsPortuguese.length; i++){
+      if(numMonth == i+1){
+        return monthsPortuguese[i];
+      }
+    }
+  }
+
+  //Retorna a sigla do mes em portugues
+  String initialsMonth ( int numMonth){
+    List<String> initialsOfMonths = ["JAN","FEV","MAR","ABR","MAI","JUN","JUL","AGO","SET","OUT","NOV","DEZ"];
+    for(int i = 0 ; i < initialsOfMonths.length; i++){
+      if(numMonth == i+1){
+        return initialsOfMonths[i];
+      }
+    }
+  }
+
+  //Retorna o dia da semana em portugues
+  String dayOfWeekPortuguese ( int day){
+    List<String> dayOfWeek = ["Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado","Domingo"];
+    for(int i = 0 ; i < dayOfWeek.length; i++){
+      if(day == i+1){
+        return dayOfWeek[i];
+      }
+    }
   }
 }
