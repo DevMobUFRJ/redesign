@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:redesign/estilos/tema.dart';
 import 'package:redesign/modulos/cadastro/registroOpcoes.dart';
+import 'package:redesign/servicos/meu_app.dart';
 import 'package:redesign/widgets/botao_padrao.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -56,13 +57,12 @@ class _LoginState extends State<_LoginPage> {
   _getCurrentUser () async {
     mCurrentUser = await _auth.currentUser();
     if(mCurrentUser != null){
-      loginSucesso();
+      loginSucesso(mCurrentUser);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return mostrandoLogin ?
     _LoginForm() : Container(
         padding: EdgeInsets.all(15.0),
@@ -85,7 +85,8 @@ class _LoginState extends State<_LoginPage> {
   }
 
   /// Usuario já estava em cache, então vai pro mapa.
-  void loginSucesso(){
+  void loginSucesso(FirebaseUser user){
+    MeuApp.firebaseUser = user;
     Navigator.pushNamed(
         context,
         '/mapa'
@@ -169,7 +170,7 @@ class _LoginFormState extends State<_LoginForm> {
   }
 
   void loginSucesso(FirebaseUser user){
-    print("User: " + user.uid);
+    MeuApp.firebaseUser = user;
     Navigator.pushNamed(
         context,
         '/mapa'

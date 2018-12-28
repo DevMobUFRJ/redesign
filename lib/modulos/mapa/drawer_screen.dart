@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:redesign/modulos/rede/rede_tela.dart';
 import 'package:redesign/modulos/eventos/eventos_lista.dart';
+import 'package:redesign/servicos/meu_app.dart';
 
 class DrawerScreen extends StatelessWidget  {
   @override
@@ -132,9 +133,11 @@ class DrawerScreen extends StatelessWidget  {
   }
 
   logout(BuildContext context) {
-    print("Quer sair");
     FirebaseAuth _auth = FirebaseAuth.instance;
-    _auth.signOut().then((dynamic) => Navigator.popUntil(context, ModalRoute.withName(Navigator.defaultRouteName))).catchError((e) => print(e));
+    _auth.signOut();
+    Navigator.popUntil(context, ModalRoute.withName(Navigator.defaultRouteName));
+    MeuApp.firebaseUser = null;
+    MeuApp.usuario = null;
   }
 }
 
