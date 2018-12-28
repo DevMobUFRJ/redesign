@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:redesign/estilos/tema.dart';
 import 'package:redesign/modulos/eventos/evento.dart';
+import 'package:redesign/servicos/meu_app.dart';
 import 'package:redesign/widgets/botao_padrao.dart';
 import 'package:redesign/widgets/tela_base.dart';
 import 'package:intl/intl.dart';
@@ -179,10 +180,9 @@ class _EventoCriarState extends State<EventoCriarPage>{
     if (!form.validate()) {
       showMessage('Por favor, complete todos os campos.');
     } else {
-      form.save(); //This invokes each onSaved event
+      form.save(); //Executa cada evento "onSaved" dos campos do formulário
+      evento.criadoPor = MeuApp.userId();
 
-      //TODO Salvar usuário que criou o evento
-      //evento.criadoPor = MyApp.getUserId() or something;
       if(evento.reference == null) {
         Firestore.instance
             .collection(Evento.collectionName)

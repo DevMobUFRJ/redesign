@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:redesign/modulos/eventos/evento.dart';
 import 'package:redesign/modulos/eventos/evento_form.dart';
+import 'package:redesign/servicos/meu_app.dart';
 import 'package:redesign/widgets/tela_base.dart';
 import 'package:redesign/estilos/tema.dart';
 
@@ -22,9 +23,8 @@ class _EventoExibir extends State<EventoForm> {
   Widget build(BuildContext context) {
     return TelaBase(
         title: evento.nome,
-        extraActions: [
+        extraActions: evento.criadoPor == MeuApp.userId() ? [
           IconButton(
-            //TODO Mostrar apenas se for do próprio usuário
             icon: Icon(
               Icons.edit,
               color: Colors.white,
@@ -43,7 +43,7 @@ class _EventoExibir extends State<EventoForm> {
             ),
             onPressed: () => excluirEvento(context),
           ),
-        ],
+        ] : null,
         body: Corpo()
 // Column(
 //          children: <Widget>[
