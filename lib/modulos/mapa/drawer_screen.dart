@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:redesign/modulos/forum/forum_tema_lista.dart';
 import 'package:redesign/modulos/rede/rede_tela.dart';
 import 'package:redesign/modulos/eventos/eventos_lista.dart';
 import 'package:redesign/servicos/meu_app.dart';
@@ -100,7 +101,12 @@ class DrawerScreen extends StatelessWidget  {
           icon: Icons.chat_bubble,
           iconColor: Color(0xff00838f),
           text: 'Fórum',
-          onPressed: () {}
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ForumTemaLista())
+            );
+          }
         ),
         ListaDrawer(
           icon: Icons.collections_bookmark,
@@ -112,12 +118,12 @@ class DrawerScreen extends StatelessWidget  {
           icon: Icons.calendar_today,
           iconColor: Color(0xff00838f),
           text: 'Eventos',
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => EventosTela())
-              );
-            }
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => EventosTela())
+            );
+          }
         ),
         ListaDrawer(
           icon: Icons.exit_to_app,

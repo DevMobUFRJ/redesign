@@ -9,7 +9,7 @@ class TelaBase extends StatelessWidget {
   final FloatingActionButton fab;
   List<IconButton> extraActions;
 
-  TelaBase({this.title, this.body, this.fab, this.extraActions}){
+  TelaBase({@required this.title, this.body, this.fab, this.extraActions}){
     if(this.extraActions == null){
       this.extraActions = [];
     }
