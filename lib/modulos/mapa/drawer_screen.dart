@@ -1,66 +1,69 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:redesign/modulos/rede/rede_tela.dart';
 import 'package:redesign/modulos/eventos/eventos_lista.dart';
 
-  class DrawerScreen extends StatelessWidget  {
+class DrawerScreen extends StatelessWidget  {
   @override
   Widget build(BuildContext context) {
-    return new Drawer(
-      child: new ListView(
+    return Drawer(
+      child: ListView(
       padding: EdgeInsets.zero,
       children: <Widget>[
-        new DrawerHeader(
-          child: new Container(
-            child: new Row(
+        DrawerHeader(
+          child: Container(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                new Container(
+                Container(
                 width: 80.0,
                   height: 80.0,
-                  decoration: new BoxDecoration(
+                  decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: Colors.white,
                   ),
                 ),
-                new Container(
+                Container(
                   width:160.0 ,
-                  margin: new EdgeInsets.all(10.0),
-                  child: new Column (
+                  margin: EdgeInsets.all(10.0),
+                  child: Column (
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      new Text('Nome',
-                        style: new TextStyle(
+                      Text('Nome',
+                        style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.normal, fontSize: 25.0),
                       ),
-                      new Text('Ocupação',
-                        style: new TextStyle(
+                      Text('Ocupação',
+                        style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.normal, fontSize: 17.0),
                       ),
-                      new Container(
-                        padding: new EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 0.0),
-                        child: new Row(
+                      Container(
+                        padding: EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 0.0),
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget> [
-                            new RoundIconButton(
-                              icon: new Icon(Icons.person),
+                            RoundIconButton(
+                              icon: Icon(Icons.edit),
                               iconColor: Colors.white,
-                              circleColor: new Color(0xff00838f),
+                              circleColor: Color(0xff00838f),
                               size: 40.0,
                             ),
-                            new RoundIconButton(
-                              icon: new Icon(Icons.chat_bubble),
+                            RoundIconButton(
+                              icon: Icon(Icons.chat_bubble),
                               iconColor: Colors.white,
-                              circleColor: new Color(0xff00838f),
+                              circleColor: Color(0xff00838f),
                               size: 40.0,
+                              onPressed: (){print("yo");},
                             ),
-                            new RoundIconButton(
-                              icon: new Icon(Icons.exit_to_app),
+                            RoundIconButton(
+                              icon: Icon(Icons.exit_to_app),
                               iconColor: Colors.white,
-                              circleColor: new Color(0xff00838f),
+                              circleColor: Color(0xff00838f),
                               size: 40.0,
+                              onPressed: () => print("oi"),
                             ),
                           ],
                         ),
@@ -71,55 +74,70 @@ import 'package:redesign/modulos/eventos/eventos_lista.dart';
               ],
             ),
           ),
-          decoration: new BoxDecoration(
+          decoration: BoxDecoration(
               color: Colors.black
           ),
         ),
-        new ListaDrawer(
+        ListaDrawer(
           icon: Icons.directions,
-          iconColor: new Color(0xff00838f),
+          iconColor: Color(0xff00838f),
           text: 'Mapa',
           onPressed: () {}
         ),
-        new ListaDrawer(
+        ListaDrawer(
           icon: Icons.people,
-          iconColor: new Color(0xff00838f),
+          iconColor: Color(0xff00838f),
           text: 'Rede',
           onPressed: () {
             Navigator.push(
                 context,
-                new MaterialPageRoute(builder: (context) => new RedeTela())
+                MaterialPageRoute(builder: (context) => RedeTela())
             );
           }
         ),
-        new ListaDrawer(
+        ListaDrawer(
           icon: Icons.chat_bubble,
-          iconColor: new Color(0xff00838f),
+          iconColor: Color(0xff00838f),
           text: 'Fórum',
           onPressed: () {}
         ),
-        new ListaDrawer(
+        ListaDrawer(
           icon: Icons.collections_bookmark,
-          iconColor: new Color(0xff00838f),
+          iconColor: Color(0xff00838f),
           text: 'Materiais',
           onPressed: () {}
         ),
-        new ListaDrawer(
+        ListaDrawer(
           icon: Icons.calendar_today,
-          iconColor: new Color(0xff00838f),
+          iconColor: Color(0xff00838f),
           text: 'Eventos',
             onPressed: () {
               Navigator.push(
                   context,
-                  new MaterialPageRoute(builder: (context) => new EventosTela())
+                  MaterialPageRoute(builder: (context) => EventosTela())
               );
+            }
+        ),
+        ListaDrawer(
+          icon: Icons.exit_to_app,
+          iconColor: Color(0xff00838f),
+          text: 'Sair',
+            onPressed: () {
+              logout(context);
             }
         ),
       ],
     ),
     );
   }
+
+  logout(BuildContext context) {
+    print("Quer sair");
+    FirebaseAuth _auth = FirebaseAuth.instance;
+    _auth.signOut().then((dynamic) => Navigator.popUntil(context, ModalRoute.withName(Navigator.defaultRouteName))).catchError((e) => print(e));
   }
+}
+
 class RoundIconButton extends StatelessWidget {
   final Icon icon;
   final Color iconColor;
@@ -137,14 +155,14 @@ class RoundIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new Container(
+    return Container(
       width: size,
       height: size,
-      decoration: new BoxDecoration(
+      decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: circleColor,
       ),
-      child: new IconButton(alignment: Alignment.center,
+      child: IconButton(alignment: Alignment.center,
             icon: icon,
             disabledColor: iconColor,
           onPressed: null
@@ -168,11 +186,11 @@ class ListaDrawer extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return new ListTile(
-      leading: new Icon(icon,
+    return ListTile(
+      leading: Icon(icon,
           color: iconColor,),
-      title: new Text(text,
-        style: new TextStyle(
+      title: Text(text,
+        style: TextStyle(
           color: Colors.black45),
       ),
       onTap: onPressed,

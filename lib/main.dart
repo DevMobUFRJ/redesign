@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       home: Login(),
 
       routes: <String, WidgetBuilder>{
-        '/mapa': (context) => MapaTela()
+        '/mapa': (context) => MapaTela(),
       },
     );
   }
