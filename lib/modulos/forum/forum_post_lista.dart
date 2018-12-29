@@ -67,7 +67,7 @@ class ForumPostListaState extends State<ForumPostLista> {
   }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
-    ForumPost post = ForumPost.fromMap(data.data);
+    ForumPost post = ForumPost.fromMap(data.data, reference: data.reference);
 
     return Container(
       key: ValueKey(data.documentID),
