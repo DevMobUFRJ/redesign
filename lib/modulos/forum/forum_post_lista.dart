@@ -9,7 +9,7 @@ import 'package:redesign/modulos/forum/forum_tema.dart';
 import 'package:redesign/widgets/tela_base.dart';
 
 class ForumPostLista extends StatefulWidget {
-  ForumTema tema;
+  final ForumTema tema;
 
   ForumPostLista(this.tema);
 

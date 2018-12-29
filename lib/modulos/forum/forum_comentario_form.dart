@@ -9,7 +9,7 @@ import 'package:redesign/widgets/botao_padrao.dart';
 import 'package:redesign/widgets/tela_base.dart';
 
 class ForumComentarioForm extends StatefulWidget {
-  CollectionReference reference;
+  final CollectionReference reference;
 
   ForumComentarioForm(this.reference);
 
@@ -57,7 +57,7 @@ class ForumComentarioFormState extends State<ForumComentarioForm> {
                 keyboardType: TextInputType.multiline,
                 maxLines: 4,
                 validator: (val) => val.isEmpty ? 'Descrição é obrigatório' :
-                val.length > 15 ? null : 'Descreva melhor seu problema',
+                  val.length > 15 ? null : 'Descreva melhor sua solução',
                 inputFormatters: [LengthLimitingTextInputFormatter(500)],
                 onSaved: (val) => comentario.descricao = val,
               ),

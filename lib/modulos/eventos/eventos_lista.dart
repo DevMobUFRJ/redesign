@@ -24,7 +24,7 @@ class EventosTela extends StatelessWidget {
         child: Icon(Icons.add),
         backgroundColor: Tema.principal.primaryColor,
       ),
-      extraActions: <IconButton>[ IconButton(
+        actions: <IconButton>[ IconButton(
         icon: Icon(
             Icons.search,
             color: Colors.white

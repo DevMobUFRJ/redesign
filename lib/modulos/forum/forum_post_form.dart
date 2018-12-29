@@ -10,7 +10,7 @@ import 'package:redesign/widgets/botao_padrao.dart';
 import 'package:redesign/widgets/tela_base.dart';
 
 class ForumPostForm extends StatefulWidget {
-  ForumTema tema;
+  final ForumTema tema;
 
   ForumPostForm(this.tema);
 

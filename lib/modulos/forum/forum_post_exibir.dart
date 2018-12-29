@@ -46,7 +46,7 @@ class ForumPostExibirState extends State<ForumPostExibir> {
 }
 
 class _ListaComentarios extends StatefulWidget {
-  CollectionReference reference;
+  final CollectionReference reference;
 
   _ListaComentarios(this.reference);
 

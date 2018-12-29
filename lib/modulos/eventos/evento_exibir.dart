@@ -23,7 +23,7 @@ class _EventoExibir extends State<EventoForm> {
   Widget build(BuildContext context) {
     return TelaBase(
         title: evento.nome,
-        extraActions: evento.criadoPor == MeuApp.userId() ? [
+        actions: evento.criadoPor == MeuApp.userId() ? [
           IconButton(
             icon: Icon(
               Icons.edit,

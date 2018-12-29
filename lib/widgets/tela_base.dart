@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 
 class TelaBase extends StatelessWidget {
 
-  var context;
+  BuildContext context;
 
   final String title;
   final Widget body;
   final FloatingActionButton fab;
-  List<IconButton> extraActions;
+  final List<IconButton> extraActions = [];
 
-  TelaBase({@required this.title, this.body, this.fab, this.extraActions}){
-    if(this.extraActions == null){
-      this.extraActions = [];
+  TelaBase({@required this.title, this.body, this.fab, actions}){
+    if(actions != null){
+      this.extraActions.addAll(actions);
     }
     extraActions.add(
       IconButton(
