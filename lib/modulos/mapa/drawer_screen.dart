@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:redesign/modulos/forum/forum_tema_lista.dart';
 import 'package:redesign/modulos/rede/rede_tela.dart';
 import 'package:redesign/modulos/eventos/eventos_lista.dart';
+import 'package:redesign/modulos/usuario/perfil_form.dart';
 import 'package:redesign/servicos/meu_app.dart';
 
 class DrawerScreen extends StatelessWidget  {
@@ -19,7 +20,7 @@ class DrawerScreen extends StatelessWidget  {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Container(
-                width: 80.0,
+                  width: 80.0,
                   height: 80.0,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
@@ -52,20 +53,26 @@ class DrawerScreen extends StatelessWidget  {
                               iconColor: Colors.white,
                               circleColor: Color(0xff00838f),
                               size: 40.0,
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => PerfilForm())
+                                );
+                              },
                             ),
                             RoundIconButton(
                               icon: Icon(Icons.chat_bubble),
                               iconColor: Colors.white,
                               circleColor: Color(0xff00838f),
                               size: 40.0,
-                              onPressed: (){print("yo");},
+                              onPressed: () => print("yo"),
                             ),
                             RoundIconButton(
                               icon: Icon(Icons.exit_to_app),
                               iconColor: Colors.white,
                               circleColor: Color(0xff00838f),
                               size: 40.0,
-                              onPressed: () => print("oi"),
+                              onPressed: () => logout(context),
                             ),
                           ],
                         ),
@@ -125,14 +132,6 @@ class DrawerScreen extends StatelessWidget  {
             );
           }
         ),
-        ListaDrawer(
-          icon: Icons.exit_to_app,
-          iconColor: Color(0xff00838f),
-          text: 'Sair',
-            onPressed: () {
-              logout(context);
-            }
-        ),
       ],
     ),
     );
@@ -171,10 +170,11 @@ class RoundIconButton extends StatelessWidget {
         shape: BoxShape.circle,
         color: circleColor,
       ),
-      child: IconButton(alignment: Alignment.center,
-            icon: icon,
-            disabledColor: iconColor,
-          onPressed: null
+      child: IconButton(
+        alignment: Alignment.center,
+        icon: icon,
+        color: iconColor,
+        onPressed: onPressed,
       ),
     );
   }

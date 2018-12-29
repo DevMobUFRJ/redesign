@@ -85,7 +85,7 @@ class _ListaComentariosState extends State<_ListaComentarios> {
   }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
-    ForumComentario comentario = ForumComentario.fromMap(data.data);
+    ForumComentario comentario = ForumComentario.fromMap(data.data, reference: data.reference);
 
     return Container(
       key: ValueKey(data.documentID),

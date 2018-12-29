@@ -18,11 +18,12 @@ class Usuario {
   /// Se for TipoUsuario.instituicao, é da classe Instituicao.
   TipoUsuario tipo;
   String ocupacao;
+  String foto;
 
   DocumentReference reference;
 
   Usuario({this.nome, this.email, this.descricao, this.site, this.facebook,
-    this.ocupacao, this.instituicaoId, this.reference, this.tipo: TipoUsuario.pessoa});
+    this.ocupacao, this.instituicaoId, this.foto, this.reference, this.tipo: TipoUsuario.pessoa});
 
   Usuario.fromMap(Map<String, dynamic> map, {this.reference})
       : nome = map['nome'] ?? '',
