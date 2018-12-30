@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:redesign/modulos/chat/chat_lista.dart';
 import 'package:redesign/modulos/forum/forum_tema_lista.dart';
 import 'package:redesign/modulos/material/material_lista.dart';
 import 'package:redesign/modulos/rede/rede_tela.dart';
@@ -66,7 +67,12 @@ class DrawerScreen extends StatelessWidget  {
                               iconColor: Colors.white,
                               circleColor: Color(0xff00838f),
                               size: 40.0,
-                              onPressed: () => print("yo"),
+                              onPressed:  () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => ChatLista())
+                                );
+                              }
                             ),
                             RoundIconButton(
                               icon: Icon(Icons.exit_to_app),
