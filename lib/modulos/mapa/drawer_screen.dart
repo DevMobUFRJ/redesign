@@ -21,12 +21,19 @@ class DrawerScreen extends StatelessWidget  {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Container(
-                  width: 80.0,
-                  height: 80.0,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white,
+                GestureDetector(
+                  onTap: () => MeuApp.irProprioPerfil(context),
+                  child: Container(
+                    width: 80.0,
+                    height: 80.0,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                          fit: BoxFit.cover,
+                          //TODO Imagem do usuário if tem imagem. Else, placeholder.
+                          image: AssetImage("images/perfil_placeholder.png"),
+                      )
+                    ),
                   ),
                 ),
                 Container(
@@ -95,7 +102,7 @@ class DrawerScreen extends StatelessWidget  {
           ),
         ),
         ListaDrawer(
-          icon: Icons.directions,
+          icon: Icons.explore,
           iconColor: Color(0xff00838f),
           text: 'Mapa',
           onPressed: () {}

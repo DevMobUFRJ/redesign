@@ -4,10 +4,10 @@ import 'package:redesign/estilos/tema.dart';
 
 class ItemListaSimples extends StatelessWidget {
 
-  String titulo;
-  VoidCallback callback;
-  Icon iconeExtra;
-  Color corTexto;
+  final String titulo;
+  final VoidCallback callback;
+  final Icon iconeExtra;
+  final Color corTexto;
 
   ItemListaSimples(this.titulo, this.callback, {Key key, this.iconeExtra, this.corTexto = Tema.primaryColor}) : super(key: key);
 
