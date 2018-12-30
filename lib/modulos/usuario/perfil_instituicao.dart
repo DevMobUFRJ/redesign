@@ -6,7 +6,7 @@ class PerfilInstituicao extends StatelessWidget {
 
   final Instituicao instituicao;
 
-  PerfilInstituicao({this.instituicao});
+  PerfilInstituicao(this.instituicao);
 
   @override
   Widget build(BuildContext context) {

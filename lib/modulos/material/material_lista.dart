@@ -5,6 +5,7 @@ import 'package:redesign/estilos/tema.dart';
 import 'package:redesign/modulos/material/material_didatico.dart';
 import 'package:redesign/modulos/material/material_form.dart';
 import 'package:redesign/servicos/meu_app.dart';
+import 'package:redesign/widgets/item_lista_simples.dart';
 import 'package:redesign/widgets/tela_base.dart';
 
 class MaterialLista extends StatefulWidget {
@@ -57,24 +58,14 @@ class MaterialListaState extends State<MaterialLista> {
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
     MaterialDidatico material = MaterialDidatico.fromMap(data.data);
 
-    return Container(
-      key: ValueKey(data.documentID),
-      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8.0),
-      child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey),
-            borderRadius: BorderRadius.circular(5.0),
-          ),
-          child: ListTile(
-            title: Text(material.titulo),
-            subtitle: Text(material.url),
-            trailing: Icon(
-              Icons.link,
-              color: Tema.principal.primaryColor,
-            ),
-            onTap: (){ /* TODO Abrir a url */ },
-          )
+    return ItemListaSimples(
+      material.titulo,
+      () => {}, //TODO abrir a url
+      iconeExtra: Icon(
+        Icons.link,
+        color: Tema.principal.primaryColor,
       ),
+      key: ValueKey(data.documentID),
     );
   }
 

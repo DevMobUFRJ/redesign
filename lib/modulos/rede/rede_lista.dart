@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:redesign/estilos/tema.dart';
 import 'package:redesign/modulos/usuario/instituicao.dart';
 import 'package:redesign/modulos/usuario/perfil_instituicao.dart';
 import 'package:redesign/modulos/usuario/perfil_pessoa.dart';
 import 'package:redesign/modulos/usuario/usuario.dart';
+import 'package:redesign/widgets/item_lista_simples.dart';
 import 'package:redesign/widgets/tela_base.dart';
 
 class RedeLista extends StatefulWidget {
@@ -59,54 +61,37 @@ class RedeListaState extends State<RedeLista> {
     Usuario usuario;
     Instituicao instituicao;
 
-    if(data.data['tipo'] == TipoUsuario.pessoa) {
+    if(data.data['tipo'] == TipoUsuario.pessoa.index) {
       usuario = Usuario.fromMap(data.data);
     } else {
       instituicao = Instituicao.fromMap(data.data);
     }
 
-    return Container(
+    return ItemListaSimples(
+      usuario != null ? usuario.nome : instituicao.nome,
+      usuario != null ? () => callbackUsuario(usuario) :
+                        () => callbackInstituicao(instituicao),
+      corTexto: Tema.textoEscuro,
       key: ValueKey(data.documentID),
-      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8.0),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey),
-          borderRadius: BorderRadius.circular(5.0),
-        ),
-        child: instituicao == null ?
-            _buildUsuario(context, usuario) :
-            _buildInstituicao(context, instituicao)
+    );
+
+  }
+
+  void callbackUsuario(Usuario usuario){
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PerfilPessoa(usuario),
       ),
     );
   }
 
-  Widget _buildUsuario(BuildContext context, Usuario usuario){
-    return ListTile(
-      title: Text(usuario.nome),
-      subtitle: Text("sou um usuário"),
-      trailing: Text(">"),
-      onTap: () =>
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => PerfilPessoa(usuario: usuario),
-            ),
-          ),
-    );
-  }
-
-  Widget _buildInstituicao(BuildContext context, Instituicao instituicao){
-    return ListTile(
-      title: Text(instituicao.nome),
-      subtitle: Text("sou uma instituicao"),
-      trailing: Text(">"),
-      onTap: () =>
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => PerfilInstituicao(instituicao: instituicao),
-            ),
-          ),
+  void callbackInstituicao(Instituicao instituicao){
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PerfilInstituicao(instituicao),
+      ),
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:redesign/modulos/forum/forum_post_lista.dart';
 import 'package:redesign/modulos/forum/forum_tema.dart';
+import 'package:redesign/widgets/item_lista_simples.dart';
 import 'package:redesign/widgets/tela_base.dart';
 
 class ForumTemaLista extends StatefulWidget {
@@ -49,26 +50,16 @@ class ForumTemaListaState extends State<ForumTemaLista> {
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
     ForumTema tema = ForumTema.fromMap(data.data, reference: data.reference);
 
-    return Container(
-      key: ValueKey(data.documentID),
-      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8.0),
-      child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey),
-            borderRadius: BorderRadius.circular(5.0),
-          ),
-          child: ListTile(
-            title: Text(tema.titulo),
-            trailing: Text(">"),
-            onTap: () =>
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ForumPostLista(tema),
-                  ),
-                ),
-          ),
-      ),
+    return ItemListaSimples(
+      tema.titulo,
+      () => tapItem(tema),
+      key: ValueKey(data.documentID)
+    );
+  }
+
+  tapItem(ForumTema tema){
+    Navigator.push(context,
+      MaterialPageRoute(builder: (context) => ForumPostLista(tema),),
     );
   }
 }

@@ -6,7 +6,7 @@ class PerfilPessoa extends StatelessWidget {
 
   final Usuario usuario;
 
-  PerfilPessoa({this.usuario});
+  PerfilPessoa(this.usuario);
 
   @override
   Widget build(BuildContext context) {

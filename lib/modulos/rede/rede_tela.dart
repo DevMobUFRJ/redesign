@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:redesign/estilos/tema.dart';
 import 'package:redesign/modulos/rede/rede_lista.dart';
+import 'package:redesign/widgets/item_lista_simples.dart';
 import 'package:redesign/widgets/tela_base.dart';
 
 class RedeTela extends StatelessWidget{
@@ -8,20 +10,14 @@ class RedeTela extends StatelessWidget{
     return TelaBase (
       title: "Rede",
       body: Center(
-        child: new Container(
-          margin: new EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
-          child: new Column(
+        child: Container(
+          child: Column(
             children: <Widget>[
-              new ItemLista(text:'Favoritos', onPressed: () => listarFavoritos(context)),
-              new Divider(height: 1.0,color: Colors.black45,),
-              new ItemLista(text:'Laboratórios', onPressed: () => listar("lab", context)),
-              new Divider(height: 1.0,color: Colors.black45,),
-              new ItemLista(text:'Escolas', onPressed: () => listar("escola", context)),
-              new Divider(height: 1.0,color: Colors.black45,),
-              new ItemLista(text:'Incubadoras', onPressed: () => listar("incubadora", context)),
-              new Divider(height: 1.0,color: Colors.black45,),
-              new ItemLista(text:'Bolsistas (PARA TESTES)', onPressed: () => listar("bolsista", context)),
-              new Divider(height: 1.0,color: Colors.black45,),
+              ItemListaSimples('Favoritos', () => listarFavoritos(context), iconeExtra: Icon(Icons.star, color: Tema.principal.primaryColor,),),
+              ItemListaSimples('Laboratórios', () => listar("Laboratorio", context)),
+              ItemListaSimples('Escolas', () => listar("Escola", context)),
+              ItemListaSimples('Incubadoras',  () => listar("Incubadora", context)),
+              ItemListaSimples('Bolsistas (PARA TESTES)', () => listar("Bolsista", context)),
             ],
           ),
         ),
@@ -36,30 +32,6 @@ class RedeTela extends StatelessWidget{
   listar(String ocupacao, context){
     Navigator.push( context,
       MaterialPageRoute( builder: (context) => RedeLista(ocupacao) ),
-    );
-  }
-}
-
-class ItemLista extends StatelessWidget{
-
-  final String text;
-  final VoidCallback onPressed;
-
-  ItemLista({
-    this.text,
-    this.onPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return new ListTile(
-      title: new Text(text,
-        style: new TextStyle(
-          color: new Color.fromARGB(255, 55, 116, 127),
-          fontSize: 25.0,
-        ),
-      ),
-      onTap: onPressed,
     );
   }
 }
