@@ -1,11 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:redesign/modulos/login/login.dart';
 import 'package:redesign/servicos/meu_app.dart';
 import 'package:redesign/widgets/botao_padrao.dart';
 import 'package:redesign/modulos/usuario/usuario.dart';
-import 'package:redesign/modulos/usuario/instituicao.dart';
 import 'package:redesign/estilos/tema.dart';
 
 Usuario usuario = new Usuario();

@@ -3,7 +3,6 @@ import 'package:redesign/modulos/cadastro/registroDados.dart';
 import 'package:redesign/widgets/botao_padrao.dart';
 import 'package:redesign/estilos/tema.dart';
 import 'package:redesign/modulos/usuario/usuario.dart';
-import 'package:redesign/modulos/usuario/instituicao.dart';
 
 class RegistroOpcoes extends StatelessWidget {
 
@@ -64,6 +63,7 @@ class _RegisterState extends State<_RegisterPage> {
         return OpcoesIncubadora();
         break;
     }
+    return null;
   }
 
   UniversidadeRegistro() {

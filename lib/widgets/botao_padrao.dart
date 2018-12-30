@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:redesign/estilos/tema.dart';
 
 class BotaoPadrao extends StatelessWidget {
 

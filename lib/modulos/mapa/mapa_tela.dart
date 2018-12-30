@@ -11,7 +11,6 @@ class MapaTela extends StatefulWidget {
 }
 
 class _MapaTelaState extends State<MapaTela> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   GoogleMapController mapController;
 
   @override

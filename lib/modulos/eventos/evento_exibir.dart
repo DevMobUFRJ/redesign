@@ -44,7 +44,7 @@ class _EventoExibir extends State<EventoForm> {
             onPressed: () => excluirEvento(context),
           ),
         ] : null,
-        body: Corpo()
+        body: _corpo()
 // Column(
 //          children: <Widget>[
 //            Text("Nome: " + evento.nome),
@@ -67,7 +67,7 @@ class _EventoExibir extends State<EventoForm> {
     //TODO Mostrar erro
   }
 
-  Widget Corpo() {
+  Widget _corpo() {
     return Container(
       padding: EdgeInsets.only(top: 10),
       child: Column(
@@ -210,6 +210,7 @@ class _EventoExibir extends State<EventoForm> {
         return monthsPortuguese[i];
       }
     }
+    return "";
   }
 
   //Retorna a sigla do mes em portugues
@@ -220,6 +221,7 @@ class _EventoExibir extends State<EventoForm> {
         return initialsOfMonths[i];
       }
     }
+    return "";
   }
 
   //Retorna o dia da semana em portugues
@@ -230,5 +232,6 @@ class _EventoExibir extends State<EventoForm> {
         return dayOfWeek[i];
       }
     }
+    return "";
   }
 }

@@ -4,7 +4,6 @@ import 'package:redesign/estilos/tema.dart';
 import 'package:redesign/modulos/eventos/evento.dart';
 import 'package:redesign/modulos/eventos/evento_exibir.dart';
 import 'package:redesign/modulos/eventos/evento_form.dart';
-import 'package:redesign/modulos/eventos/evento_exibir.dart';
 import 'package:redesign/widgets/tela_base.dart';
 
 class EventosTela extends StatelessWidget {
@@ -196,13 +195,14 @@ class _EventosListaState extends State<EventosLista> {
   }
 
   //Retorna a sigla do mes em portugues
-  String initialsMonth ( int numMonth){
+  String initialsMonth (int numMonth){
     List<String> initialsOfMonths = ["JAN","FEV","MAR","ABR","MAI","JUN","JUL","AGO","SET","OUT","NOV","DEZ"];
     for(int i = 0 ; i < initialsOfMonths.length; i++){
       if(numMonth == i+1){
         return initialsOfMonths[i];
       }
     }
+    return "";
   }
 }
 
