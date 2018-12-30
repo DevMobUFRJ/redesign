@@ -202,36 +202,27 @@ class _EventoExibir extends State<EventoForm> {
     );
   }
 
-  // Retorna a nome do mês em portugues
-  String monthPortuguese ( int numMonth){
+  /// Retorna a nome do mês em portugues
+  String monthPortuguese (int numMonth){
+    if(numMonth < 1 || numMonth > 12) return "";
+
     List<String> monthsPortuguese = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
-    for(int i = 0 ; i < monthsPortuguese.length; i++){
-      if(numMonth == i+1){
-        return monthsPortuguese[i];
-      }
-    }
-    return "";
+    return monthsPortuguese[numMonth-1];
   }
 
-  //Retorna a sigla do mes em portugues
-  String initialsMonth ( int numMonth){
+  /// Retorna a sigla do mes em portugues
+  String initialsMonth (int numMonth){
+    if(numMonth < 1 || numMonth > 12) return "";
+
     List<String> initialsOfMonths = ["JAN","FEV","MAR","ABR","MAI","JUN","JUL","AGO","SET","OUT","NOV","DEZ"];
-    for(int i = 0 ; i < initialsOfMonths.length; i++){
-      if(numMonth == i+1){
-        return initialsOfMonths[i];
-      }
-    }
-    return "";
+    return initialsOfMonths[numMonth-1];
   }
 
-  //Retorna o dia da semana em portugues
-  String dayOfWeekPortuguese ( int day){
+  /// Retorna o dia da semana em portugues
+  String dayOfWeekPortuguese (int day){
+    if(day < 1 || day > 7) return "";
+
     List<String> dayOfWeek = ["Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado","Domingo"];
-    for(int i = 0 ; i < dayOfWeek.length; i++){
-      if(day == i+1){
-        return dayOfWeek[i];
-      }
-    }
-    return "";
+    return dayOfWeek[day-1];
   }
 }

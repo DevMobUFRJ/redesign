@@ -196,13 +196,10 @@ class _EventosListaState extends State<EventosLista> {
 
   //Retorna a sigla do mes em portugues
   String initialsMonth (int numMonth){
+    if(numMonth < 1 || numMonth > 12) return "";
+
     List<String> initialsOfMonths = ["JAN","FEV","MAR","ABR","MAI","JUN","JUL","AGO","SET","OUT","NOV","DEZ"];
-    for(int i = 0 ; i < initialsOfMonths.length; i++){
-      if(numMonth == i+1){
-        return initialsOfMonths[i];
-      }
-    }
-    return "";
+    return initialsOfMonths[numMonth-1];
   }
 }
 
