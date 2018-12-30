@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:redesign/modulos/cadastro/registroDados.dart';
 import 'package:redesign/widgets/botao_padrao.dart';
 import 'package:redesign/estilos/tema.dart';
+import 'package:redesign/modulos/usuario/usuario.dart';
+import 'package:redesign/modulos/usuario/instituicao.dart';
 
 class RegistroOpcoes extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,7 +21,6 @@ class RegistroOpcoes extends StatelessWidget {
               ],
             ),
           ),
-
     );
   }
 }
@@ -90,7 +92,7 @@ class _RegisterState extends State<_RegisterPage> {
 
   Widget OpcoesCadastro() {
     return Container(
-      padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+      padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
       child: Column(
         children: <Widget>[
           texto("Olá! para começar, informe sua origem."),
@@ -108,46 +110,46 @@ class _RegisterState extends State<_RegisterPage> {
 
   Widget OpcoesUniversidade() {
     return Container(
-      padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+      padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
       child: Column(
         children: <Widget>[
           texto("Você é ..."),
-          BotaoPadrao("Bolsista", cadastroDados, Tema.buttonBlue, Tema.cinzaClaro),
-          BotaoPadrao("Professor(a)", cadastroDados, Tema.buttonBlue, Tema.cinzaClaro),
-          BotaoPadrao("Estudante", cadastroDados, Tema.buttonBlue, Tema.cinzaClaro),
+          BotaoPadrao("Bolsista", () => cadastroDados(TipoUsuario.pessoa,"Bolsista"), Tema.buttonBlue, Tema.cinzaClaro),
+          BotaoPadrao("Professor(a)", () => cadastroDados(TipoUsuario.pessoa, "Professor"), Tema.buttonBlue, Tema.cinzaClaro),
+          BotaoPadrao("Estudante", () => cadastroDados(TipoUsuario.pessoa, "Discente"), Tema.buttonBlue, Tema.cinzaClaro),
         ],
       ),
     );
   }
   Widget OpcoesEscola() {
     return Container(
-      padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+      padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
       child: Column(
         children: <Widget>[
           texto("Você é ..."),
-          BotaoPadrao("Bolsista", cadastroDados, Tema.purple, Tema.cinzaClaro),
-          BotaoPadrao("Professor(a)", cadastroDados, Tema.purple, Tema.cinzaClaro),
+          BotaoPadrao("Bolsista", () => cadastroDados(TipoUsuario.pessoa, "Bolsista"), Tema.purple, Tema.cinzaClaro),
+          BotaoPadrao("Professor(a)", () => cadastroDados(TipoUsuario.pessoa, "Professor"), Tema.purple, Tema.cinzaClaro),
         ],
       ),
     );
   }
   Widget OpcoesIncubadora() {
     return Container(
-      padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+      padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
       child: Column(
         children: <Widget>[
           texto("Você é ..."),
-          BotaoPadrao("Empreendedor(a)", cadastroDados, Tema.yellow, Tema.cinzaClaro),
-          BotaoPadrao("Incubadora", cadastroDados, Tema.yellow, Tema.cinzaClaro),
+          BotaoPadrao("Empreendedor(a)", () => cadastroDados(TipoUsuario.pessoa,"Empreendedor"), Tema.yellow, Tema.cinzaClaro),
+          BotaoPadrao("Incubadora", () => cadastroDados(TipoUsuario.instituicao, "Incubadora"), Tema.yellow, Tema.cinzaClaro),
         ],
       ),
     );
   }
 
-  cadastroDados() {
+  cadastroDados(TipoUsuario tipoUsuario , String ocupacao) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => RegistroDados()),
+      MaterialPageRoute(builder: (context) => RegistroDados(tipo: tipoUsuario, ocupacao: ocupacao,)),
     );
   }
 }
@@ -157,7 +159,7 @@ Widget texto (String texto){
     mainAxisAlignment: MainAxisAlignment.center,
     children: <Widget>[
       Container(
-        padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+        padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
         child: Text("$texto",
           style: TextStyle(
               color: Colors.white,
