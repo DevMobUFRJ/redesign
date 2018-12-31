@@ -8,7 +8,12 @@ import 'package:redesign/modulos/eventos/eventos_lista.dart';
 import 'package:redesign/modulos/usuario/perfil_form.dart';
 import 'package:redesign/servicos/meu_app.dart';
 
-class DrawerScreen extends StatelessWidget  {
+class DrawerScreen extends StatefulWidget {
+  @override
+  DrawerScreenState createState() => DrawerScreenState();
+}
+
+class DrawerScreenState extends State<DrawerScreen> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -30,8 +35,9 @@ class DrawerScreen extends StatelessWidget  {
                       shape: BoxShape.circle,
                       image: DecorationImage(
                           fit: BoxFit.cover,
-                          //TODO Imagem do usuário if tem imagem. Else, placeholder.
-                          image: AssetImage("images/perfil_placeholder.png"),
+                          image: MeuApp.imagemMemory == null ?
+                            AssetImage("images/perfil_placeholder.png") :
+                            MemoryImage(MeuApp.imagemMemory),
                       )
                     ),
                   ),

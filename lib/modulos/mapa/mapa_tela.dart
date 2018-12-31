@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:redesign/modulos/mapa/drawer_screen.dart';
 import 'package:redesign/modulos/mapa/filter_drawer.dart';
+import 'package:redesign/servicos/meu_app.dart';
 
 class MapaTela extends StatefulWidget {
   MapaTela({Key key}) : super(key: key);
@@ -12,6 +13,10 @@ class MapaTela extends StatefulWidget {
 
 class _MapaTelaState extends State<MapaTela> {
   GoogleMapController mapController;
+
+  _MapaTelaState(){
+    MeuApp.startup();
+  }
 
   @override
   Widget build(BuildContext context) {

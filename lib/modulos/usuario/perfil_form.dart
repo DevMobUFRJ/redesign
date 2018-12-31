@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,8 +11,14 @@ import 'package:redesign/servicos/meu_app.dart';
 import 'package:redesign/servicos/validadores.dart';
 import 'package:redesign/widgets/botao_padrao.dart';
 import 'package:redesign/widgets/tela_base.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:image/image.dart' as ImageHelper;
+import 'package:firebase_storage/firebase_storage.dart';
 
-final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+final FirebaseStorage _storage = FirebaseStorage.instance;
+StorageReference reference = _storage.ref().child("perfil/" + MeuApp.userId() + ".jpg");
+bool blocked = false;
 
 class PerfilForm extends StatefulWidget {
   @override
@@ -51,11 +59,57 @@ class _UsuarioForm extends StatefulWidget {
 /// O formulário para instituição está mais em baixo
 class _UsuarioFormState extends State<_UsuarioForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  bool blocked = false;
 
   Usuario usuario;
 
-  _UsuarioFormState(this.usuario);
+  _UsuarioFormState(this.usuario){
+    reference.getData(38000).then((value) => setState((){
+      imagemAtual = value;
+    }));
+  }
+
+  List<int> imagemAtual;
+  List<int> imagemNova;
+
+  Future getImage() async {
+    carregando(true, mensagem: "Fazendo upload da imagem...");
+    File image_file = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+    if(image_file == null){
+      carregando(false);
+      return;
+    }
+
+    ImageHelper.Image image = ImageHelper.decodeImage(image_file.readAsBytesSync());
+
+    image = ImageHelper.copyResize(image, 100, 100);
+
+    setState(() {
+      imagemNova = ImageHelper.encodeJpg(image, quality: 90);
+    });
+
+    //Upload the file to firebase
+    StorageUploadTask uploadTask = reference.putData(imagemNova);
+    uploadTask.onComplete.then((s) => uploadFinalizado(imagemNova)).catchError((e) => uploadErro(e));
+  }
+
+  void uploadFinalizado(imagem){
+    carregando(false);
+    showMessage("Upload finalizado", Colors.green);
+    setState((){
+      imagemNova = imagem;
+      imagemAtual = imagem;
+    });
+    MeuApp.imagemMemory = imagem;
+  }
+
+  void uploadErro(e){
+    carregando(false);
+    showMessage("Erro ao atualizar foto");
+    setState((){
+      imagemNova = null;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +118,29 @@ class _UsuarioFormState extends State<_UsuarioForm> {
       autovalidate: true,
       child: ListView(
         children: <Widget>[
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              GestureDetector(
+                onTap: (){ getImage(); },
+                child: Container(
+                  width: 100.0,
+                  height: 100.0,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      //TODO Imagem do usuário if tem imagem. Else, placeholder.
+                      image: imagemNova == null ? imagemAtual == null ?
+                          AssetImage("images/perfil_placeholder.png") :
+                          MemoryImage(imagemAtual):
+                          MemoryImage(imagemNova),
+                    )
+                  ),
+                ),
+              ),
+            ],
+          ),
           TextFormField(
             decoration: const InputDecoration(
               icon: const Icon(Icons.person),
@@ -125,12 +202,6 @@ class _UsuarioFormState extends State<_UsuarioForm> {
     );
   }
 
-  void showMessage(String message, [MaterialColor color = Colors.red]) {
-    blocked = false;
-    _scaffoldKey.currentState
-        .showSnackBar(SnackBar(backgroundColor: color, content: Text(message)));
-  }
-
   void _submitForm() {
     if(blocked) return;
 
@@ -139,6 +210,7 @@ class _UsuarioFormState extends State<_UsuarioForm> {
 
     if (!form.validate()) {
       showMessage('Por favor, complete todos os campos.');
+      blocked = false;
     } else {
       form.save(); //Executa cada evento "onSaved" dos campos do formulário
       save(usuario);
@@ -166,11 +238,53 @@ class _InstituicaoForm extends StatefulWidget {
 
 class _InstituicaoFormState extends State<_InstituicaoForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  bool blocked = false;
 
   Instituicao instituicao;
 
   _InstituicaoFormState(this.instituicao);
+
+  List<int> imagemAtual;
+  List<int> imagemNova;
+
+  Future getImage() async {
+    carregando(true, mensagem: "Fazendo upload da imagem...");
+    File image_file = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+    if(image_file == null){
+      carregando(false);
+      return;
+    }
+
+    ImageHelper.Image image = ImageHelper.decodeImage(image_file.readAsBytesSync());
+
+    image = ImageHelper.copyResize(image, 100, 100);
+
+    setState(() {
+      imagemNova = ImageHelper.encodeJpg(image, quality: 90);
+    });
+
+    //Upload the file to firebase
+    StorageUploadTask uploadTask = reference.putData(imagemNova);
+    uploadTask.onComplete.then((s) => uploadFinalizado(imagemNova)).catchError((e) => uploadErro(e));
+  }
+
+  void uploadFinalizado(imagem){
+    carregando(false);
+    showMessage("Upload finalizado", Colors.green);
+    setState((){
+      imagemNova = imagem;
+      imagemAtual = imagem;
+    });
+    MeuApp.imagemMemory = imagem;
+  }
+
+  void uploadErro(e){
+    carregando(false);
+    showMessage("Erro ao atualizar foto");
+    setState((){
+      imagemNova = null;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -179,6 +293,29 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
       autovalidate: true,
       child: ListView(
         children: <Widget>[
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              GestureDetector(
+                onTap: (){ getImage(); },
+                child: Container(
+                  width: 100.0,
+                  height: 100.0,
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        //TODO Imagem do usuário if tem imagem. Else, placeholder.
+                        image: imagemNova == null ? imagemAtual == null ?
+                        AssetImage("images/perfil_placeholder.png") :
+                        MemoryImage(imagemAtual):
+                        MemoryImage(imagemNova),
+                      )
+                  ),
+                ),
+              ),
+            ],
+          ),
           TextFormField(
             decoration: const InputDecoration(
               icon: const Icon(Icons.people),
@@ -258,12 +395,6 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
     );
   }
 
-  void showMessage(String message, [MaterialColor color = Colors.red]) {
-    blocked = false;
-    _scaffoldKey.currentState
-        .showSnackBar(SnackBar(backgroundColor: color, content: Text(message)));
-  }
-
   save(Instituicao instituicao){
     instituicao.reference.updateData(instituicao.toJson())
         .then(saved); //TODO pegar o erro
@@ -281,9 +412,33 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
 
     if (!form.validate()) {
       showMessage('Por favor, complete todos os campos.');
+      blocked = false;
     } else {
       form.save(); //Executa cada evento "onSaved" dos campos do formulário
       save(instituicao);
     }
+  }
+}
+
+void showMessage(String message, [MaterialColor color = Colors.red]) {
+  _scaffoldKey.currentState
+      .showSnackBar(SnackBar(backgroundColor: color, content: Text(message)));
+}
+
+void carregando(bool estaCarregando, {String mensagem = ""}) {
+  blocked = !estaCarregando;
+  if(estaCarregando) {
+    _scaffoldKey.currentState.showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.amber,
+          content: Row(
+            children: <Widget>[
+              CircularProgressIndicator(),
+              Text(" " + mensagem)
+            ],
+          ),
+        ));
+  } else {
+    _scaffoldKey.currentState.hideCurrentSnackBar();
   }
 }

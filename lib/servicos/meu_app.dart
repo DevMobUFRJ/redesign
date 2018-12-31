@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:redesign/modulos/usuario/instituicao.dart';
 import 'package:redesign/modulos/usuario/perfil_instituicao.dart';
@@ -7,7 +8,9 @@ import 'package:redesign/modulos/usuario/usuario.dart';
 
 class MeuApp {
 
+  static final FirebaseStorage storage = FirebaseStorage.instance;
   static FirebaseUser firebaseUser;
+  static List<int> imagemMemory;
 
   /// Deve usar apenas um dos campos abaixo, usuario ou instituicao
   /// de acordo com o tipo do firebaseUser;
@@ -36,5 +39,20 @@ class MeuApp {
         ),
       );
     }
+  }
+
+  static void startup(){
+    atualizarImagem();
+  }
+
+  static void atualizarImagem(){
+    if(imagemMemory == null){
+      storage.ref().child("perfil/" + userId() + ".jpg").getData(38000).then(salvaImagem);
+    }
+  }
+
+  static void salvaImagem(List<int> bytes){
+    print("Imagem atualizada");
+    imagemMemory = bytes;
   }
 }
