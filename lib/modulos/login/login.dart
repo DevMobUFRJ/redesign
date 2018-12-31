@@ -11,10 +11,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 FirebaseUser mCurrentUser;
 FirebaseAuth _auth;
 
+final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
 class Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       resizeToAvoidBottomPadding: false,
       body: Center(
         child: Container(
@@ -175,6 +178,7 @@ class _LoginFormState extends State<_LoginForm> {
       senhaController.text = "123456";
     }
 
+    _logando(true);
     await _auth.signInWithEmailAndPassword(
         email: emailController.text, password: senhaController.text)
         .then(authSucesso)
@@ -189,6 +193,7 @@ class _LoginFormState extends State<_LoginForm> {
 
   void encontrouUsuario(DocumentSnapshot snapshot){
     MeuApp.usuario = Usuario.fromMap(snapshot.data, reference: snapshot.reference);
+    _logando(false);
     Navigator.pushNamed(
         context,
         '/mapa'
@@ -196,6 +201,24 @@ class _LoginFormState extends State<_LoginForm> {
   }
   
   void erroEncontrarUsuario(e){
+    _logando(false);
     print(e);
+  }
+}
+
+void _logando(bool isCarregando){
+  if(isCarregando){
+    _scaffoldKey.currentState.showSnackBar(
+        SnackBar(
+          backgroundColor: Tema.primaryColor,
+          content: Row(
+            children: <Widget>[
+              CircularProgressIndicator(),
+              Text(" Aguarde..."),
+            ],
+          ),
+        ));
+  } else {
+    _scaffoldKey.currentState.hideCurrentSnackBar();
   }
 }
