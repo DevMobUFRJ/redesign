@@ -19,6 +19,10 @@ class RedeLista extends StatefulWidget {
 }
 
 class RedeListaState extends State<RedeLista> {
+  bool buscando = false;
+  TextEditingController _buscaController = TextEditingController();
+  String busca = "";
+
   final String ocupacao;
 
   RedeListaState(this.ocupacao);
@@ -28,6 +32,15 @@ class RedeListaState extends State<RedeLista> {
     return TelaBase(
         title: ocupacao,
         body: _buildBody(context),
+        actions: <IconButton>[
+          IconButton(
+            icon: Icon(
+              Icons.search,
+              color: Colors.white
+            ),
+            onPressed: () => alternarBusca(),
+          ),
+        ],
     );
   }
 
@@ -50,7 +63,30 @@ class RedeListaState extends State<RedeLista> {
         children: [
           Expanded(
             child:  ListView(
-              children: snapshot.map((data) => _buildListItem(context, data)).toList(),
+              children: [
+                buscando ?
+                Container(
+                    margin: EdgeInsets.only(bottom: 5),
+                    decoration: ShapeDecoration(shape: StadiumBorder() ),
+                    child: Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              onChanged: textoBuscaMudou,
+                              controller: _buscaController,
+                              cursorColor: Tema.cinzaClaro,
+                              decoration: InputDecoration(
+                                  hintText: "Buscar",
+                                  prefixIcon: Icon(Icons.search, color: Tema.primaryColor)
+                              ),
+                            ),
+                          ),
+                        ]
+                    )
+                )
+                    : Container(),
+              ]
+              ..addAll(snapshot.map((data) => _buildListItem(context, data)).toList()),
             ),
           ),
         ]
@@ -63,8 +99,14 @@ class RedeListaState extends State<RedeLista> {
 
     if(data.data['tipo'] == TipoUsuario.pessoa.index) {
       usuario = Usuario.fromMap(data.data);
+      if(!usuario.nome.toLowerCase().contains(busca)
+          && !usuario.descricao.toLowerCase().contains(busca))
+        return Container();
     } else {
       instituicao = Instituicao.fromMap(data.data);
+      if(!instituicao.nome.toLowerCase().contains(busca)
+          && !instituicao.descricao.toLowerCase().contains(busca))
+        return Container();
     }
 
     return ItemListaSimples(
@@ -93,5 +135,21 @@ class RedeListaState extends State<RedeLista> {
         builder: (context) => PerfilInstituicao(instituicao),
       ),
     );
+  }
+
+  alternarBusca(){
+    setState((){
+      buscando = !buscando;
+    });
+    if(!buscando) {
+      _buscaController.text = "";
+      textoBuscaMudou("");
+    }
+  }
+
+  textoBuscaMudou(String texto){
+    setState(() {
+      busca = texto.toLowerCase();
+    });
   }
 }
