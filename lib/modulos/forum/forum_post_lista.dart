@@ -73,7 +73,6 @@ class ForumPostListaState extends State<ForumPostLista> {
       behavior: HitTestBehavior.translucent,
       child: Container(
         key: ValueKey(data.documentID),
-        padding: EdgeInsets.only(left: 10, right: 10,top: 5),
         child: Column(
           children: <Widget>[
             Row(
@@ -87,40 +86,53 @@ class ForumPostListaState extends State<ForumPostLista> {
                         fit: BoxFit.cover,
                         //TODO Imagem do usuário if tem imagem. Else, placeholder.
                         image: AssetImage("images/perfil_placeholder.png"),
-                      )
-                  ),
+                      )),
                 ),
                 Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text( post.titulo, style: TextStyle(color: Tema.buttonBlue,fontSize: 20),),
-                          Text(post.criadoPor, style: TextStyle(color: Colors.black54),)
-                        ],
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.only(left: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              post.titulo,
+                              style: TextStyle(
+                                  color: Tema.buttonBlue, fontSize: 20),
+                            ),
+                            Text(
+                              post.criadoPor,
+                              style: TextStyle(color: Colors.black54),
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-
-                          Container(
-                            //alignment: Alignment.bottomRight,
-                            //padding: EdgeInsets.only(right: 10),
-                            child: Icon(Icons.arrow_forward_ios, color: Tema.buttonBlue,size: 20,),
-                          ),
-                  ],
-                ),
+                      Container(
+                        //alignment: Alignment.bottomRight,
+                        //padding: EdgeInsets.only(right: 10),
+                        child: Icon(
+                          Icons.arrow_forward_ios,
+                          color: Tema.buttonBlue,
+                          size: 20,
+                        ),
+                      ),
+                    ],
+                  ),
                 )
               ],
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 10, bottom: 5),
+              child: Divider(
+                color: Colors.black54,
               ),
-            Padding(padding: EdgeInsets.only(top: 10, bottom: 5),child: Divider(color: Colors.black54,),)
+            )
           ],
         ),
       ),
-      onTap: () =>
-          Navigator.push(
+      onTap: () => Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => ForumPostExibir(post),
