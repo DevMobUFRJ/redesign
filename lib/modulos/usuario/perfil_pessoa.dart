@@ -1,4 +1,6 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:redesign/estilos/tema.dart';
 import 'package:redesign/modulos/usuario/usuario.dart';
 import 'package:redesign/widgets/tela_base.dart';
 
@@ -11,8 +13,90 @@ class PerfilPessoa extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TelaBase(
-      title: usuario.nome,
-      body: Text("Ih, é o " + usuario.nome),
+      title: "Perfil",
+      body: ListView(
+        children: <Widget>[
+          Corpo()
+        ],
+      )
     );
   }
+
+  Widget Corpo (){
+    return Container(
+      padding: EdgeInsets.only(top: 20),
+      child: Column(
+        children: <Widget>[
+          Container(
+            child: Column(
+              children: <Widget>[
+                Container(
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        width: 80.0,
+                        height: 80.0,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              //TODO Imagem do usuário if tem imagem. Else, placeholder.
+                              image: AssetImage("images/perfil_placeholder.png"),
+                            )
+                        ),
+                      ),
+                      Padding(padding: EdgeInsets.only(top: 10),
+                      child: Text(usuario.nome,style: TextStyle(fontSize: 25),),
+                      ),
+                    Padding(padding: EdgeInsets.only(top: 5),
+                      child: Text(usuario.ocupacao,style: TextStyle(fontSize: 15),),
+                      )
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.only(top:  15,left: 15,right: 15),
+                  child: Text(usuario.descricao.isEmpty ?  "Nenhuma descrição" : usuario.descricao , style: TextStyle(color: Colors.black54, fontSize: 15),textAlign: TextAlign.center,),
+                ) // Descição
+              ],
+            ),
+          ),
+          Padding(padding: EdgeInsets.only(top:15, bottom: 15),child: Divider(color: Colors.black54,),),
+          Container(
+            padding: EdgeInsets.only(left: 15, right: 15),
+            child: Column(
+              children: <Widget>[
+                Container(
+                  child: redesPessoais(Icons.email, usuario.email)
+                ),Container(
+                  padding: EdgeInsets.only(top: 12),
+                  child: usuario.site.isEmpty ? null : redesPessoais( Icons.public, usuario.site),
+                ),Container(
+                    padding: EdgeInsets.only(top: 12),
+                    child: usuario.facebook.isEmpty ? null : redesPessoais(Icons.public, usuario.facebook)
+                ), // email
+                // facebook
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget redesPessoais( IconData icon, String informacao){
+    return Row(
+        children: <Widget>[
+          Container(
+            child: Icon(icon, color: Tema.buttonBlue,),
+          ),
+          Container(
+            padding: EdgeInsets.only(left: 15),
+          ),
+          Text(informacao, style: TextStyle(fontSize: 17,color: Colors.black87))
+        ],
+    );
+  }
+
 }
+
