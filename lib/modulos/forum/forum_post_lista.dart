@@ -28,21 +28,22 @@ class ForumPostListaState extends State<ForumPostLista> {
       title: tema.titulo,
       body: _buildBody(context),
       fab: FloatingActionButton(
-          onPressed: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ForumPostForm(tema),
+        onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ForumPostForm(tema),
+              ),
             ),
-          ),
-          child: Icon(Icons.add),
-          backgroundColor: Tema.principal.primaryColor,
+        child: Icon(Icons.add),
+        backgroundColor: Tema.principal.primaryColor,
       ),
     );
   }
 
   Widget _buildBody(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance.collection(ForumPost.collectionName)
+      stream: Firestore.instance
+          .collection(ForumPost.collectionName)
           .where("temaId", isEqualTo: tema.reference.documentID)
           .orderBy("data", descending: true)
           .snapshots(),
@@ -55,40 +56,76 @@ class ForumPostListaState extends State<ForumPostLista> {
   }
 
   Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
-    return Column(
-        children: [
-          Expanded(
-            child:  ListView(
-              children: snapshot.map((data) => _buildListItem(context, data)).toList(),
-            ),
-          ),
-        ]
-    );
+    return Column(children: [
+      Expanded(
+        child: ListView(
+          children:
+              snapshot.map((data) => _buildListItem(context, data)).toList(),
+        ),
+      ),
+    ]);
   }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
     ForumPost post = ForumPost.fromMap(data.data, reference: data.reference);
 
-    return Container(
-      key: ValueKey(data.documentID),
-      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8.0),
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
       child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey),
-          borderRadius: BorderRadius.circular(5.0),
-        ),
-        child: ListTile(
-          title: Text(post.titulo),
-          trailing: Text(">"),
-          onTap: () =>
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ForumPostExibir(post),
+        key: ValueKey(data.documentID),
+        padding: EdgeInsets.only(left: 10, right: 10,top: 5),
+        child: Column(
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Container(
+                  width: 45.0,
+                  height: 45.0,
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        //TODO Imagem do usuário if tem imagem. Else, placeholder.
+                        image: AssetImage("images/perfil_placeholder.png"),
+                      )
+                  ),
                 ),
+                Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.only(left: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text( post.titulo, style: TextStyle(color: Tema.buttonBlue,fontSize: 20),),
+                          Text(post.criadoPor, style: TextStyle(color: Colors.black54),)
+                        ],
+                      ),
+                    ),
+
+                          Container(
+                            //alignment: Alignment.bottomRight,
+                            //padding: EdgeInsets.only(right: 10),
+                            child: Icon(Icons.arrow_forward_ios, color: Tema.buttonBlue,size: 20,),
+                          ),
+                  ],
+                ),
+                )
+              ],
               ),
+            Padding(padding: EdgeInsets.only(top: 10, bottom: 5),child: Divider(color: Colors.black54,),)
+          ],
         ),
       ),
+      onTap: () =>
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ForumPostExibir(post),
+            ),
+          ),
     );
   }
 }
