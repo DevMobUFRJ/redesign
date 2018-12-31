@@ -5,48 +5,49 @@ import 'package:redesign/modulos/eventos/evento.dart';
 import 'package:redesign/modulos/eventos/evento_exibir.dart';
 import 'package:redesign/modulos/eventos/evento_form.dart';
 import 'package:redesign/widgets/tela_base.dart';
+import 'package:redesign/widgets/dados_asincronos.dart';
 
 class EventosTela extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
-    return TelaBase(
-      title: 'Eventos',
-      body: EventosLista(),
-      fab: FloatingActionButton(
-        onPressed: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => EventoCriar(),
-            ),
-          ),
-        child: Icon(Icons.add),
-        backgroundColor: Tema.principal.primaryColor,
-      ),
-        actions: <IconButton>[ IconButton(
-        icon: Icon(
-            Icons.search,
-            color: Colors.white
-        ),
-        onPressed: () => {},
-      ),
-    ]
-    );
+    return EventosLista();
   }
 }
 
 class EventosLista extends StatefulWidget {
-
   @override
   _EventosListaState createState() => _EventosListaState();
 }
 
 class _EventosListaState extends State<EventosLista> {
 
+  bool buscando = false;
+  TextEditingController _buscaController = TextEditingController();
+  String busca = "";
+
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-      body: _buildBody(context),
+    return TelaBase(
+        title: 'Eventos',
+        body: _buildBody(context),
+        fab: FloatingActionButton(
+          onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EventoCriar(),
+            ),
+          ),
+          child: Icon(Icons.add),
+          backgroundColor: Tema.principal.primaryColor,
+        ),
+        actions: <IconButton>[ IconButton(
+          icon: Icon(
+              Icons.search,
+              color: Colors.white
+          ),
+          onPressed: () => alternarBusca(),
+        ),
+        ]
     );
   }
 
@@ -69,8 +70,30 @@ class _EventosListaState extends State<EventosLista> {
       children: [
         Expanded(
           child:  ListView(
-            children: snapshot.map((data) => _buildListItem(context, data)).toList(),
-
+            children: [
+              buscando ?
+                Container(
+                  margin: EdgeInsets.only(bottom: 5),
+                  decoration: ShapeDecoration(shape: StadiumBorder() ),
+                  child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            onChanged: textoBuscaMudou,
+                            controller: _buscaController,
+                            cursorColor: Tema.cinzaClaro,
+                            decoration: InputDecoration(
+                                hintText: "Buscar",
+                                prefixIcon: Icon(Icons.search, color: Tema.primaryColor)
+                            ),
+                          ),
+                        ),
+                      ]
+                    )
+                )
+                : Container(),
+            ]
+            ..addAll(snapshot.map((data) => _buildListItem(context, data)).toList()) ,
           ),
         ),
       ]
@@ -78,7 +101,12 @@ class _EventosListaState extends State<EventosLista> {
   }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
-    final record = Evento.fromSnapshot(data);
+    final Evento record = Evento.fromSnapshot(data);
+
+    if(!record.nome.contains(busca) && !record.local.contains(busca)
+        && !record.descricao.contains(busca))
+      return Container();
+    //Firestore.instance.collection(Usuario.collectionName).document(record.criadoPor).get().then((map) => (){ nome = map.data['nome']; });
 
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
@@ -136,7 +164,7 @@ class _EventosListaState extends State<EventosLista> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
                                     Text(
-                                      record.local,
+                                      record.nome,
                                       style: TextStyle(
                                         fontSize: 17,
                                         color: Colors.black54
@@ -159,10 +187,8 @@ class _EventosListaState extends State<EventosLista> {
                                     )
                                   ],
                                 ),
-                                Text(
-                                  "Pessoa",
-                                  //record.criadoPor,
-                                  style: TextStyle(
+                                NomeTextAsync(record.criadoPor,
+                                  TextStyle(
                                     color: Colors.black45,
                                     fontSize: 15,
                                   ),
@@ -201,17 +227,20 @@ class _EventosListaState extends State<EventosLista> {
     List<String> initialsOfMonths = ["JAN","FEV","MAR","ABR","MAI","JUN","JUL","AGO","SET","OUT","NOV","DEZ"];
     return initialsOfMonths[numMonth-1];
   }
-}
 
-//child: ListTile(
-//            title: Text(record.nome),
-//            subtitle: Text(record.local),
-//            trailing: Text(">"),
-//            onTap: () =>
-//                Navigator.push(
-//                  context,
-//                  MaterialPageRoute(
-//                    builder: (context) => EventoForm(evento: record),
-//                  ),
-//                ),
-//          )
+  alternarBusca(){
+    setState((){
+      buscando = !buscando;
+    });
+    if(!buscando) {
+      _buscaController.text = "";
+      textoBuscaMudou("");
+    }
+  }
+
+  textoBuscaMudou(String texto){
+    setState(() {
+      busca = texto;
+    });
+  }
+}
