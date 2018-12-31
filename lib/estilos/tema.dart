@@ -10,7 +10,7 @@ class Tema {
     primaryColor: Tema.primaryColor,
     accentColor: const Color.fromARGB(255, 27, 60, 65),
     primarySwatch: Colors.blue,
-    primaryColorDark: const Color.fromARGB(255, 16, 36, 40),
+    primaryColorDark: const Color.fromARGB(255, 42, 92, 102),
   );
 
   // ===== CORES EXTRAS ===== //
@@ -21,7 +21,6 @@ class Tema {
   static const Color purple = Color.fromARGB(255, 96, 72, 137);
   static const Color yellow = Color.fromARGB(255, 159, 135, 60);
   static const Color buttonDarkGrey = Color.fromARGB(255, 20, 45, 50);
-  static const Color buttonYellow = Color.fromARGB(255, 62, 53, 24);
-  static const Color buttonPurple = Color.fromARGB(255, 38, 28, 54);
-  static const Color primaryColor = Color.fromARGB(255, 55, 116, 127);
+  static const Color primaryColor = Color.fromARGB(255, 52, 116, 128);
+  static const Color darkBackground = Color.fromARGB(255, 15, 34, 38);
 }

@@ -143,7 +143,9 @@ class _UsuarioFormState extends State<_UsuarioForm> {
           ),
           TextFormField(
             decoration: const InputDecoration(
-              icon: const Icon(Icons.person),
+              icon: const Icon(Icons.person,
+                color: Tema.primaryColor,
+              ),
               labelText: 'Nome',
             ),
             validator: (val) => val.isEmpty ? 'Nome é obrigatório' : null,
@@ -162,7 +164,9 @@ class _UsuarioFormState extends State<_UsuarioForm> {
           ),
           TextFormField(
             decoration: const InputDecoration(
-              icon: const Icon(Icons.description),
+              icon: const Icon(Icons.description,
+                color: Tema.primaryColor,
+              ),
               labelText: 'Descrição',
             ),
             keyboardType: TextInputType.multiline,
@@ -174,7 +178,9 @@ class _UsuarioFormState extends State<_UsuarioForm> {
           ),
           TextFormField(
             decoration: const InputDecoration(
-              icon: const Icon(Icons.link),
+              icon: const Icon(Icons.link,
+                color: Tema.primaryColor,
+              ),
               labelText: 'Site',
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
@@ -184,7 +190,9 @@ class _UsuarioFormState extends State<_UsuarioForm> {
           ),
           TextFormField(
             decoration: const InputDecoration(
-              icon: const Icon(Icons.face),
+              icon: const Icon(Icons.face,
+                color: Tema.primaryColor,
+              ),
               labelText: 'Facebook',
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
@@ -318,7 +326,9 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
           ),
           TextFormField(
             decoration: const InputDecoration(
-              icon: const Icon(Icons.people),
+              icon: const Icon(Icons.people,
+                color: Tema.primaryColor,
+              ),
               labelText: 'Nome',
             ),
             validator: (val) => val.isEmpty ? 'Nome é obrigatório' : null,
@@ -328,8 +338,8 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
           ),
           TextFormField(
             decoration: const InputDecoration(
-              icon: const Icon(Icons.description),
-              labelText: 'Descrição',
+              icon: const Icon(Icons.email),
+              labelText: 'Email',
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(500)],
             initialValue: instituicao.email,
@@ -337,7 +347,9 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
           ),
           TextFormField(
             decoration: const InputDecoration(
-              icon: const Icon(Icons.description),
+              icon: const Icon(Icons.description,
+                color: Tema.primaryColor,
+              ),
               labelText: 'Descrição',
             ),
             keyboardType: TextInputType.multiline,
@@ -349,7 +361,9 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
           ),
           TextFormField(
             decoration: const InputDecoration(
-              icon: const Icon(Icons.person),
+              icon: const Icon(Icons.person,
+                color: Tema.primaryColor,
+              ),
               labelText: 'Site',
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
@@ -359,7 +373,9 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
           ),
           TextFormField(
             decoration: const InputDecoration(
-              icon: const Icon(Icons.face),
+              icon: const Icon(Icons.face,
+                color: Tema.primaryColor,
+              ),
               labelText: 'Site',
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
@@ -369,7 +385,9 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
           ),
           TextFormField(
             decoration: const InputDecoration(
-              icon: const Icon(Icons.location_on),
+              icon: const Icon(Icons.location_on,
+                color: Tema.primaryColor,
+              ),
               labelText: 'Endereço',
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
@@ -378,7 +396,9 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
           ),
           TextFormField(
             decoration: const InputDecoration(
-              icon: const Icon(Icons.location_city),
+              icon: const Icon(Icons.location_city,
+                color: Tema.primaryColor,
+              ),
               labelText: 'Cidade',
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(40)],

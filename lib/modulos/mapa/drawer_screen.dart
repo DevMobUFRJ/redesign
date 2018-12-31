@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:redesign/estilos/tema.dart';
 import 'package:redesign/modulos/chat/chat_lista.dart';
 import 'package:redesign/modulos/forum/forum_tema_lista.dart';
 import 'package:redesign/modulos/material/material_lista.dart';
@@ -104,18 +105,18 @@ class DrawerScreenState extends State<DrawerScreen> {
             ),
           ),
           decoration: BoxDecoration(
-              color: Colors.black
+              color: Tema.darkBackground
           ),
         ),
         ListaDrawer(
           icon: Icons.explore,
-          iconColor: Color(0xff00838f),
+          iconColor: Tema.primaryColor,
           text: 'Mapa',
           onPressed: () {}
         ),
         ListaDrawer(
           icon: Icons.people,
-          iconColor: Color(0xff00838f),
+          iconColor: Tema.primaryColor,
           text: 'Rede',
           onPressed: () {
             Navigator.push(
@@ -126,7 +127,7 @@ class DrawerScreenState extends State<DrawerScreen> {
         ),
         ListaDrawer(
           icon: Icons.forum,
-          iconColor: Color(0xff00838f),
+          iconColor: Tema.primaryColor,
           text: 'Fórum',
           onPressed: () {
             Navigator.push(
@@ -137,7 +138,7 @@ class DrawerScreenState extends State<DrawerScreen> {
         ),
         ListaDrawer(
           icon: Icons.library_books,
-          iconColor: Color(0xff00838f),
+          iconColor: Tema.primaryColor,
           text: 'Materiais',
             onPressed: () {
               Navigator.push(
@@ -148,7 +149,7 @@ class DrawerScreenState extends State<DrawerScreen> {
         ),
         ListaDrawer(
           icon: Icons.event,
-          iconColor: Color(0xff00838f),
+          iconColor: Tema.primaryColor,
           text: 'Eventos',
           onPressed: () {
             Navigator.push(

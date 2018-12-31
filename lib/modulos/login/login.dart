@@ -18,7 +18,7 @@ class Login extends StatelessWidget {
       resizeToAvoidBottomPadding: false,
       body: Center(
         child: Container(
-          color: Tema.principal.primaryColorDark,
+          color: Tema.darkBackground,
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
