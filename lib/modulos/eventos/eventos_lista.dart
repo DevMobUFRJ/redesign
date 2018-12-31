@@ -103,8 +103,9 @@ class _EventosListaState extends State<EventosLista> {
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
     final Evento record = Evento.fromSnapshot(data);
 
-    if(!record.nome.contains(busca) && !record.local.contains(busca)
-        && !record.descricao.contains(busca))
+    if(!record.nome.toLowerCase().contains(busca)
+        && !record.local.toLowerCase().contains(busca)
+        && !record.descricao.toLowerCase().contains(busca))
       return Container();
     //Firestore.instance.collection(Usuario.collectionName).document(record.criadoPor).get().then((map) => (){ nome = map.data['nome']; });
 
@@ -240,7 +241,7 @@ class _EventosListaState extends State<EventosLista> {
 
   textoBuscaMudou(String texto){
     setState(() {
-      busca = texto;
+      busca = texto.toLowerCase();
     });
   }
 }
