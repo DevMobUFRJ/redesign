@@ -20,7 +20,6 @@ class EventosLista extends StatefulWidget {
 }
 
 class _EventosListaState extends State<EventosLista> {
-
   bool buscando = false;
   TextEditingController _buscaController = TextEditingController();
   String busca = "";
@@ -40,13 +39,14 @@ class _EventosListaState extends State<EventosLista> {
           child: Icon(Icons.add),
           backgroundColor: Tema.principal.primaryColor,
         ),
-        actions: <IconButton>[ IconButton(
-          icon: Icon(
+        actions: <IconButton>[
+          IconButton(
+            icon: Icon(
               Icons.search,
               color: Colors.white
+            ),
+            onPressed: () => alternarBusca(),
           ),
-          onPressed: () => alternarBusca(),
-        ),
         ]
     );
   }
@@ -107,7 +107,6 @@ class _EventosListaState extends State<EventosLista> {
         && !record.local.toLowerCase().contains(busca)
         && !record.descricao.toLowerCase().contains(busca))
       return Container();
-    //Firestore.instance.collection(Usuario.collectionName).document(record.criadoPor).get().then((map) => (){ nome = map.data['nome']; });
 
     return GestureDetector(
       behavior: HitTestBehavior.translucent,

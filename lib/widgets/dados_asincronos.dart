@@ -1,23 +1,21 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
 import 'package:redesign/modulos/usuario/usuario.dart';
 
-/// Recebe o ID do usuário como parâmetro pra obter o nome.
+/// Idealmente, aqui ficam todos os widgets padronizados para lidar com dados
+/// que precisam ser buscados de forma asíncrona do firebase.
+
+/// [NomeTextAsync] Recebe o ID do usuário como parâmetro pra obter o nome.
 /// Gera um Stateful Text com o nome do usuário.
-///
-/// Esse widget é necessário porque a consulta no firebase é asíncrona
-/// então precisaríamos de um stateful widget pra cada elemento da lista ou
-/// pros trechos asíncronos.
 class NomeTextAsync extends StatefulWidget {
-  final String usuario;
+  final String idUsuario;
   final TextStyle style;
   final String prefixo;
 
-  const NomeTextAsync(this.usuario, this.style, {this.prefixo = "por"});
+  const NomeTextAsync(this.idUsuario, this.style, {this.prefixo = "por"});
 
   @override
-  _NomeTextState createState() => _NomeTextState(usuario, style, prefixo);
+  _NomeTextState createState() => _NomeTextState(idUsuario, style, prefixo);
 }
 
 class _NomeTextState extends State<NomeTextAsync> {
@@ -28,6 +26,7 @@ class _NomeTextState extends State<NomeTextAsync> {
 
   _NomeTextState(this.usuario, this.style, this.prefixo){
     if(usuario != null && usuario.isNotEmpty){
+      // Dentro do construtor pois se fosse no build seria repetido toda hora.
       DocumentReference ref = Firestore.instance.collection(
           Usuario.collectionName).document(usuario);
       try {

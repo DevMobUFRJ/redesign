@@ -15,26 +15,26 @@ class Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomPadding: false,
-        body: Center(
-            child: Container(
-                color: Tema.principal.primaryColorDark,
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(top: 50, bottom: 50),
-                      child: Image.asset(
-                        'images/rede_logo.png',
-                        fit: BoxFit.fitWidth,
-                        width: 200,
-                      ),
-                    ),
-                    _LoginPage(),
-                  ],
-                )
-            )
+      resizeToAvoidBottomPadding: false,
+      body: Center(
+        child: Container(
+          color: Tema.principal.primaryColorDark,
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(top: 50, bottom: 50),
+                child: Image.asset(
+                  'images/rede_logo.png',
+                  fit: BoxFit.fitWidth,
+                  width: 200,
+                ),
+              ),
+              _LoginPage(),
+            ],
+          )
         )
+      )
     );
   }
 }
