@@ -182,7 +182,7 @@ class _LoginFormState extends State<_LoginForm> {
     await _auth.signInWithEmailAndPassword(
         email: emailController.text, password: senhaController.text)
         .then(authSucesso)
-        .catchError((e) => print(e));
+        .catchError(erroEncontrarUsuario);
   }
 
   void authSucesso(FirebaseUser user){
@@ -202,8 +202,21 @@ class _LoginFormState extends State<_LoginForm> {
   
   void erroEncontrarUsuario(e){
     _logando(false);
-    print(e);
+    _mostraErro();
   }
+}
+
+void _mostraErro(){
+  _scaffoldKey.currentState.showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.red,
+        content: Row(
+          children: <Widget>[
+            Text("Ocorreu um erro."),
+          ],
+        ),
+        duration: Duration(seconds: 4),
+      ));
 }
 
 void _logando(bool isCarregando){
