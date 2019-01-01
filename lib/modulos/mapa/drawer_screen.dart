@@ -29,8 +29,8 @@ class DrawerScreenState extends State<DrawerScreen> {
                 GestureDetector(
                   onTap: () => MeuApp.irProprioPerfil(context),
                   child: Container(
-                    width: 80.0,
-                    height: 80.0,
+                    width: 90.0,
+                    height: 90.0,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       image: DecorationImage(
@@ -48,15 +48,20 @@ class DrawerScreenState extends State<DrawerScreen> {
                   child: Column (
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(MeuApp.usuario.nome,
-                        style: TextStyle(
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 2),
+                        child: Text(MeuApp.usuario.nome,
+                          style: TextStyle(
                             color: Colors.white,
-                            fontWeight: FontWeight.normal, fontSize: 25.0),
+                            fontWeight: FontWeight.bold, fontSize: 20.0),
+                          maxLines: 1,
+                        ),
                       ),
                       Text(MeuApp.usuario.ocupacao,
                         style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.normal, fontSize: 17.0),
+                          color: Colors.white,
+                          fontWeight: FontWeight.normal, fontSize: 16.0),
+                        maxLines: 1,
                       ),
                       Container(
                         padding: EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 0.0),
@@ -75,17 +80,19 @@ class DrawerScreenState extends State<DrawerScreen> {
                                 );
                               },
                             ),
-                            RoundIconButton(
-                              icon: Icon(Icons.chat_bubble),
-                              iconColor: Colors.white,
-                              circleColor: Color(0xff00838f),
-                              size: 40.0,
-                              onPressed:  () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => ChatLista())
-                                );
-                              }
+                            Expanded(
+                              child: RoundIconButton(
+                                icon: Icon(Icons.chat_bubble),
+                                iconColor: Colors.white,
+                                circleColor: Color(0xff00838f),
+                                size: 40.0,
+                                onPressed:  () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => ChatLista())
+                                  );
+                                }
+                              ),
                             ),
                             RoundIconButton(
                               icon: Icon(Icons.exit_to_app),
@@ -111,7 +118,9 @@ class DrawerScreenState extends State<DrawerScreen> {
           icon: Icons.explore,
           iconColor: Tema.primaryColor,
           text: 'Mapa',
-          onPressed: () {}
+          onPressed: () {
+            Navigator.pop(context);
+          }
         ),
         ListaDrawer(
           icon: Icons.people,
