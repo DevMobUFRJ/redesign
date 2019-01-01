@@ -4,7 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:redesign/modulos/chat/chat.dart';
+import 'package:redesign/modulos/chat/chat_tela.dart';
 import 'package:redesign/servicos/meu_app.dart';
+import 'package:redesign/widgets/dados_asincronos.dart';
 import 'package:redesign/widgets/tela_base.dart';
 
 class ChatLista extends StatefulWidget {
@@ -69,8 +71,14 @@ class ChatListaState extends State<ChatLista> {
             borderRadius: BorderRadius.circular(5.0),
           ),
           child: ListTile(
-            title: Text(chat.docId),
-            onTap: (){ print(chat.toJson()); },
+            title: NomeTextAsync(chat.idOutroUsuario(), TextStyle(color: Colors.black45), prefixo: "",),
+            onTap: () =>
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ChatTela(chat),
+                  ),
+                ),
           )
       ),
     );

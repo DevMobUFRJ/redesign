@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:redesign/servicos/meu_app.dart';
 
 class Chat {
   static const String collectionName = "chat";
@@ -6,12 +7,11 @@ class Chat {
   String user1;
   String user2;
 
-  String docId;
   DocumentReference reference;
 
   /// Recebe IDs de 2 usuários, não importa a ordem, o construtor
   /// colocará o menor primeiro, mantendo sempre a ordem.
-  Chat(id1, id2, {this.reference})
+  Chat(String id1, String id2, {this.reference})
   {
     if(id1.hashCode <= id2.hashCode){
       user1 = id1;
@@ -20,20 +20,24 @@ class Chat {
       user1 = id2;
       user2 = id1;
     }
-    atualizarDocId();
   }
 
   Chat.fromMap(Map<String, dynamic> data, {this.reference}) :
-        user1 = data['user1'], user2 = data['user2']
-  {
-    atualizarDocId();
+        user1 = data['user1'], user2 = data['user2'];
+
+  String getIdReferencia(){
+    if(user1.hashCode <= user2.hashCode){
+      return user1 + "-" + user2;
+    } else {
+      return user2 + "-" + user1;
+    }
   }
 
-  void atualizarDocId(){
-    if(user1.hashCode <= user2.hashCode){
-      docId = user1 + "-" + user2;
+  String idOutroUsuario(){
+    if(user1 == MeuApp.userId()){
+      return user2;
     } else {
-      docId = user2 + "-" + user1;
+      return user1;
     }
   }
 

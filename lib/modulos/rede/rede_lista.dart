@@ -98,12 +98,12 @@ class RedeListaState extends State<RedeLista> {
     Instituicao instituicao;
 
     if(data.data['tipo'] == TipoUsuario.pessoa.index) {
-      usuario = Usuario.fromMap(data.data);
+      usuario = Usuario.fromMap(data.data, reference: data.reference);
       if(!usuario.nome.toLowerCase().contains(busca)
           && !usuario.descricao.toLowerCase().contains(busca))
         return Container();
     } else {
-      instituicao = Instituicao.fromMap(data.data);
+      instituicao = Instituicao.fromMap(data.data, reference: data.reference);
       if(!instituicao.nome.toLowerCase().contains(busca)
           && !instituicao.descricao.toLowerCase().contains(busca))
         return Container();

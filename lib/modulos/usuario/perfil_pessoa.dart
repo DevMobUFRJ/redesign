@@ -1,7 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:redesign/estilos/tema.dart';
+import 'package:redesign/modulos/chat/chat_tela.dart';
 import 'package:redesign/modulos/usuario/usuario.dart';
+import 'package:redesign/servicos/meu_app.dart';
 import 'package:redesign/widgets/tela_base.dart';
 
 class PerfilPessoa extends StatelessWidget {
@@ -18,7 +20,17 @@ class PerfilPessoa extends StatelessWidget {
         children: <Widget>[
           Corpo()
         ],
-      )
+      ),
+      fab: usuario.reference.documentID != MeuApp.userId() ?
+      FloatingActionButton(
+        child: Icon(Icons.chat_bubble),
+        backgroundColor: Tema.principal.primaryColor,
+        onPressed: () =>
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ChatTela(null, outroUsuario: usuario,))
+          ),
+      ) : null,
     );
   }
 

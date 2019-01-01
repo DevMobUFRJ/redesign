@@ -39,7 +39,10 @@ class _NomeTextState extends State<NomeTextAsync> {
   Widget build(BuildContext context) {
     String texto = "";
     if(nome != ""){
-      texto = prefixo + " " + nome;
+      if(prefixo.isNotEmpty){
+        texto = prefixo + " ";
+      }
+      texto += nome;
     }
 
     return Text(texto, style: style);
