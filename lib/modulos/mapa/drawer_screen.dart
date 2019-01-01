@@ -164,11 +164,7 @@ class DrawerScreenState extends State<DrawerScreen> {
   }
 
   logout(BuildContext context) {
-    FirebaseAuth _auth = FirebaseAuth.instance;
-    _auth.signOut();
-    Navigator.popUntil(context, ModalRoute.withName(Navigator.defaultRouteName));
-    MeuApp.firebaseUser = null;
-    MeuApp.usuario = null;
+    MeuApp.logout(context);
   }
 }
 

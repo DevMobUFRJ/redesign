@@ -45,6 +45,16 @@ class MeuApp {
     atualizarImagem();
   }
 
+  static void logout(BuildContext context){
+    FirebaseAuth _auth = FirebaseAuth.instance;
+    _auth.signOut();
+    Navigator.popUntil(context, ModalRoute.withName(Navigator.defaultRouteName));
+    MeuApp.firebaseUser = null;
+    MeuApp.usuario = null;
+    MeuApp.instituicao = null;
+    MeuApp.imagemMemory = null;
+  }
+
   static void atualizarImagem(){
     if(imagemMemory == null){
       storage.ref().child("perfil/" + userId() + ".jpg").getData(38000).then(salvaImagem);
@@ -52,7 +62,6 @@ class MeuApp {
   }
 
   static void salvaImagem(List<int> bytes){
-    print("Imagem atualizada");
     imagemMemory = bytes;
   }
 }
