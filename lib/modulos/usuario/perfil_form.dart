@@ -73,7 +73,7 @@ class _UsuarioFormState extends State<_UsuarioForm> {
   List<int> imagemNova;
 
   Future getImage() async {
-    carregando(true, mensagem: "Fazendo upload da imagem...");
+    carregando(true, mensagem: "Enviando foto...");
     File image_file = await ImagePicker.pickImage(source: ImageSource.gallery);
 
     if(image_file == null){
@@ -96,7 +96,7 @@ class _UsuarioFormState extends State<_UsuarioForm> {
 
   void uploadFinalizado(imagem){
     carregando(false);
-    showMessage("Upload finalizado", Colors.green);
+    showMessage("Foto atualizada", Colors.green);
     setState((){
       imagemNova = imagem;
       imagemAtual = imagem;
@@ -221,6 +221,7 @@ class _UsuarioFormState extends State<_UsuarioForm> {
       showMessage('Por favor, complete todos os campos.');
       blocked = false;
     } else {
+      carregando(true);
       form.save(); //Executa cada evento "onSaved" dos campos do formulário
       save(usuario);
     }
@@ -228,12 +229,19 @@ class _UsuarioFormState extends State<_UsuarioForm> {
   
   save(Usuario usuario){
     usuario.reference.updateData(usuario.toJson())
-        .then(saved); //TODO pegar o erro
-    blocked = false;
+        .then(saved).catchError(saveError);
   }
 
   saved(dynamic){
+    carregando(false);
+    blocked = false;
     Navigator.pop(context);
+  }
+
+  saveError(){
+    carregando(false);
+    blocked = false;
+    showMessage("Erro ao atualizar informações");
   }
 }
 
@@ -258,7 +266,7 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
   List<int> imagemNova;
 
   Future getImage() async {
-    carregando(true, mensagem: "Fazendo upload da imagem...");
+    carregando(true, mensagem: "Enviando foto...");
     File image_file = await ImagePicker.pickImage(source: ImageSource.gallery);
 
     if(image_file == null){
@@ -281,7 +289,7 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
 
   void uploadFinalizado(imagem){
     carregando(false);
-    showMessage("Upload finalizado", Colors.green);
+    showMessage("Foto atualizada", Colors.green);
     setState((){
       imagemNova = imagem;
       imagemAtual = imagem;
@@ -425,12 +433,19 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
 
   save(Instituicao instituicao){
     instituicao.reference.updateData(instituicao.toJson())
-        .then(saved); //TODO pegar o erro
-    blocked = false;
+        .then(saved).catchError(saveError); //TODO pegar o erro
   }
 
   saved(dynamic){
+    carregando(false);
+    blocked = false;
     Navigator.pop(context);
+  }
+
+  saveError(){
+    carregando(false);
+    blocked = false;
+    showMessage("Erro ao atualizar informações");
   }
 
   void _submitForm() async{
@@ -443,18 +458,22 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
       showMessage('Por favor, complete todos os campos.');
       blocked = false;
     } else {
+      carregando(true);
       form.save(); //Executa cada evento "onSaved" dos campos do formulário
-      if(enderecoMudou && instituicao.endereco.isNotEmpty && instituicao.cidade.isNotEmpty){
-        debugPrint("Achando endereço...");
-        final query = instituicao.endereco + " - " + instituicao.cidade;
-        var addresses = await Geocoder.local.findAddressesFromQuery(query);
-        var first = addresses.first;
-        instituicao.lat = first.coordinates.latitude;
-        instituicao.lng = first.coordinates.longitude;
-        debugPrint("Achou:");
-        debugPrint(first.addressLine);
+      try {
+        if (enderecoMudou && instituicao.endereco.isNotEmpty &&
+            instituicao.cidade.isNotEmpty) {
+          final query = instituicao.endereco + " - " + instituicao.cidade;
+          var addresses = await Geocoder.local.findAddressesFromQuery(query);
+          var first = addresses.first;
+          instituicao.lat = first.coordinates.latitude;
+          instituicao.lng = first.coordinates.longitude;
+        }
+        save(instituicao);
+      } catch(e) {
+        carregando(false);
+        showMessage("Erro ao atualizar informações");
       }
-      save(instituicao);
     }
   }
 }
@@ -464,7 +483,7 @@ void showMessage(String message, [MaterialColor color = Colors.red]) {
       .showSnackBar(SnackBar(backgroundColor: color, content: Text(message)));
 }
 
-void carregando(bool estaCarregando, {String mensagem = ""}) {
+void carregando(bool estaCarregando, {String mensagem = "Aguarde"}) {
   blocked = !estaCarregando;
   if(estaCarregando) {
     _scaffoldKey.currentState.showSnackBar(
