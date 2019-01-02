@@ -1,12 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:redesign/modulos/usuario/instituicao.dart';
 import 'package:redesign/servicos/meu_app.dart';
 import 'package:redesign/widgets/botao_padrao.dart';
 import 'package:redesign/modulos/usuario/usuario.dart';
 import 'package:redesign/estilos/tema.dart';
 
-Usuario usuario = new Usuario();
+Usuario usuario;
 FirebaseAuth _auth = FirebaseAuth.instance;
 
 class RegistroDados extends StatelessWidget {
@@ -14,11 +15,16 @@ class RegistroDados extends StatelessWidget {
   String ocupacao ;
   TipoUsuario tipo;
 
-  RegistroDados({ this.ocupacao, this.tipo });
+  RegistroDados({ this.ocupacao, this.tipo }){
+    if(tipo == TipoUsuario.pessoa){
+      usuario = Usuario();
+    } else {
+      usuario = Instituicao();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-
     usuario.ocupacao = ocupacao;
     usuario.tipo = tipo;
 
@@ -181,10 +187,10 @@ class _SenhaFormState extends State<_SenhaForm> {
   }
 
   entrar(dynamic) {
-    MeuApp.usuario = usuario;
-      Navigator.pushNamed(
-          context,
-        '/mapa'
-      );
-    }
+    MeuApp.setUsuario(usuario);
+    Navigator.pushNamed(
+        context,
+      '/mapa'
+    );
+  }
 }

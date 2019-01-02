@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:redesign/estilos/tema.dart';
 import 'package:redesign/modulos/cadastro/registroOpcoes.dart';
+import 'package:redesign/modulos/usuario/instituicao.dart';
 import 'package:redesign/modulos/usuario/usuario.dart';
 import 'package:redesign/servicos/meu_app.dart';
 import 'package:redesign/widgets/botao_padrao.dart';
@@ -97,7 +98,11 @@ class _LoginState extends State<_LoginPage> {
   }
 
   void encontrouUsuario(DocumentSnapshot snapshot){
-    MeuApp.usuario = Usuario.fromMap(snapshot.data, reference: snapshot.reference);
+    if(snapshot.data['tipo'] == TipoUsuario.instituicao.index){
+      MeuApp.setUsuario(Instituicao.fromMap(snapshot.data, reference: snapshot.reference));
+    } else {
+      MeuApp.setUsuario(Usuario.fromMap(snapshot.data, reference: snapshot.reference));
+    }
     Navigator.pushNamed(
         context,
         '/mapa'

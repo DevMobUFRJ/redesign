@@ -7,21 +7,22 @@ class Instituicao extends Usuario {
   double lat;
   double lng;
 
-  Instituicao({nome, email, descricao, site, facebook, ocupacao, foto, this.endereco, this.cidade, this.lat, this.lng, reference}) :
+  Instituicao({nome, email, descricao='', site='', facebook='', ocupacao='',
+    this.endereco='', this.cidade='', this.lat=0.0, this.lng=0.0, reference}) :
     super(nome: nome, email: email, descricao: descricao, site: site,
-        facebook: facebook, ocupacao: ocupacao, foto: foto, reference: reference,
+        facebook: facebook, ocupacao: ocupacao, reference: reference,
         instituicaoId: null, tipo: TipoUsuario.instituicao);
 
   @override
   Instituicao.fromMap(Map<String, dynamic> map, {reference}) :
     super(nome: map['nome'] , email: map['email'], descricao: map['descricao'],
         site: map['site'], facebook: map['facebook'], ocupacao: map['ocupacao'],
-        foto: map['foto'], tipo: TipoUsuario.instituicao, reference: reference)
+        tipo: TipoUsuario.values[map['tipo']], reference: reference)
   {
     endereco = map['endereco'];
     cidade = map['cidade'];
-    lat = map['lat'];
-    lng = map['lng'];
+    lat = (map['lat'] as num).toDouble();
+    lng = (map['lng'] as num).toDouble();
   }
 
   @override
@@ -34,10 +35,9 @@ class Instituicao extends Usuario {
       'facebook': facebook ?? '',
       'tipo': tipo.index ?? '',
       'ocupacao': ocupacao ?? '',
-      'foto': foto ?? '',
       'endereco': endereco ?? '',
       'cidade': cidade ?? '',
-      'lat': lat ?? 0,
-      'lng': lng ?? 0,
+      'lat': lat ?? 0.0,
+      'lng': lng ?? 0.0,
     };
 }

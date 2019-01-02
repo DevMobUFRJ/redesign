@@ -50,14 +50,14 @@ class DrawerScreenState extends State<DrawerScreen> {
                     children: <Widget>[
                       Padding(
                         padding: const EdgeInsets.only(bottom: 2),
-                        child: Text(MeuApp.usuario.nome,
+                        child: Text(MeuApp.nome(),
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold, fontSize: 20.0),
                           maxLines: 1,
                         ),
                       ),
-                      Text(MeuApp.usuario.ocupacao,
+                      Text(MeuApp.ocupacao(),
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.normal, fontSize: 16.0),

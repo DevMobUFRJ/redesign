@@ -18,6 +18,8 @@ class MeuApp {
   static Instituicao instituicao;
 
   static String userId() => firebaseUser != null ? firebaseUser.uid : null;
+  static String nome() => usuario != null ? usuario.nome : instituicao.nome;
+  static String ocupacao() => usuario != null ? usuario.ocupacao : instituicao.ocupacao;
 
   static bool ehLabDis() => true || //instituicao != null && TODO
       instituicao.email == "labdis@gmail.com";
@@ -43,6 +45,16 @@ class MeuApp {
 
   static void startup(){
     atualizarImagem();
+  }
+
+  static void setUsuario(Usuario usuario){
+    if(usuario.tipo == TipoUsuario.instituicao){
+      MeuApp.instituicao = usuario;
+      MeuApp.usuario = null;
+    } else {
+      MeuApp.usuario = usuario;
+      MeuApp.instituicao = null;
+    }
   }
 
   static void logout(BuildContext context){
