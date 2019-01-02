@@ -14,6 +14,7 @@ import 'package:redesign/widgets/tela_base.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as ImageHelper;
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:geocoder/geocoder.dart';
 
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 final FirebaseStorage _storage = FirebaseStorage.instance;
@@ -228,6 +229,7 @@ class _UsuarioFormState extends State<_UsuarioForm> {
   save(Usuario usuario){
     usuario.reference.updateData(usuario.toJson())
         .then(saved); //TODO pegar o erro
+    blocked = false;
   }
 
   saved(dynamic){
@@ -246,6 +248,7 @@ class _InstituicaoForm extends StatefulWidget {
 
 class _InstituicaoFormState extends State<_InstituicaoForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool enderecoMudou = false;
 
   Instituicao instituicao;
 
@@ -339,7 +342,7 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
           TextFormField(
             decoration: const InputDecoration(
               icon: const Icon(Icons.email),
-              labelText: 'Email',
+              labelText: 'Email (não editável)',
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(500)],
             initialValue: instituicao.email,
@@ -361,7 +364,7 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
           ),
           TextFormField(
             decoration: const InputDecoration(
-              icon: const Icon(Icons.person,
+              icon: const Icon(Icons.link,
                 color: Tema.primaryColor,
               ),
               labelText: 'Site',
@@ -376,7 +379,7 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
               icon: const Icon(Icons.face,
                 color: Tema.primaryColor,
               ),
-              labelText: 'Site',
+              labelText: 'Facebook',
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
             validator: (val) => val.isEmpty ? null : Validadores.facebookUrl(val) ? null : 'Link do facebook inválido',
@@ -388,11 +391,14 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
               icon: const Icon(Icons.location_on,
                 color: Tema.primaryColor,
               ),
-              labelText: 'Endereço',
+              labelText: 'Endereço (Rua, Número)',
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
             initialValue: instituicao.endereco,
-            onSaved: (val) => instituicao.endereco = val,
+            onSaved: (val){
+              if(val != instituicao.endereco) enderecoMudou = true;
+              instituicao.endereco = val;
+            },
           ),
           TextFormField(
             decoration: const InputDecoration(
@@ -403,7 +409,9 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(40)],
             initialValue: instituicao.cidade,
-            onSaved: (val) => instituicao.cidade = val,
+            onSaved: (val){
+              if(val != instituicao.cidade) enderecoMudou = true;
+              instituicao.cidade = val; },
           ),
           Container(
               padding: const EdgeInsets.only(top: 20.0),
@@ -418,13 +426,14 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
   save(Instituicao instituicao){
     instituicao.reference.updateData(instituicao.toJson())
         .then(saved); //TODO pegar o erro
+    blocked = false;
   }
 
-  saved(DocumentReference doc){
+  saved(dynamic){
     Navigator.pop(context);
   }
 
-  void _submitForm() {
+  void _submitForm() async{
     if(blocked) return;
 
     blocked = true;
@@ -435,6 +444,16 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
       blocked = false;
     } else {
       form.save(); //Executa cada evento "onSaved" dos campos do formulário
+      if(enderecoMudou && instituicao.endereco.isNotEmpty && instituicao.cidade.isNotEmpty){
+        debugPrint("Achando endereço...");
+        final query = instituicao.endereco + " - " + instituicao.cidade;
+        var addresses = await Geocoder.local.findAddressesFromQuery(query);
+        var first = addresses.first;
+        instituicao.lat = first.coordinates.latitude;
+        instituicao.lng = first.coordinates.longitude;
+        debugPrint("Achou:");
+        debugPrint(first.addressLine);
+      }
       save(instituicao);
     }
   }
