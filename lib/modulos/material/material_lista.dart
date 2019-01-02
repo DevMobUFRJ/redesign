@@ -7,6 +7,7 @@ import 'package:redesign/modulos/material/material_form.dart';
 import 'package:redesign/servicos/meu_app.dart';
 import 'package:redesign/widgets/item_lista_simples.dart';
 import 'package:redesign/widgets/tela_base.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MaterialLista extends StatefulWidget {
 
@@ -15,6 +16,7 @@ class MaterialLista extends StatefulWidget {
 }
 
 class MaterialListaState extends State<MaterialLista> {
+
   @override
   Widget build(BuildContext context) {
     return TelaBase(
@@ -60,7 +62,7 @@ class MaterialListaState extends State<MaterialLista> {
 
     return ItemListaSimples(
       material.titulo,
-      () => {}, //TODO abrir a url
+      (){ _launchURL(material.url); }, //TODO abrir a url
       iconeExtra: Icon(
         Icons.link,
         color: Tema.principal.primaryColor,
@@ -74,5 +76,11 @@ class MaterialListaState extends State<MaterialLista> {
         context,
         MaterialPageRoute(builder: (context) => MaterialForm())
     );
+  }
+
+  _launchURL(String url) async{
+    if (await canLaunch(url)) {
+      await launch(url);
+    }
   }
 }
