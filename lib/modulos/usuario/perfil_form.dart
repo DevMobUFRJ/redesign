@@ -187,7 +187,12 @@ class _UsuarioFormState extends State<_UsuarioForm> {
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
             validator: (val) => val.isEmpty ? null : Validadores.url(val) ? null : 'Site inválido',
             initialValue: usuario.site,
-            onSaved: (val) => usuario.site = val,
+            onSaved: (val){
+              if(!val.startsWith("http")){
+                val = "http://" + val;
+              }
+              usuario.site = val;
+            },
           ),
           TextFormField(
             decoration: const InputDecoration(
@@ -199,7 +204,12 @@ class _UsuarioFormState extends State<_UsuarioForm> {
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
             validator: (val) => val.isEmpty ? null : Validadores.facebookUrl(val) ? null : 'Link do facebook inválido',
             initialValue: usuario.facebook,
-            onSaved: (val) => usuario.facebook = val,
+            onSaved: (val){
+              if(!val.startsWith("http")){
+                val = "http://" + val;
+              }
+              usuario.facebook = val;
+            },
           ),
           Container(
               padding: const EdgeInsets.only(top: 20.0),
@@ -380,7 +390,12 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
             validator: (val) => val.isEmpty ? null : Validadores.url(val) ? null : 'Site inválido',
             initialValue: instituicao.site,
-            onSaved: (val) => instituicao.site = val,
+            onSaved: (val){
+              if(!val.startsWith("http")){
+                val = "http://" + val;
+              }
+              instituicao.site = val;
+            },
           ),
           TextFormField(
             decoration: const InputDecoration(
@@ -392,7 +407,12 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
             validator: (val) => val.isEmpty ? null : Validadores.facebookUrl(val) ? null : 'Link do facebook inválido',
             initialValue: instituicao.facebook,
-            onSaved: (val) => instituicao.facebook = val,
+            onSaved: (val){
+              if(!val.startsWith("http")){
+                val = "http://" + val;
+              }
+              instituicao.facebook = val;
+            },
           ),
           TextFormField(
             decoration: const InputDecoration(

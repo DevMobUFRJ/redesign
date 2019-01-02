@@ -51,7 +51,12 @@ class MaterialFormState extends State<MaterialForm> {
                 validator: (val) => val.isEmpty ? 'Link é obrigatório' :
                   Validadores.url(val) ? null : 'Link inválido',
                 inputFormatters: [LengthLimitingTextInputFormatter(70)],
-                onSaved: (val) => material.url = val,
+                onSaved: (val){
+                  if(!val.startsWith("http")){
+                    val = "http://" + val;
+                  }
+                  material.url = val;
+                },
               ),
               Container(
                   padding: const EdgeInsets.only(top: 20.0),

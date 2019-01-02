@@ -5,6 +5,7 @@ import 'package:redesign/modulos/chat/chat_tela.dart';
 import 'package:redesign/modulos/usuario/usuario.dart';
 import 'package:redesign/servicos/meu_app.dart';
 import 'package:redesign/widgets/tela_base.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PerfilPessoa extends StatelessWidget {
 
@@ -78,14 +79,25 @@ class PerfilPessoa extends StatelessWidget {
             padding: EdgeInsets.only(left: 15, right: 15),
             child: Column(
               children: <Widget>[
-                Container(
-                  child: redesPessoais(Icons.email, usuario.email)
-                ),Container(
-                  padding: EdgeInsets.only(top: 12),
-                  child: usuario.site.isEmpty ? null : redesPessoais( Icons.public, usuario.site),
-                ),Container(
+                GestureDetector(
+                  child: Container(
+                    child: redesPessoais(Icons.email, usuario.email)
+                  ),
+                  onTap: () => _launchURL("mailto:" + usuario.email + "?subject=Contato%20pelo%20REDEsign"),
+                ),
+                GestureDetector(
+                  child: Container(
+                    padding: EdgeInsets.only(top: 12),
+                    child: usuario.site.isEmpty ? null : redesPessoais( Icons.public, usuario.site),
+                  ),
+                  onTap: usuario.site.isEmpty ? null : () => _launchURL(usuario.site),
+                ),
+                GestureDetector(
+                  child: Container(
                     padding: EdgeInsets.only(top: 12),
                     child: usuario.facebook.isEmpty ? null : redesPessoais(Icons.public, usuario.facebook)
+                  ),
+                  onTap: usuario.facebook.isEmpty ? null : () => _launchURL(usuario.facebook),
                 ), // email
                 // facebook
               ],
@@ -110,5 +122,10 @@ class PerfilPessoa extends StatelessWidget {
     );
   }
 
+  _launchURL(String url) async{
+    if (await canLaunch(url)) {
+      await launch(url);
+    }
+  }
 }
 
