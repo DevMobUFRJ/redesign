@@ -23,5 +23,6 @@ class Tema {
   static const Color buttonDarkGrey = Color.fromARGB(255, 20, 45, 50);
   static const Color primaryColor = Color.fromARGB(255, 52, 116, 128);
   static const Color primaryColorTransparency = Color.fromARGB(170, 52, 116, 128);
+  static const Color primaryColorLighter = Color.fromARGB(255, 69, 153, 169);
   static const Color darkBackground = Color.fromARGB(255, 15, 34, 38);
 }

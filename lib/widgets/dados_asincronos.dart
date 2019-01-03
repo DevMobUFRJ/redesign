@@ -45,7 +45,7 @@ class _NomeTextState extends State<NomeTextAsync> {
       texto += nome;
     }
 
-    return Text(texto, style: style);
+    return Text(texto, style: style, overflow: TextOverflow.clip, maxLines: 1,);
   }
 
   atualizarNome(DocumentSnapshot user){

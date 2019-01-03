@@ -189,7 +189,7 @@ class _LoginFormState extends State<_LoginForm> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
                   Text("Esqueci a senha",
-                      style: TextStyle(color: Tema.primaryColorTransparency, fontSize: 12.0),
+                      style: TextStyle(color: Tema.primaryColorLighter, fontWeight: FontWeight.w300, fontSize: 12.0),
                       textAlign: TextAlign.end),
                 ],
               )
