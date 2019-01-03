@@ -152,8 +152,8 @@ class _RegisterState extends State<_RegisterPage> {
         child: ListView(
           children: <Widget>[
             texto("Você é ..."),
-            BotaoPadrao("Empreendedor(a)", () => cadastroDados(TipoUsuario.pessoa,"Empreendedor"), Tema.yellow, Tema.cinzaClaro),
-            BotaoPadrao("Incubadora", () => cadastroDados(TipoUsuario.instituicao, "Incubadora"), Tema.yellow, Tema.cinzaClaro),
+            BotaoPadrao("Empreendedor(a)", () => cadastroDados(TipoUsuario.instituicao, Ocupacao.empreendedor), Tema.yellow, Tema.cinzaClaro),
+            BotaoPadrao("Incubadora", () => cadastroDados(TipoUsuario.instituicao, Ocupacao.incubadora), Tema.yellow, Tema.cinzaClaro),
           ],
         ),
       ),
