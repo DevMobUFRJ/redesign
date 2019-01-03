@@ -90,58 +90,72 @@ class _RegisterState extends State<_RegisterPage> {
     });
   }
 
+
   Widget OpcoesCadastro() {
-    return Container(
-      padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
-      child: Column(
-        children: <Widget>[
-          texto("Olá! para começar, informe sua origem."),
-          BotaoPadrao("Universidade", UniversidadeRegistro, Tema.buttonBlue,
-              Tema.cinzaClaro),
-          BotaoPadrao(
-              "Escola", EscolaRegistro, Tema.buttonBlue, Tema.cinzaClaro),
-          BotaoPadrao("Incubadora", IncubadoraRegistro, Tema.buttonBlue,
-              Tema.cinzaClaro),
-          BotaoPadrao("Outra", OutraRegistro, Tema.buttonGrey, Tema.cinzaClaro),
-        ],
+    return Expanded(
+      child: Container(
+        padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
+        child: ListView(
+          children: <Widget>[
+            texto("Olá! para começar, informe sua origem."),
+            BotaoPadrao("Universidade", UniversidadeRegistro, Tema.buttonBlue,
+                Tema.cinzaClaro),
+            BotaoPadrao( "Escola", EscolaRegistro, Tema.buttonBlue,
+                Tema.cinzaClaro),
+            BotaoPadrao("Incubadora", IncubadoraRegistro, Tema.buttonBlue,
+                Tema.cinzaClaro),
+            BotaoPadrao("Outra",
+                () => cadastroDados(TipoUsuario.pessoa, Ocupacao.outra),
+                Tema.buttonGrey, Tema.cinzaClaro),
+          ],
+        ),
       ),
     );
   }
 
   Widget OpcoesUniversidade() {
-    return Container(
-      padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
-      child: Column(
-        children: <Widget>[
-          texto("Você é ..."),
-          BotaoPadrao("Bolsista", () => cadastroDados(TipoUsuario.pessoa,"Bolsista"), Tema.buttonBlue, Tema.cinzaClaro),
-          BotaoPadrao("Professor(a)", () => cadastroDados(TipoUsuario.pessoa, "Professor"), Tema.buttonBlue, Tema.cinzaClaro),
-          BotaoPadrao("Estudante", () => cadastroDados(TipoUsuario.pessoa, "Discente"), Tema.buttonBlue, Tema.cinzaClaro),
-        ],
+    return Expanded(
+      child: Container(
+        padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
+        child: ListView(
+          children: <Widget>[
+            texto("Você é ..."),
+            BotaoPadrao("Bolsista", () => cadastroDados(TipoUsuario.pessoa, Ocupacao.bolsista), Tema.buttonBlue, Tema.cinzaClaro),
+            BotaoPadrao("Professor(a)", () => cadastroDados(TipoUsuario.pessoa, Ocupacao.professor), Tema.buttonBlue, Tema.cinzaClaro),
+            BotaoPadrao("Estudante", () => cadastroDados(TipoUsuario.pessoa, Ocupacao.discente), Tema.buttonBlue, Tema.cinzaClaro),
+            BotaoPadrao("Laboratório", () => cadastroDados(TipoUsuario.instituicao, Ocupacao.laboratorio), Tema.buttonBlue, Tema.cinzaClaro),
+            BotaoPadrao("Outro(a)", () => cadastroDados(TipoUsuario.pessoa, Ocupacao.outra), Tema.buttonGrey, Tema.cinzaClaro),
+          ],
+        ),
       ),
     );
   }
   Widget OpcoesEscola() {
-    return Container(
-      padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
-      child: Column(
-        children: <Widget>[
-          texto("Você é ..."),
-          BotaoPadrao("Bolsista", () => cadastroDados(TipoUsuario.pessoa, "Bolsista"), Tema.purple, Tema.cinzaClaro),
-          BotaoPadrao("Professor(a)", () => cadastroDados(TipoUsuario.pessoa, "Professor"), Tema.purple, Tema.cinzaClaro),
-        ],
+    return Expanded(
+      child: Container(
+        padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
+        child: ListView(
+          children: <Widget>[
+            texto("Você é ..."),
+            BotaoPadrao("Aluno(a)", () => cadastroDados(TipoUsuario.pessoa, Ocupacao.aluno), Tema.purple, Tema.cinzaClaro),
+            BotaoPadrao("Professor(a)", () => cadastroDados(TipoUsuario.pessoa, Ocupacao.professor), Tema.purple, Tema.cinzaClaro),
+            BotaoPadrao("Escola", () => cadastroDados(TipoUsuario.instituicao, Ocupacao.escola), Tema.purple, Tema.cinzaClaro),
+          ],
+        ),
       ),
     );
   }
   Widget OpcoesIncubadora() {
-    return Container(
-      padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
-      child: Column(
-        children: <Widget>[
-          texto("Você é ..."),
-          BotaoPadrao("Empreendedor(a)", () => cadastroDados(TipoUsuario.pessoa,"Empreendedor"), Tema.yellow, Tema.cinzaClaro),
-          BotaoPadrao("Incubadora", () => cadastroDados(TipoUsuario.instituicao, "Incubadora"), Tema.yellow, Tema.cinzaClaro),
-        ],
+    return Expanded(
+      child: Container(
+        padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
+        child: ListView(
+          children: <Widget>[
+            texto("Você é ..."),
+            BotaoPadrao("Empreendedor(a)", () => cadastroDados(TipoUsuario.pessoa,"Empreendedor"), Tema.yellow, Tema.cinzaClaro),
+            BotaoPadrao("Incubadora", () => cadastroDados(TipoUsuario.instituicao, "Incubadora"), Tema.yellow, Tema.cinzaClaro),
+          ],
+        ),
       ),
     );
   }

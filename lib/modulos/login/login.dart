@@ -77,7 +77,7 @@ class _LoginState extends State<_LoginPage> {
             Padding(
                 padding: EdgeInsets.only(bottom: 10),
                 child: BotaoPadrao(
-                    "Nome", mostrarLogin, Tema.principal.primaryColor,
+                    "Entrar", mostrarLogin, Tema.principal.primaryColor,
                     Tema.cinzaClaro)
             ),
             Padding(
@@ -146,10 +146,19 @@ class _LoginFormState extends State<_LoginForm> {
           Padding(
             padding: EdgeInsets.only(bottom: 10),
             child: TextField(
-              style: TextStyle(decorationColor: Colors.white),
+              style: TextStyle(
+                decorationColor: Tema.cinzaClaro,
+                color: Colors.white
+              ),
               cursorColor: Tema.buttonBlue,
               decoration: InputDecoration(
-                labelText: 'Email',
+                labelText: 'E-mail',
+                labelStyle: TextStyle(color: Colors.white54),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                      color: Colors.white54
+                  ),
+                ),
               ),
               controller: emailController,
             )
@@ -157,9 +166,19 @@ class _LoginFormState extends State<_LoginForm> {
           Padding(
             padding: EdgeInsets.only(bottom: 10),
             child: TextField(
+              style: TextStyle(
+                  decorationColor: Tema.cinzaClaro,
+                  color: Colors.white
+              ),
               cursorColor: Tema.buttonBlue,
               decoration: InputDecoration(
                 labelText: 'Senha',
+                labelStyle: TextStyle(color: Colors.white54),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                      color: Colors.white54
+                  ),
+                ),
               ),
               obscureText: true,
               controller: senhaController,

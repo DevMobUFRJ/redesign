@@ -18,8 +18,8 @@ class MeuApp {
   static Instituicao instituicao;
 
   static String userId() => firebaseUser != null ? firebaseUser.uid : null;
-  static String nome() => usuario != null ? usuario.nome : instituicao.nome;
-  static String ocupacao() => usuario != null ? usuario.ocupacao : instituicao.ocupacao;
+  static String nome() => usuario != null ? usuario.nome : instituicao != null ? instituicao.nome : "";
+  static String ocupacao() => usuario != null ? usuario.ocupacao : instituicao != null ? instituicao.ocupacao : "";
 
   static bool ehLabDis() => true || //instituicao != null && TODO
       instituicao.email == "labdis@gmail.com";

@@ -3,11 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:redesign/modulos/usuario/instituicao.dart';
 import 'package:redesign/servicos/meu_app.dart';
+import 'package:redesign/servicos/validadores.dart';
 import 'package:redesign/widgets/botao_padrao.dart';
 import 'package:redesign/modulos/usuario/usuario.dart';
 import 'package:redesign/estilos/tema.dart';
 
-Usuario usuario;
+Usuario _usuario;
 FirebaseAuth _auth = FirebaseAuth.instance;
 
 class RegistroDados extends StatelessWidget {
@@ -16,18 +17,21 @@ class RegistroDados extends StatelessWidget {
   TipoUsuario tipo;
 
   RegistroDados({ this.ocupacao, this.tipo }){
-    if(tipo == TipoUsuario.pessoa){
-      usuario = Usuario();
-    } else {
-      usuario = Instituicao();
+    if(_usuario == null) {
+      if (tipo == TipoUsuario.pessoa) {
+        print("Criando pessoa");
+        _usuario = Usuario();
+      } else {
+        print("Criando instituicao");
+        _usuario = Instituicao();
+      }
+      _usuario.ocupacao = ocupacao;
+      _usuario.tipo = tipo;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    usuario.ocupacao = ocupacao;
-    usuario.tipo = tipo;
-
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 15, 34, 38),
       body: Container(
@@ -75,26 +79,47 @@ class _RegisterFormState extends State<_RegisterForm> {
     // TODO: implement build
     return registroSenha ?
     _SenhaForm() : Container(
-        padding: EdgeInsets.all(15.0),
+        padding: EdgeInsets.only(top: 15.0),
         child: Column(
           children: [Padding(
               padding: EdgeInsets.only(bottom: 10),
-              child: TextField(style: TextStyle(decorationColor: Colors.white),
+              child: TextField(
+                style: TextStyle(
+                    decorationColor: Tema.cinzaClaro,
+                    color: Colors.white
+                ),
                 cursorColor: Tema.buttonBlue,
                 decoration: InputDecoration(
-                  labelText: 'Nome',),
+                  labelText: 'Nome',
+                  labelStyle: TextStyle(color: Colors.white54),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                        color: Colors.white54
+                    ),
+                  ),
+                ),
                 controller: _nomeController,
               )
           ),Padding(
-              padding: EdgeInsets.only(bottom: 10),
-              child: TextFormField(
-                style: TextStyle(
-                    decorationColor: Colors.white
+            padding: EdgeInsets.only(bottom: 10),
+            child: TextFormField(
+              style: TextStyle(
+                decorationColor: Tema.cinzaClaro,
+                color: Colors.white
+              ),
+              decoration: InputDecoration(
+                labelText: 'E-mail',
+                labelStyle: TextStyle(color: Colors.white54),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                      color: Colors.white54
+                  ),
                 ),
-                //cursorColor: Tema.buttonBlue,
-                decoration: InputDecoration(
-                  labelText: 'E-mail',),
-              controller: _emailController,)
+              ),
+              controller: _emailController,
+              autovalidate: true,
+              validator: (val) => Validadores.email(val) ? null : 'Email inválido',
+            )
           ),
             Padding(
                 padding: EdgeInsets.only(bottom: 10),
@@ -110,9 +135,16 @@ class _RegisterFormState extends State<_RegisterForm> {
   mostrarSenha() {
     setState(() {
       if(_nomeController.text.isNotEmpty && _emailController.text.isNotEmpty){
-        usuario.email = _emailController.text.trim();
-        usuario.nome = _nomeController.text.trim();
+        print("SEtando noem e email.\nAntes:");
+        print(_usuario.toJson());
+        _usuario.email = _emailController.text.trim();
+        _usuario.nome = _nomeController.text.trim();
         registroSenha = true;
+        print("Depois");
+        print(_usuario.toJson());
+      } else {
+        //TODO mostrar erro pro usuário
+        print("Preencha nome e email");
       }
     });
   }
@@ -139,27 +171,52 @@ class _SenhaFormState extends State<_SenhaForm> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: EdgeInsets.all(15.0),
+        padding: EdgeInsets.only(top: 15.0),
         child: Column(
           children: [
             Padding(
-                padding: EdgeInsets.only(bottom: 10),
-                child: TextField(style: TextStyle(decorationColor: Colors.white),
-                  cursorColor: Tema.buttonBlue,
-                  decoration: InputDecoration(
-                    labelText: 'Escolha uma senha',),
+              padding: EdgeInsets.only(bottom: 10),
+              child: TextFormField(
+                style: TextStyle(
+                  decorationColor: Tema.cinzaClaro,
+                  color: Colors.white
+                ),
+                decoration: InputDecoration(
+                  labelText: 'Escolha uma senha',
+                  labelStyle: TextStyle(color: Colors.white54),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.white54
+                    ),
+                  ),
+                ),
                 obscureText: true,
-                controller: _senhaController,)
+                controller: _senhaController,
+                autovalidate: true,
+                validator: (val) => !val.isNotEmpty && val.length < 6 ? 'Mínimo 6 caracteres' : null,
+              )
             ),
             Padding(
                 padding: EdgeInsets.only(bottom: 10),
-                child: TextField(
-                  cursorColor: Tema.buttonBlue,
+                child: TextFormField(
+                  style: TextStyle(
+                      decorationColor: Tema.cinzaClaro,
+                      color: Colors.white
+                  ),
                   decoration: InputDecoration(
                     labelText: 'Confirme a senha',
+                    labelStyle: TextStyle(color: Colors.white54),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Colors.white54
+                      ),
+                    ),
                   ),
                   obscureText: true,
-                controller: _senhaConfirmaController,)
+                  controller: _senhaConfirmaController,
+                  autovalidate: true,
+                  validator: (val) => val != _senhaController.text ? 'Confirmação incorreta' : null,
+                )
             ),
             Padding(
               padding: EdgeInsets.only(top: 10),
@@ -174,20 +231,25 @@ class _SenhaFormState extends State<_SenhaForm> {
   criaUsuario(){
     if(_senhaConfirmaController.text.isNotEmpty && _senhaController.text.isNotEmpty
         && _senhaController.text == _senhaConfirmaController.text){
+      print(_usuario.toJson());
       _auth.createUserWithEmailAndPassword(
-          email: usuario.email,
-          password: _senhaController.text).then(adicionaBanco).catchError((e)=> print(e));
+          email: _usuario.email,
+          password: _senhaController.text).then(adicionaBanco)
+          .catchError((e){ print("Erro ao criar usuário"); print(e); });
+    } else {
+      //TODO mostrar erro pro usuário
+      debugPrint("Senhas não conferem");
     }
   }
 
   adicionaBanco(FirebaseUser user){
-    Firestore.instance.collection(Usuario.collectionName).document(user.uid).setData(usuario.toJson()).then(entrar).catchError((e)=> print(e)) ;
+    Firestore.instance.collection(Usuario.collectionName).document(user.uid).setData(_usuario.toJson()).then(entrar).catchError((e)=> print(e)) ;
     MeuApp.firebaseUser = user;
-    usuario.reference = Firestore.instance.collection(Usuario.collectionName).document(user.uid);
+    _usuario.reference = Firestore.instance.collection(Usuario.collectionName).document(user.uid);
   }
 
   entrar(dynamic) {
-    MeuApp.setUsuario(usuario);
+    MeuApp.setUsuario(_usuario);
     Navigator.pushNamed(
         context,
       '/mapa'

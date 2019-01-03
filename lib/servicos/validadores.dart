@@ -4,7 +4,7 @@ class Validadores {
     if(!url.startsWith("http")){
       url = "http://" + url;
     }
-    
+
     url = url.toLowerCase();
     return Validadores.url(url) &&
         (url.contains("facebook.com") || url.contains("fb.com"));
@@ -16,5 +16,10 @@ class Validadores {
     }
     RegExp regExp = RegExp(r"^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+", caseSensitive: false);
     return regExp.hasMatch(url);
+  }
+
+  static bool email(String email){
+    RegExp regExp = RegExp(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", caseSensitive: false);
+    return regExp.hasMatch(email);
   }
 }
