@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:redesign/estilos/tema.dart';
 import 'package:redesign/modulos/cadastro/registroOpcoes.dart';
+import 'package:redesign/modulos/login/esqueci_senha.dart';
 import 'package:redesign/modulos/usuario/instituicao.dart';
 import 'package:redesign/modulos/usuario/usuario.dart';
 import 'package:redesign/servicos/meu_app.dart';
@@ -163,29 +164,40 @@ class _LoginFormState extends State<_LoginForm> {
               controller: emailController,
             )
           ),
-          Padding(
-            padding: EdgeInsets.only(bottom: 10),
-            child: TextField(
-              style: TextStyle(
-                  decorationColor: Tema.cinzaClaro,
-                  color: Colors.white
-              ),
-              cursorColor: Tema.buttonBlue,
-              decoration: InputDecoration(
-                labelText: 'Senha',
-                labelStyle: TextStyle(color: Colors.white54),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                      color: Colors.white54
-                  ),
+          TextField(
+            style: TextStyle(
+                decorationColor: Tema.cinzaClaro,
+                color: Colors.white
+            ),
+            cursorColor: Tema.buttonBlue,
+            decoration: InputDecoration(
+              labelText: 'Senha',
+              labelStyle: TextStyle(color: Colors.white54),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                    color: Colors.white54
                 ),
               ),
-              obscureText: true,
-              controller: senhaController,
-            )
+            ),
+            obscureText: true,
+            controller: senhaController,
+          ),
+          GestureDetector(
+            child: Container(
+              padding: EdgeInsets.only(top: 8, bottom: 4),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  Text("Esqueci a senha",
+                      style: TextStyle(color: Tema.primaryColorTransparency, fontSize: 12.0),
+                      textAlign: TextAlign.end),
+                ],
+              )
+            ),
+            onTap: esqueciSenha,
           ),
           Padding(
-            padding: EdgeInsets.only(top: 10),
+            padding: EdgeInsets.only(top: 8),
             child: BotaoPadrao("Entrar", entrar,
                 Tema.principal.primaryColor, Tema.cinzaClaro
             ),
@@ -227,6 +239,13 @@ class _LoginFormState extends State<_LoginForm> {
   void erroEncontrarUsuario(e){
     _logando(false);
     _mostraErro();
+  }
+
+  void esqueciSenha(){
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => EsqueciSenha()),
+    );
   }
 }
 

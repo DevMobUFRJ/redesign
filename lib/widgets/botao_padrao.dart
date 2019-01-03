@@ -17,7 +17,7 @@ class BotaoPadrao extends StatelessWidget {
         Expanded(
             child: GestureDetector(
               child: Container(
-                padding: EdgeInsets.all(8.0),
+                padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
                 child: Container(
                   alignment: Alignment.center,
                   height: 50.0,
