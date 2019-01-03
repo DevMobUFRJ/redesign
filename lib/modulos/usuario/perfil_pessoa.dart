@@ -1,3 +1,4 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:redesign/estilos/tema.dart';
@@ -7,11 +8,26 @@ import 'package:redesign/servicos/meu_app.dart';
 import 'package:redesign/widgets/tela_base.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class PerfilPessoa extends StatelessWidget {
+class PerfilPessoa extends StatefulWidget {
+  final Usuario usuario;
+  PerfilPessoa(this.usuario);
+  @override
+  _PerfilPessoaState createState() => _PerfilPessoaState(usuario);
+}
+
+class _PerfilPessoaState extends State<PerfilPessoa> {
 
   final Usuario usuario;
+  List<int> imagemPerfil;
 
-  PerfilPessoa(this.usuario);
+  _PerfilPessoaState(this.usuario){
+    if(usuario.reference.documentID != MeuApp.userId() && imagemPerfil == null){
+      FirebaseStorage.instance.ref()
+          .child("perfil/" + usuario.reference.documentID + ".jpg")
+          .getData(36000).then(salvaFotoPerfil)
+          .catchError((e) => debugPrint("Erro foto"));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,26 +66,43 @@ class PerfilPessoa extends StatelessWidget {
                         width: 80.0,
                         height: 80.0,
                         decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              //TODO Imagem do usuário if tem imagem. Else, placeholder.
-                              image: AssetImage("images/perfil_placeholder.png"),
-                            )
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            //TODO Imagem do usuário if tem imagem. Else, placeholder.
+                            image: usuario.reference.documentID == MeuApp.userId() ?
+                              MemoryImage(MeuApp.imagemMemory)
+                              : imagemPerfil != null ?
+                                   MemoryImage(imagemPerfil)
+                                  : AssetImage("images/perfil_placeholder.png"),
+                          )
                         ),
                       ),
-                      Padding(padding: EdgeInsets.only(top: 10),
-                      child: Text(usuario.nome,style: TextStyle(fontSize: 25),),
+                      Padding(
+                        padding: EdgeInsets.only(top: 10),
+                        child: Text(
+                          usuario.nome,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          maxLines: 2,
+                        ),
                       ),
-                    Padding(padding: EdgeInsets.only(top: 5),
-                      child: Text(usuario.ocupacao,style: TextStyle(fontSize: 15),),
+                      Padding(padding: EdgeInsets.only(top: 5),
+                        child: Text(usuario.ocupacao,style: TextStyle(fontSize: 15),),
                       )
                     ],
                   ),
                 ),
                 Container(
                   padding: EdgeInsets.only(top:  15,left: 15,right: 15),
-                  child: Text(usuario.descricao.isEmpty ?  "Nenhuma descrição" : usuario.descricao , style: TextStyle(color: Colors.black54, fontSize: 15),textAlign: TextAlign.center,),
+                  child: Text(
+                    usuario.descricao.isEmpty ?  "Nenhuma descrição" : usuario.descricao,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.black54, fontSize: 15),
+                  ),
                 ) // Descição
               ],
             ),
@@ -126,6 +159,12 @@ class PerfilPessoa extends StatelessWidget {
     if (await canLaunch(url)) {
       await launch(url);
     }
+  }
+
+  salvaFotoPerfil(List<int> foto){
+    setState(() {
+      this.imagemPerfil = foto;
+    });
   }
 }
 
