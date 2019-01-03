@@ -10,6 +10,7 @@ import 'package:redesign/estilos/tema.dart';
 
 Usuario _usuario;
 FirebaseAuth _auth = FirebaseAuth.instance;
+GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 class RegistroDados extends StatelessWidget {
 
@@ -19,10 +20,8 @@ class RegistroDados extends StatelessWidget {
   RegistroDados({ this.ocupacao, this.tipo }){
     if(_usuario == null) {
       if (tipo == TipoUsuario.pessoa) {
-        print("Criando pessoa");
         _usuario = Usuario();
       } else {
-        print("Criando instituicao");
         _usuario = Instituicao();
       }
       _usuario.ocupacao = ocupacao;
@@ -33,11 +32,11 @@ class RegistroDados extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Color.fromARGB(255, 15, 34, 38),
       body: Container(
         padding: EdgeInsets.all(20.0),
         child: ListView(
-          //mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Logo(),
             _RegisterForm()
@@ -76,7 +75,6 @@ class _RegisterFormState extends State<_RegisterForm> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return registroSenha ?
     _SenhaForm() : Container(
         padding: EdgeInsets.only(top: 15.0),
@@ -134,27 +132,14 @@ class _RegisterFormState extends State<_RegisterForm> {
 
   mostrarSenha() {
     setState(() {
-      if(_nomeController.text.isNotEmpty && _emailController.text.isNotEmpty){
-        print("SEtando noem e email.\nAntes:");
-        print(_usuario.toJson());
+      if(_nomeController.text.isNotEmpty && _emailController.text.isNotEmpty && Validadores.email(_emailController.text)){
         _usuario.email = _emailController.text.trim();
         _usuario.nome = _nomeController.text.trim();
         registroSenha = true;
-        print("Depois");
-        print(_usuario.toJson());
       } else {
-        //TODO mostrar erro pro usuário
-        print("Preencha nome e email");
+        mostrarMensagem("Preencha todos os campos");
       }
     });
-  }
-
-  entrar() {
-    //TODO
-    Navigator.pushNamed(
-        context,
-        '/mapa'
-    );
   }
 }
 
@@ -164,6 +149,7 @@ class _SenhaForm extends StatefulWidget {
 }
 
 class _SenhaFormState extends State<_SenhaForm> {
+  bool botaoBloqueado = false;
 
   final TextEditingController _senhaController = TextEditingController();
   final TextEditingController _senhaConfirmaController = TextEditingController();
@@ -199,6 +185,7 @@ class _SenhaFormState extends State<_SenhaForm> {
             Padding(
                 padding: EdgeInsets.only(bottom: 10),
                 child: TextFormField(
+
                   style: TextStyle(
                       decorationColor: Tema.cinzaClaro,
                       color: Colors.white
@@ -229,30 +216,62 @@ class _SenhaFormState extends State<_SenhaForm> {
   }
 
   criaUsuario(){
+    if(botaoBloqueado) return;
+    botaoBloqueado = true;
+
+    mostrarMensagem("Aguarde...", cor: Colors.green, loading: true);
     if(_senhaConfirmaController.text.isNotEmpty && _senhaController.text.isNotEmpty
         && _senhaController.text == _senhaConfirmaController.text){
       print(_usuario.toJson());
       _auth.createUserWithEmailAndPassword(
           email: _usuario.email,
           password: _senhaController.text).then(adicionaBanco)
-          .catchError((e){ print("Erro ao criar usuário"); print(e); });
+          .catchError(erroCadastro);
     } else {
-      //TODO mostrar erro pro usuário
-      debugPrint("Senhas não conferem");
+      mostrarMensagem("Confirmação incorreta");
+      botaoBloqueado = false;
     }
   }
 
   adicionaBanco(FirebaseUser user){
-    Firestore.instance.collection(Usuario.collectionName).document(user.uid).setData(_usuario.toJson()).then(entrar).catchError((e)=> print(e)) ;
+    Firestore.instance.collection(Usuario.collectionName).document(user.uid)
+        .setData(_usuario.toJson())
+        .then(entrar).catchError(erroCadastro) ;
     MeuApp.firebaseUser = user;
     _usuario.reference = Firestore.instance.collection(Usuario.collectionName).document(user.uid);
   }
 
   entrar(dynamic) {
     MeuApp.setUsuario(_usuario);
+    botaoBloqueado = false;
     Navigator.pushNamed(
         context,
       '/mapa'
     );
   }
+
+  erroCadastro(){
+    mostrarMensagem("Erro no cadastro");
+    botaoBloqueado = false;
+  }
+}
+
+mostrarMensagem(String mensagem, {Color cor=Colors.red, bool loading=false}){
+  esconderMensagem();
+  _scaffoldKey.currentState.showSnackBar(
+    SnackBar(
+      content: Row(
+        children: <Widget>[
+          loading ? CircularProgressIndicator() : Container(height: 0,),
+          Text(mensagem),
+        ],
+      ),
+      backgroundColor: cor,
+      duration: Duration(seconds: 3),
+    )
+  );
+}
+
+esconderMensagem(){
+  _scaffoldKey.currentState.hideCurrentSnackBar();
 }
