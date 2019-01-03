@@ -5,9 +5,9 @@ import 'package:redesign/modulos/usuario/instituicao.dart';
 import 'package:redesign/modulos/usuario/perfil_instituicao.dart';
 import 'package:redesign/modulos/usuario/perfil_pessoa.dart';
 import 'package:redesign/modulos/usuario/usuario.dart';
+import 'package:redesign/servicos/helper.dart';
 
 class MeuApp {
-
   static final FirebaseStorage storage = FirebaseStorage.instance;
   static FirebaseUser firebaseUser;
   static List<int> imagemMemory;
@@ -21,8 +21,8 @@ class MeuApp {
   static String nome() => usuario != null ? usuario.nome : instituicao != null ? instituicao.nome : "";
   static String ocupacao() => usuario != null ? usuario.ocupacao : instituicao != null ? instituicao.ocupacao : "";
 
-  static bool ehLabDis() => true || //instituicao != null && TODO
-      instituicao.email == "labdis@gmail.com";
+  static bool ehLabDis() => instituicao != null &&
+      instituicao.email == Helper.emailLabdis;
 
   /// Retorna uma função a ser
   static void irProprioPerfil(BuildContext context){
