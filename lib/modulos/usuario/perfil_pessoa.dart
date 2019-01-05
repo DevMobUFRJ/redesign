@@ -21,11 +21,15 @@ class _PerfilPessoaState extends State<PerfilPessoa> {
   List<int> imagemPerfil;
 
   _PerfilPessoaState(this.usuario){
-    if(usuario.reference.documentID != MeuApp.userId() && imagemPerfil == null){
-      FirebaseStorage.instance.ref()
-          .child("perfil/" + usuario.reference.documentID + ".jpg")
-          .getData(36000).then(salvaFotoPerfil)
-          .catchError((e) => debugPrint("Erro foto"));
+    if(imagemPerfil == null) {
+      if (usuario.reference.documentID != MeuApp.userId()) {
+        FirebaseStorage.instance.ref()
+            .child("perfil/" + usuario.reference.documentID + ".jpg")
+            .getData(36000).then(salvaFotoPerfil)
+            .catchError((e) => debugPrint("Erro foto"));
+      } else {
+        imagemPerfil = MeuApp.imagemMemory;
+      }
     }
   }
 
@@ -69,10 +73,7 @@ class _PerfilPessoaState extends State<PerfilPessoa> {
                           shape: BoxShape.circle,
                           image: DecorationImage(
                             fit: BoxFit.cover,
-                            //TODO Imagem do usuário if tem imagem. Else, placeholder.
-                            image: usuario.reference.documentID == MeuApp.userId() ?
-                              MemoryImage(MeuApp.imagemMemory)
-                              : imagemPerfil != null ?
+                            image: imagemPerfil != null ?
                                    MemoryImage(imagemPerfil)
                                   : AssetImage("images/perfil_placeholder.png"),
                           )
@@ -120,14 +121,14 @@ class _PerfilPessoaState extends State<PerfilPessoa> {
                 ),
                 GestureDetector(
                   child: Container(
-                    padding: EdgeInsets.only(top: 12),
+                    padding: EdgeInsets.only(top: 15),
                     child: usuario.site.isEmpty ? null : redesPessoais( Icons.public, usuario.site),
                   ),
                   onTap: usuario.site.isEmpty ? null : () => _launchURL(usuario.site),
                 ),
                 GestureDetector(
                   child: Container(
-                    padding: EdgeInsets.only(top: 12),
+                    padding: EdgeInsets.only(top: 15),
                     child: usuario.facebook.isEmpty ? null : redesPessoais(Icons.public, usuario.facebook)
                   ),
                   onTap: usuario.facebook.isEmpty ? null : () => _launchURL(usuario.facebook),
@@ -150,7 +151,7 @@ class _PerfilPessoaState extends State<PerfilPessoa> {
           Container(
             padding: EdgeInsets.only(left: 15),
           ),
-          Text(informacao, style: TextStyle(fontSize: 17,color: Colors.black87))
+          Text(informacao, style: TextStyle(fontSize: 15,color: Colors.black54))
         ],
     );
   }
