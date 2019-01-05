@@ -76,10 +76,15 @@ class _MapaTelaState extends State<MapaTela> {
   }
 
   void _infoTapped(Marker marker){
+    Instituicao instituicao = instituicoes[marcadores.indexOf(marker)];
     Navigator.push(
         context,
         MaterialPageRoute(builder:(context) =>
-            PerfilInstituicao(instituicoes[marcadores.indexOf(marker)])),
+          // Apesar de empreendedores serem do tipo Instituição p/ ter lat-lng,
+          // a visualização é de pessoa.
+          instituicao.ocupacao != Ocupacao.empreendedor ?
+            PerfilInstituicao(instituicao)
+            : PerfilPessoa(instituicao)),
     );
   }
 
