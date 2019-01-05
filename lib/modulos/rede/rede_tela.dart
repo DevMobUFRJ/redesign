@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:redesign/estilos/tema.dart';
 import 'package:redesign/modulos/rede/rede_lista.dart';
+import 'package:redesign/modulos/usuario/usuario.dart';
 import 'package:redesign/widgets/item_lista_simples.dart';
 import 'package:redesign/widgets/tela_base.dart';
 
@@ -14,10 +15,10 @@ class RedeTela extends StatelessWidget{
           child: Column(
             children: <Widget>[
               ItemListaSimples('Favoritos', () => listarFavoritos(context), iconeExtra: Icon(Icons.star, color: Tema.principal.primaryColor,),),
-              ItemListaSimples('Laboratórios', () => listar("Laboratorio", context)),
-              ItemListaSimples('Escolas', () => listar("Escola", context)),
-              ItemListaSimples('Incubadoras',  () => listar("Incubadora", context)),
-              ItemListaSimples('Bolsistas (PARA TESTES)', () => listar("Bolsista", context)),
+              ItemListaSimples('Laboratórios', () => listar(Ocupacao.laboratorio, context)),
+              ItemListaSimples('Escolas', () => listar(Ocupacao.escola, context)),
+              ItemListaSimples('Incubadoras',  () => listar(Ocupacao.incubadora, context)),
+              ItemListaSimples('Bolsistas (PARA TESTES)', () => listar(Ocupacao.bolsista, context)),
             ],
           ),
         ),
