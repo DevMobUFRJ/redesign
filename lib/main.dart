@@ -12,10 +12,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: Tema.principal,
-      home: Login(),
+      home: MapaTela(),
 
       routes: <String, WidgetBuilder>{
         '/mapa': (context) => MapaTela(),
+        '/login': (context) => Login(),
       },
     );
   }

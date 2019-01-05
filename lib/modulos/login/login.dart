@@ -11,7 +11,7 @@ import 'package:redesign/widgets/botao_padrao.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 FirebaseUser mCurrentUser;
-FirebaseAuth _auth;
+FirebaseAuth _auth = FirebaseAuth.instance;
 
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -54,21 +54,6 @@ class _LoginState extends State<_LoginPage> {
   bool mostrandoLogin = false;
 
   @override
-  void initState() {
-    super.initState();
-    _auth = FirebaseAuth.instance;
-    _getCurrentUser();
-  }
-
-  /// Tenta logar o usuário pegando do cache logo ao criar a tela
-  _getCurrentUser () async {
-    mCurrentUser = await _auth.currentUser();
-    if(mCurrentUser != null){
-      authSucesso(mCurrentUser);
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     return mostrandoLogin ?
     _LoginForm() : Container(
@@ -89,29 +74,6 @@ class _LoginState extends State<_LoginPage> {
           ],
         )
     );
-  }
-
-  /// Usuario já estava em cache, então vai pro mapa.
-  void authSucesso(FirebaseUser user){
-    MeuApp.firebaseUser = user;
-    Firestore.instance.collection(Usuario.collectionName).document(user.uid).get()
-        .then(encontrouUsuario).catchError(erroEncontrarUsuario);
-  }
-
-  void encontrouUsuario(DocumentSnapshot snapshot){
-    if(snapshot.data['tipo'] == TipoUsuario.instituicao.index){
-      MeuApp.setUsuario(Instituicao.fromMap(snapshot.data, reference: snapshot.reference));
-    } else {
-      MeuApp.setUsuario(Usuario.fromMap(snapshot.data, reference: snapshot.reference));
-    }
-    Navigator.pushNamed(
-        context,
-        '/mapa'
-    );
-  }
-
-  void erroEncontrarUsuario(e){
-    print(e);
   }
 
   mostrarLogin() {
@@ -228,9 +190,13 @@ class _LoginFormState extends State<_LoginForm> {
   }
 
   void encontrouUsuario(DocumentSnapshot snapshot){
-    MeuApp.usuario = Usuario.fromMap(snapshot.data, reference: snapshot.reference);
+    if(snapshot.data['tipo'] == TipoUsuario.instituicao.index){
+      MeuApp.setUsuario(Instituicao.fromMap(snapshot.data, reference: snapshot.reference));
+    } else {
+      MeuApp.setUsuario(Usuario.fromMap(snapshot.data, reference: snapshot.reference));
+    }
     _logando(false);
-    Navigator.pushNamed(
+    Navigator.pushReplacementNamed(
         context,
         '/mapa'
     );

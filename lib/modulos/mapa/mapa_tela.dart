@@ -1,13 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:redesign/modulos/mapa/drawer_screen.dart';
-import 'package:redesign/modulos/mapa/filter_drawer.dart';
 import 'package:redesign/modulos/usuario/instituicao.dart';
 import 'package:redesign/modulos/usuario/perfil_instituicao.dart';
+import 'package:redesign/modulos/usuario/perfil_pessoa.dart';
 import 'package:redesign/modulos/usuario/usuario.dart';
 import 'package:redesign/servicos/helper.dart';
 import 'package:redesign/servicos/meu_app.dart';
+
+FirebaseUser mCurrentUser;
 
 class MapaTela extends StatefulWidget {
   MapaTela({Key key}) : super(key: key);
@@ -21,9 +24,57 @@ class _MapaTelaState extends State<MapaTela> {
   List<Marker> marcadores = [];
   List<Instituicao> instituicoes = [];
   Marker _selectedMarker;
+  _FiltroDrawer filtro = _FiltroDrawer();
+  bool mapaCarregou = false;
+  bool temUsuario = false;
 
-  _MapaTelaState(){
+  @override
+  void initState() {
+    super.initState();
+    if(MeuApp.userId() == null) {
+      _getCurrentUser();
+    } else {
+      temUsuario = true;
+    }
+  }
+
+  /// Tenta logar o usuário pegando do cache logo ao criar a tela
+  _getCurrentUser() async {
+    FirebaseAuth _auth = FirebaseAuth.instance;
+    mCurrentUser = await _auth.currentUser();
+    if(mCurrentUser != null){
+      authSucesso(mCurrentUser);
+    } else {
+      erroEncontrarUsuario(null);
+    }
+  }
+
+  /// Usuario já estava em cache, então vai pro mapa.
+  void authSucesso(FirebaseUser user){
+    MeuApp.firebaseUser = user;
+    Firestore.instance.collection(Usuario.collectionName).document(user.uid).get()
+        .then(encontrouUsuario).catchError(erroEncontrarUsuario);
+  }
+
+  void encontrouUsuario(DocumentSnapshot snapshot){
+    print("Sucesos, achou!");
+    if(snapshot.data['tipo'] == TipoUsuario.instituicao.index){
+      MeuApp.setUsuario(Instituicao.fromMap(snapshot.data, reference: snapshot.reference));
+    } else {
+      MeuApp.setUsuario(Usuario.fromMap(snapshot.data, reference: snapshot.reference));
+    }
+    // Finalmente pode fazer o que tem que fazer.
+    temUsuario = true;
     MeuApp.startup();
+    getInstituicoesColocaMarcadores();
+  }
+
+  void erroEncontrarUsuario(e){
+    print("Não achou :(");
+    Navigator.pushReplacementNamed(
+        context,
+        '/login'
+    );
   }
 
   @override
@@ -46,7 +97,7 @@ class _MapaTelaState extends State<MapaTela> {
           ),
         ],
       ),
-      endDrawer: FiltroDrawer(),
+      endDrawer: filtro,
       body: GoogleMap(
         initialCameraPosition: CameraPosition(
           target: LatLng(-22.8544375, -43.2296038),
@@ -59,6 +110,7 @@ class _MapaTelaState extends State<MapaTela> {
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
+    mapaCarregou = true;
     mapController.onInfoWindowTapped.add(_infoTapped);
     getInstituicoesColocaMarcadores();
     setState(() {
@@ -89,6 +141,11 @@ class _MapaTelaState extends State<MapaTela> {
   }
 
   getInstituicoesColocaMarcadores(){
+    if(!mapaCarregou || !temUsuario){
+      print("Aguardando condições pra botar o marcador");
+      return;
+    }
+
     Stream<QuerySnapshot> query = Firestore.instance.collection(Usuario.collectionName)
         .where("tipo", isEqualTo: TipoUsuario.instituicao.index).snapshots();
     query.forEach((element){
@@ -123,4 +180,77 @@ class _MapaTelaState extends State<MapaTela> {
       }
     });
   }
+}
+
+class _FiltroDrawer extends StatefulWidget {
+  @override
+  _FiltroState createState() => _FiltroState();
+}
+
+class _FiltroState extends State<_FiltroDrawer>  {
+  bool favoritos = true;
+  bool laboratorios = true;
+  bool escolas = true;
+  bool incubadoras = false;
+  //TODO Botar isso repetido no mapa, passar o mapa pra cá numa var Parent,
+  //e setar sempre o state de ambos os widgets pra atualizar lá e aqui. (4/1/19)
+
+  _FiltroState();
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+        width: 180,
+        child: Drawer(
+          child: Container(
+            color: Colors.transparent,
+            child: ListView(
+              children: <Widget>[
+                Checkbox(
+                  value: favoritos,
+                  onChanged: checkFavoritos,
+                ),
+                Checkbox(
+                  value: laboratorios,
+                  onChanged: checkLabs,
+                ),
+                Checkbox(
+                  value: escolas,
+                  onChanged: checkEscolas,
+                ),
+                Checkbox(
+                  value: incubadoras,
+                  onChanged: checkIncubadoras,
+                ),
+              ],
+            ),
+          ),
+        )
+    );
+  }
+
+  checkFavoritos(bool novo){
+    setState(() {
+      favoritos = novo;
+    });
+  }
+
+  checkLabs(bool novo){
+    setState(() {
+      laboratorios = novo;
+    });
+  }
+
+  checkEscolas(bool novo){
+    setState(() {
+      escolas = novo;
+    });
+  }
+
+  checkIncubadoras(bool novo){
+    setState(() {
+      incubadoras = novo;
+    });
+  }
+
 }
