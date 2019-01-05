@@ -132,11 +132,16 @@ class _EventosListaState extends State<EventosLista> {
                           style: TextStyle(
                             color: Tema.buttonBlue,
                             fontSize: 40,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                         Text(
                           initialsMonth(record.data.month),
-                          style: TextStyle(color: Tema.buttonBlue, fontSize: 20),
+                          style: TextStyle(
+                            color: Tema.buttonBlue,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ],
                     ),
@@ -163,11 +168,16 @@ class _EventosListaState extends State<EventosLista> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
-                                    Text(
-                                      record.nome,
-                                      style: TextStyle(
-                                        fontSize: 17,
-                                        color: Colors.black54
+                                    Flexible(
+                                      child: Text(
+                                        record.nome + "iuashdiu hasuid haisudh isd",
+                                        style: TextStyle(
+                                          fontSize: 17,
+                                          color: Colors.black54
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.clip,
+                                        softWrap: false,
                                       ),
                                     ),
                                     Container(

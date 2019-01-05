@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:redesign/modulos/eventos/evento.dart';
 import 'package:redesign/modulos/eventos/evento_form.dart';
 import 'package:redesign/servicos/meu_app.dart';
+import 'package:redesign/widgets/dados_asincronos.dart';
 import 'package:redesign/widgets/tela_base.dart';
 import 'package:redesign/estilos/tema.dart';
 
@@ -36,7 +37,6 @@ class _EventoExibir extends State<EventoForm> {
                   ),
                 ),
           ),
-          //TODO Visível apenas para quem criou o evento
           IconButton(
             icon: Icon(
               Icons.delete,
@@ -45,14 +45,7 @@ class _EventoExibir extends State<EventoForm> {
           ),
         ] : null,
         body: _corpo()
-// Column(
-//          children: <Widget>[
-//            Text("Nome: " + evento.nome),
-//            Text("Local: " + evento.local),
-//            Text("Dados completos: " + evento.toJson().toString()),
-//          ],
-//        )
-        );
+      );
   }
 
   void excluirEvento(context) {
@@ -67,10 +60,14 @@ class _EventoExibir extends State<EventoForm> {
     //TODO Mostrar erro
   }
 
+  void alternaFavorito(){
+    //TODO adicionar ou remover favoritos.
+  }
+
   Widget _corpo() {
     return Container(
-      padding: EdgeInsets.only(top: 10),
-      child: Column(
+      padding: EdgeInsets.only(top: 5),
+      child: ListView(
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -85,7 +82,8 @@ class _EventoExibir extends State<EventoForm> {
                       evento.data.day.toString(),
                       style: TextStyle(
                         color: Tema.buttonBlue,
-                        fontSize: 60,
+                        fontSize: 40,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                     Text(
@@ -96,14 +94,14 @@ class _EventoExibir extends State<EventoForm> {
                 ),
               ),
               Container(
-                height: 100.0,
+                height: 90.0,
                 width: 1.0,
                 color: Tema.buttonBlue,
                 margin: const EdgeInsets.only(left: 10.0, right: 10.0),
               ),
               Expanded(
                 child: Container(
-                  height: 100.0,
+                  height: 90.0,
                   alignment: Alignment.topLeft,
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
@@ -117,15 +115,17 @@ class _EventoExibir extends State<EventoForm> {
                           Text(
                             evento.nome,
                             style: TextStyle(
-                              fontSize: 17,
+                              fontSize: 18,
                             ),
+                            maxLines: 2,
                           ),
-                          Text(
+                          NomeTextAsync(
                             evento.criadoPor,
-                            style: TextStyle(
+                            TextStyle(
                               color: Colors.black45,
                               fontSize: 15,
                             ),
+                            prefixo: "",
                           ),
                         ],
                       ),
@@ -136,14 +136,17 @@ class _EventoExibir extends State<EventoForm> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           mainAxisSize: MainAxisSize.max,
                           children: <Widget>[
-                            Container(
-                              alignment: Alignment.bottomRight,
-                              padding: EdgeInsets.only(right: 10),
-                              child: Icon(Icons.collections_bookmark),
+                            GestureDetector(
+                              child: Container(
+                                alignment: Alignment.bottomRight,
+                                padding: EdgeInsets.only(right: 10),
+                                child: Icon(Icons.collections_bookmark, color: Tema.primaryColor),
+                              ),
+                              onTap: () => alternaFavorito(),
                             ),
                             Container(
                               alignment: Alignment.bottomRight,
-                              child: Icon(Icons.star_border),
+                              child: Icon(Icons.star_border, color: Tema.primaryColor),
                             ),
                           ],
                         ),
@@ -165,14 +168,15 @@ class _EventoExibir extends State<EventoForm> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Container(child: Icon(Icons.location_on,color: Colors.black45,),),
+                    Container(child: Icon(Icons.location_on,color: Colors.black45, size: 24,),),
                     Container(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
-                        Text(evento.local,style: TextStyle(fontSize: 20, color: Colors.black54),),
-                        Text(evento.endereco+" - "+ evento.cidade, style: TextStyle(color: Colors.black45),),
+                        Text(evento.local,style: TextStyle(fontSize: 18, color: Colors.black54),),
+                        Text(evento.endereco, style: TextStyle(color: Colors.black45)),
+                        Text(evento.cidade, style: TextStyle(color: Colors.black45),),
                       ],),
                     )
                   ],
@@ -181,11 +185,11 @@ class _EventoExibir extends State<EventoForm> {
               ],
             ),
           ),Container(
-              padding: EdgeInsets.only(top: 20, bottom: 5),
+              padding: EdgeInsets.only(top: 20),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text("Descrição"),
+                  Text("Descrição", style: TextStyle(fontWeight: FontWeight.w500, color: Colors.black54),),
                 ],
               )),
           Divider(color: Colors.black45,),
