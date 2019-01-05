@@ -1,37 +1,26 @@
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:redesign/estilos/tema.dart';
 import 'package:redesign/modulos/chat/chat_tela.dart';
 import 'package:redesign/modulos/usuario/usuario.dart';
 import 'package:redesign/servicos/meu_app.dart';
+import 'package:redesign/widgets/dados_asincronos.dart';
 import 'package:redesign/widgets/tela_base.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PerfilPessoa extends StatefulWidget {
   final Usuario usuario;
+
   PerfilPessoa(this.usuario);
+
   @override
   _PerfilPessoaState createState() => _PerfilPessoaState(usuario);
 }
 
 class _PerfilPessoaState extends State<PerfilPessoa> {
-
   final Usuario usuario;
-  List<int> imagemPerfil;
 
-  _PerfilPessoaState(this.usuario){
-    if(imagemPerfil == null) {
-      if (usuario.reference.documentID != MeuApp.userId()) {
-        FirebaseStorage.instance.ref()
-            .child("perfil/" + usuario.reference.documentID + ".jpg")
-            .getData(36000).then(salvaFotoPerfil)
-            .catchError((e) => debugPrint("Erro foto"));
-      } else {
-        imagemPerfil = MeuApp.imagemMemory;
-      }
-    }
-  }
+  _PerfilPessoaState(this.usuario);
 
   @override
   Widget build(BuildContext context) {
@@ -66,18 +55,9 @@ class _PerfilPessoaState extends State<PerfilPessoa> {
                 Container(
                   child: Column(
                     children: <Widget>[
-                      Container(
-                        width: 80.0,
-                        height: 80.0,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: imagemPerfil != null ?
-                                   MemoryImage(imagemPerfil)
-                                  : AssetImage("images/perfil_placeholder.png"),
-                          )
-                        ),
+                      CircleAvatarAsync(
+                        usuario.reference.documentID,
+                        radius: 40.0,
                       ),
                       Padding(
                         padding: EdgeInsets.only(top: 10),
@@ -160,12 +140,6 @@ class _PerfilPessoaState extends State<PerfilPessoa> {
     if (await canLaunch(url)) {
       await launch(url);
     }
-  }
-
-  salvaFotoPerfil(List<int> foto){
-    setState(() {
-      this.imagemPerfil = foto;
-    });
   }
 }
 
