@@ -88,7 +88,7 @@ class _MapaTelaState extends State<MapaTela> {
         .where("tipo", isEqualTo: TipoUsuario.instituicao.index).snapshots();
     query.forEach((element){
       for(DocumentSnapshot d in element.documents){
-        Instituicao instituicao = Instituicao.fromMap(d.data);
+        Instituicao instituicao = Instituicao.fromMap(d.data, reference: d.reference);
 
         if(instituicao.lat == 0 || instituicao.lng == 0) continue;
 

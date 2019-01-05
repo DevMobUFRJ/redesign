@@ -11,6 +11,7 @@ class Tema {
     accentColor: const Color.fromARGB(255, 27, 60, 65),
     primarySwatch: Colors.blue,
     primaryColorDark: const Color.fromARGB(255, 42, 92, 102),
+    dividerColor: const Color.fromARGB(0, 0, 0, 0),
   );
 
   // ===== CORES EXTRAS ===== //
