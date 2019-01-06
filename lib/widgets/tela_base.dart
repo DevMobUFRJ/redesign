@@ -8,8 +8,9 @@ class TelaBase extends StatelessWidget {
   final Widget body;
   final FloatingActionButton fab;
   final List<IconButton> extraActions = [];
+  final EdgeInsets bodyPadding;
 
-  TelaBase({@required this.title, this.body, this.fab, actions}){
+  TelaBase({@required this.title, this.body, this.fab, this.bodyPadding=const EdgeInsets.fromLTRB(16, 8, 16, 0), actions}){
     if(actions != null){
       this.extraActions.addAll(actions);
     }
@@ -38,7 +39,7 @@ class TelaBase extends StatelessWidget {
         actions: extraActions.where(notNull).toList(),//permite que searchButton seja null
       ),
       body: Padding(
-          padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
+          padding: bodyPadding,
           //padding: EdgeInsets.all(16),
           child: body
       ),

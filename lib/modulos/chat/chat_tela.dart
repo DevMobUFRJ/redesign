@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:redesign/estilos/tema.dart';
 import 'package:redesign/modulos/chat/chat.dart';
 import 'package:redesign/modulos/chat/mensagem.dart';
+import 'package:redesign/modulos/usuario/instituicao.dart';
 import 'package:redesign/modulos/usuario/usuario.dart';
 import 'package:redesign/servicos/meu_app.dart';
+import 'package:redesign/widgets/dados_asincronos.dart';
 import 'package:redesign/widgets/tela_base.dart';
 
 /// O elemento chat OU usuário podem ser null.
@@ -50,15 +53,20 @@ class _ChatTelaState extends State<ChatTela> {
       return TelaBase(
         title: usuario.nome,
         body: CircularProgressIndicator(),
+        bodyPadding: EdgeInsets.only(top: 10),
       );
     }
 
     return TelaBase(
       title: usuario != null ? usuario.nome : "",
+      bodyPadding: EdgeInsets.only(top: 10),
       body: Column(
         children: <Widget>[
           Expanded(
-            child: _ListaMensagens(this),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: _ListaMensagens(this),
+            ),
           ),
           Container(
             color: Tema.primaryColor,
@@ -68,7 +76,7 @@ class _ChatTelaState extends State<ChatTela> {
               children: <Widget>[
                 Expanded(
                   child: Container(
-                    margin: EdgeInsets.only(right: 10 ),
+                    margin: EdgeInsets.only(right: 10),
                     decoration: ShapeDecoration(shape: StadiumBorder(), color: Colors.white),
                     child: TextField(
                       controller: _controller,
@@ -76,6 +84,7 @@ class _ChatTelaState extends State<ChatTela> {
                         contentPadding: EdgeInsets.fromLTRB(12, 8, 12, 8),
                         hintText: "Digite uma mensagem",
                       ),
+                      inputFormatters: [LengthLimitingTextInputFormatter(500)],
                       style: TextStyle(
                         color: Colors.black,
                       ),
@@ -141,7 +150,11 @@ class _ChatTelaState extends State<ChatTela> {
 
   setUsuario(DocumentSnapshot doc){
     setState(() {
-      usuario = Usuario.fromMap(doc.data, reference: doc.reference);
+      if(doc.data['tipo'] == TipoUsuario.instituicao) {
+        usuario = Instituicao.fromMap(doc.data, reference: doc.reference);
+      } else {
+        usuario = Usuario.fromMap(doc.data, reference: doc.reference);
+      }
     });
   }
 }
@@ -170,7 +183,7 @@ class __ListaMensagensState extends State<_ListaMensagens> {
     return StreamBuilder<QuerySnapshot>(
       stream: this.parent._mensagensReference
           .orderBy("data", descending: true)
-          .limit(20)
+          .limit(100)
           .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return LinearProgressIndicator();
@@ -191,18 +204,78 @@ class __ListaMensagensState extends State<_ListaMensagens> {
     Mensagem mensagem = Mensagem.fromMap(data.data, reference: data.reference);
     bool propria = mensagem.criadaPor == MeuApp.userId();
 
-    return Container(
-      key: ValueKey(data.documentID),
-      padding: propria ? EdgeInsets.only(left: 50, bottom: 5, top: 5) : EdgeInsets.only(right: 50, bottom: 5, top: 5),
-      child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey),
-            borderRadius: BorderRadius.circular(5.0),
-          ),
-          child: ListTile(
-            title: Text(mensagem.descricao),
-          )
-      ),
-    );
+    if(propria) {
+      return Container(
+        key: ValueKey(data.documentID),
+        padding: EdgeInsets.only(left: 60, bottom: 6, top: 6),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 14),
+                    decoration: ShapeDecoration(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(15))),
+                      color: Tema.primaryColor,
+                    ),
+                    child: Text(
+                      mensagem.descricao,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      // Ao carregar a mensagem, marca que já foi lida.
+      mensagem.reference.updateData({'lida': true});
+
+      return Container(
+        key: ValueKey(data.documentID),
+        padding: EdgeInsets.only(right: 60, bottom: 6, top: 6),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(right: 10.0),
+              child: CircleAvatarAsync(mensagem.criadaPor, radius: 18 ,),
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 14),
+                    decoration: ShapeDecoration(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(15))),
+                      color: Tema.darkBackground,
+                    ),
+                    child: Text(
+                      mensagem.descricao,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
   }
 }
