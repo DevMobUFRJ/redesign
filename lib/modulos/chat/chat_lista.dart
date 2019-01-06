@@ -3,8 +3,10 @@ import 'package:async/async.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:redesign/estilos/tema.dart';
 import 'package:redesign/modulos/chat/chat.dart';
 import 'package:redesign/modulos/chat/chat_tela.dart';
+import 'package:redesign/modulos/chat/mensagem.dart';
 import 'package:redesign/servicos/meu_app.dart';
 import 'package:redesign/widgets/dados_asincronos.dart';
 import 'package:redesign/widgets/tela_base.dart';
@@ -26,7 +28,7 @@ class ChatListaState extends State<ChatLista> {
   @override
   Widget build(BuildContext context) {
     return TelaBase(
-      title: "Conversas",
+      title: "Mensagens",
       body: _buildBody(context),
     );
   }
@@ -62,25 +64,117 @@ class ChatListaState extends State<ChatLista> {
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
     Chat chat = Chat.fromMap(data.data, reference: data.reference);
 
-    return Container(
-      key: ValueKey(data.documentID),
-      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8.0),
-      child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey),
-            borderRadius: BorderRadius.circular(5.0),
-          ),
-          child: ListTile(
-            title: NomeTextAsync(chat.idOutroUsuario(), TextStyle(color: Colors.black45), prefixo: "",),
-            onTap: () =>
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ChatTela(chat),
-                  ),
+    return Column(
+      children: <Widget>[
+        ListTile(
+          contentPadding: EdgeInsets.all(0),
+          leading: CircleAvatarAsync(chat.idOutroUsuario(), radius: 23.0),
+          title: _TileContent(chat),
+          onTap: () =>
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChatTela(chat),
                 ),
-          )
-      ),
+              ),
+        ),
+        Divider(color: Colors.black45, height: 20,),
+      ],
+    );
+  }
+}
+
+class _TileContent extends StatefulWidget {
+  final Chat chat;
+
+  _TileContent(this.chat);
+
+  @override
+  _TileContentState createState() {
+    return new _TileContentState(chat);
+  }
+}
+
+class _TileContentState extends State<_TileContent> {
+  String ultimaMsg = "";
+  String ultimaMsgHora = "";
+  Color color = Colors.black45;
+  FontWeight weight = FontWeight.w400;
+
+  final Chat chat;
+  _TileContentState(this.chat){
+    chat.reference.collection(Mensagem.collectionName)
+        .orderBy('data', descending: true).limit(1)
+        .snapshots()
+        // O meodo listen executa da primeira vez e a cada alteração das
+        // mensagens. Se receber algo ou enviar algo, muda na interface.
+        .listen((snapshot){
+          if(snapshot.documents.length > 0){
+            Mensagem msg = Mensagem.fromMap(snapshot.documents[0].data,
+                reference: snapshot.documents[0].reference);
+            setState(() {
+              ultimaMsg = msg.descricao;
+              ultimaMsgHora = msg.data.hour.toString() + ":" + msg.data.minute.toString();
+
+              if(msg.criadaPor != MeuApp.userId() && !msg.lida){
+                color = Tema.primaryColor;
+                weight = FontWeight.w600;
+              } else {
+                color = Colors.black45;
+                weight = FontWeight.w400;
+              }
+            });
+          }
+        });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      children: <Widget>[
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  Expanded(
+                    //TODO ajustar pra cor mudar se tiver mensagem nova (6/1/19)
+                    child: NomeTextAsync(
+                      chat.idOutroUsuario(),
+                      TextStyle(
+                        color: Colors.black54,
+                      ),
+                      prefixo: "",
+                    )
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4, right: 10),
+                    child: Text(ultimaMsgHora,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: color,
+                        fontWeight: weight,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Text(ultimaMsg,
+                style: TextStyle(
+                  color: color,
+                  fontSize: 14,
+                  fontWeight: weight,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Icon(Icons.arrow_forward_ios, size: 16, color: Colors.black54,),
+      ],
     );
   }
 }
