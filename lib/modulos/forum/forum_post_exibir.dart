@@ -11,19 +11,17 @@ import 'package:redesign/widgets/tela_base_forum_post.dart';
 
 class ForumPostExibir extends StatefulWidget {
   final ForumPost post;
-  final List<int> imagem;
 
-  ForumPostExibir(this.post, this.imagem);
+  ForumPostExibir(this.post);
 
   @override
-  ForumPostExibirState createState() => ForumPostExibirState(post, imagem);
+  ForumPostExibirState createState() => ForumPostExibirState(post);
 }
 
 class ForumPostExibirState extends State<ForumPostExibir> {
   final ForumPost post;
-  final List<int> imagem;
 
-  ForumPostExibirState(this.post, this.imagem);
+  ForumPostExibirState(this.post);
 
   @override
   Widget build(BuildContext context) {
@@ -38,17 +36,7 @@ class ForumPostExibirState extends State<ForumPostExibir> {
               children: <Widget>[
                 Row(
                   children: <Widget>[
-                    Container(
-                      width: 45.0,
-                      height: 45.0,
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: imagem != null ? MemoryImage(imagem)
-                                : AssetImage("images/perfil_placeholder.png"),
-                          )),
-                    ),
+                    CircleAvatarAsync(post.criadoPor, radius: 23),
                     Expanded(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -161,18 +149,7 @@ class _ListaComentariosState extends State<_ListaComentarios> {
                   key: ValueKey(data.documentID),
                   child: Row(
                     children: <Widget>[
-                      Container(
-                        width: 45.0,
-                        height: 45.0,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              //TODO Imagem do usuário if tem imagem. Else, placeholder.
-                              image:
-                                  AssetImage("images/perfil_placeholder.png"),
-                            )),
-                      ),
+                      CircleAvatarAsync(comentario.criadoPor, radius: 23),
                       Expanded(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
