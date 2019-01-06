@@ -19,6 +19,10 @@ class ForumPostLista extends StatefulWidget {
 }
 
 class ForumPostListaState extends State<ForumPostLista> {
+  bool buscando = false;
+  TextEditingController _buscaController = TextEditingController();
+  String busca = "";
+  
   ForumTema tema;
 
   ForumPostListaState(this.tema);
@@ -38,6 +42,15 @@ class ForumPostListaState extends State<ForumPostLista> {
         child: Icon(Icons.add),
         backgroundColor: Tema.principal.primaryColor,
       ),
+      actions: <IconButton>[
+        IconButton(
+          icon: Icon(
+              Icons.search,
+              color: Colors.white
+          ),
+          onPressed: () => alternarBusca(),
+        ),
+      ],
     );
   }
 
@@ -61,8 +74,29 @@ class ForumPostListaState extends State<ForumPostLista> {
     return Column(children: [
       Expanded(
         child: ListView(
-          children:
-              snapshot.map((data) => _buildListItem(context, data)).toList(),
+          children: [
+            buscando ?
+            Container(
+              margin: EdgeInsets.only(bottom: 15),
+              decoration: ShapeDecoration(shape: StadiumBorder()),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      onChanged: textoBuscaMudou,
+                      controller: _buscaController,
+                      cursorColor: Tema.cinzaClaro,
+                      decoration: InputDecoration(
+                        hintText: "Buscar",
+                        prefixIcon: Icon(Icons.search, color: Tema.primaryColor)
+                      ),
+                    ),
+                  ),
+                ]
+              ),
+            )
+            : Container(),
+          ]..addAll(snapshot.map((data) => _buildListItem(context, data)).toList()),
         ),
       ),
     ]);
@@ -70,7 +104,29 @@ class ForumPostListaState extends State<ForumPostLista> {
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
     ForumPost post = ForumPost.fromMap(data.data, reference: data.reference);
+    
+    if(!post.titulo.toLowerCase().contains(busca)
+      && !post.descricao.toLowerCase().contains(busca))
+      return Container();
+    
     return _PostItem(post);
+  }
+  
+  alternarBusca(){
+    setState((){
+      buscando = !buscando;
+    });
+    
+    if(!buscando) {
+      _buscaController.text = "";
+      textoBuscaMudou("");
+    }
+  }
+
+  textoBuscaMudou(String texto){
+    setState(() {
+      busca = texto.toLowerCase();
+    });
   }
 }
 
