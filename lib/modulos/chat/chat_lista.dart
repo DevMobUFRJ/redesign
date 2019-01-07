@@ -38,12 +38,24 @@ class ChatListaState extends State<ChatLista> {
       stream: getData(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return LinearProgressIndicator();
+
         // Isso aqui é um esquema pra juntar dois queries diferentes do firebase
         // em um só. A gente faz o merge deles no método getData, então é uma
         // lista com 2 posições, aqui a gente copia da segunda pra primeira,
         // e usa só a primeira.
         List<QuerySnapshot> querySnapshotData =  snapshot.data.toList();
         querySnapshotData[0].documents.addAll(querySnapshotData[1].documents);
+
+        if(querySnapshotData[0].documents.length == 0)
+          return Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Text("Comece uma conversa através de outro perfil!"),
+            ],
+          );
+
         return _buildList(context, querySnapshotData[0].documents);
       },
     );

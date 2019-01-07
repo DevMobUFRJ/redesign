@@ -61,6 +61,16 @@ class _EventosListaState extends State<EventosLista> {
       builder: (context, snapshot) {
         if (!snapshot.hasData) return LinearProgressIndicator();
 
+        if(snapshot.data.documents.length == 0)
+          return Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Text("Não há eventos futuros cadastrados"),
+            ],
+          );
+
         return _buildList(context, snapshot.data.documents);
       },
     );

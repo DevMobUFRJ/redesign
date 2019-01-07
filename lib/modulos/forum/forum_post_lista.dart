@@ -65,6 +65,16 @@ class ForumPostListaState extends State<ForumPostLista> {
       builder: (context, snapshot) {
         if (!snapshot.hasData) return LinearProgressIndicator();
 
+        if(snapshot.data.documents.length == 0)
+          return Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Text("Ainda não há problemas sobre esse tema"),
+            ],
+          );
+
         return _buildList(context, snapshot.data.documents);
       },
     );

@@ -40,6 +40,16 @@ class MaterialListaState extends State<MaterialLista> {
       builder: (context, snapshot) {
         if (!snapshot.hasData) return LinearProgressIndicator();
 
+        if(snapshot.data.documents.length == 0)
+          return Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Text("Ainda não temos materiais disponíveis"),
+            ],
+          );
+
         return _buildList(context, snapshot.data.documents);
       },
     );
