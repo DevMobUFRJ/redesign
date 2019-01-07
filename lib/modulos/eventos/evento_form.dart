@@ -36,12 +36,24 @@ class EventoCriarPage extends StatefulWidget{
 class _EventoCriarState extends State<EventoCriarPage>{
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final TextEditingController _horaController = TextEditingController();
 
   Evento evento;
   bool blocked = false;
 
-  _EventoCriarState(evento) : this.evento = evento ?? new Evento();
+  _EventoCriarState(this.evento){
+    if(evento == null){
+      evento = Evento();
+    }
+    // Precisa ser inicializado fora pois o TextField não aceita um
+    // controller e um initialValue simultãneamente.
+    if(evento.data != null){
+      String hora = convertToHMString(evento.data);
+      if(hora != null)
+        _horaController.text = hora;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,8 +85,21 @@ class _EventoCriarState extends State<EventoCriarPage>{
                 keyboardType: TextInputType.datetime,
                 inputFormatters: [new LengthLimitingTextInputFormatter(10)],
                 validator: (val) =>
-                ehDataValida(val) ? null : 'Data inválida',
-                onSaved: (val) => evento.data = convertToDate(val),
+                  ehDataValida(val) ? null : 'Data inválida',
+                onSaved: (val) => evento.data = convertToDateTime(val),
+              ),
+              TextFormField(
+                decoration: const InputDecoration(
+                  icon: const Icon(Icons.calendar_today),
+                  labelText: 'Hora (ex. 16:30)',
+                ),
+                controller: _horaController,
+                //initialValue: ,
+                keyboardType: TextInputType.datetime,
+                inputFormatters: [new LengthLimitingTextInputFormatter(5)],
+                validator: (val) =>
+                  ehHoraValida(val) ? null : 'Hora inválida',
+                //Não precisa de onSaved pois é salvo c/ a data pelo controller
               ),
               TextFormField(
                 decoration: const InputDecoration(
@@ -147,6 +172,13 @@ class _EventoCriarState extends State<EventoCriarPage>{
     return d != null && d.isAfter(new DateTime.now());
   }
 
+  bool ehHoraValida(String hora) {
+    if (hora.isEmpty)
+      return false;
+    var d = convertToHour(hora);
+    return d != null;
+  }
+
   DateTime convertToDate(String input) {
     try
     {
@@ -157,9 +189,31 @@ class _EventoCriarState extends State<EventoCriarPage>{
     }
   }
 
+  DateTime convertToHour(String input) {
+    try
+    {
+      var d = DateFormat("Hm").parse(input);
+      return d;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  DateTime convertToDateTime(String inputData){
+    return DateFormat("d/M/y H:m").parse(inputData + " " + _horaController.text);
+  }
+
   String convertToDMYString(DateTime d){
     try{
       return d.day.toString() + "/" + d.month.toString() + "/" + d.year.toString();
+    } catch (e) {
+      return null;
+    }
+  }
+
+  String convertToHMString(DateTime d){
+    try{
+      return d.hour.toString() + ":" + d.minute.toString();
     } catch (e) {
       return null;
     }

@@ -56,6 +56,7 @@ class _EventosListaState extends State<EventosLista> {
       stream: Firestore.instance.collection('evento')
           .where("data", isGreaterThan: DateTime.now().toIso8601String())
           .orderBy("data")
+          .limit(50)
           .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return LinearProgressIndicator();
@@ -170,7 +171,7 @@ class _EventosListaState extends State<EventosLista> {
                                   children: <Widget>[
                                     Flexible(
                                       child: Text(
-                                        record.nome + "iuashdiu hasuid haisudh isd",
+                                        record.nome,
                                         style: TextStyle(
                                           fontSize: 17,
                                           color: Colors.black54

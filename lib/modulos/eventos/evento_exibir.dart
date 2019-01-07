@@ -163,7 +163,7 @@ class _EventoExibir extends State<EventoForm> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(dayOfWeekPortuguese(evento.data.weekday) +", " + evento.data.day.toString() +" de "+ monthPortuguese(evento.data.month)+" às " + evento.data.hour.toString(), style: TextStyle(color: Colors.black54),),
+                Text(dayOfWeekPortuguese(evento.data.weekday) +", " + evento.data.day.toString() +" de "+ monthPortuguese(evento.data.month) + " de " + evento.data.year.toString() +" às " + evento.data.hour.toString() + ":" + evento.data.minute.toString(), style: TextStyle(color: Colors.black54),),
                 Padding(padding: EdgeInsets.only(bottom: 10)),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
