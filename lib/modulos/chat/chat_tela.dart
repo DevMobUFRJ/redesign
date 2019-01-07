@@ -135,6 +135,8 @@ class _ChatTelaState extends State<ChatTela> {
   }
 
   enviarMensagem(){
+    if(_controller.text == null || _controller.text.trim().isEmpty) return;
+    
     if(ehChatNovo){
       setState(() {
         _chat.reference.setData(_chat.toJson());
