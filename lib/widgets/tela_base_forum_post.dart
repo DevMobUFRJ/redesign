@@ -44,7 +44,7 @@ class TelaBaseForum extends StatelessWidget {
 
   void homePressed(){
     Navigator.popUntil(context,
-        ModalRoute.withName('/mapa')
+        ModalRoute.withName('/')
     );
   }
 }

@@ -246,7 +246,7 @@ class _SenhaFormState extends State<_SenhaForm> {
     botaoBloqueado = false;
     Navigator.pushNamed(
         context,
-      '/mapa'
+      '/'
     );
   }
 
