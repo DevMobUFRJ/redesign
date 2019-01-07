@@ -82,6 +82,7 @@ class _ChatTelaState extends State<ChatTela> {
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.fromLTRB(12, 8, 12, 8),
                         hintText: "Digite uma mensagem",
+                        border: InputBorder.none,
                       ),
                       inputFormatters: [LengthLimitingTextInputFormatter(500)],
                       style: TextStyle(
@@ -136,7 +137,7 @@ class _ChatTelaState extends State<ChatTela> {
 
   enviarMensagem(){
     if(_controller.text == null || _controller.text.trim().isEmpty) return;
-    
+
     if(ehChatNovo){
       setState(() {
         _chat.reference.setData(_chat.toJson());
