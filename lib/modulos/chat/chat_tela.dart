@@ -52,8 +52,7 @@ class _ChatTelaState extends State<ChatTela> {
     if(!temChat()){
       return TelaBase(
         title: usuario.nome,
-        body: CircularProgressIndicator(),
-        bodyPadding: EdgeInsets.only(top: 10),
+        body: LinearProgressIndicator(),
       );
     }
 
