@@ -4,6 +4,8 @@ import 'package:redesign/estilos/tema.dart';
 import 'package:redesign/modulos/eventos/evento.dart';
 import 'package:redesign/modulos/eventos/evento_exibir.dart';
 import 'package:redesign/modulos/eventos/evento_form.dart';
+import 'package:redesign/modulos/usuario/favorito.dart';
+import 'package:redesign/servicos/meu_app.dart';
 import 'package:redesign/widgets/tela_base.dart';
 import 'package:redesign/widgets/dados_asincronos.dart';
 
@@ -23,6 +25,22 @@ class _EventosListaState extends State<EventosLista> {
   bool buscando = false;
   TextEditingController _buscaController = TextEditingController();
   String busca = "";
+  List<Favorito> favoritos;
+
+  _EventosListaState(){
+    MeuApp.getReferenciaUsuario().collection(Favorito.collectionName)
+        .where('classe', isEqualTo: 'Evento').snapshots()
+        .listen((QuerySnapshot query){
+          List<Favorito> novosFavoritos = [];
+          for(DocumentSnapshot d in query.documents){
+            print(d.data);
+            novosFavoritos.add(new Favorito.fromMap(d.data));
+          }
+          setState(() {
+            favoritos = novosFavoritos;
+          });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +89,23 @@ class _EventosListaState extends State<EventosLista> {
             ],
           );
 
-        return _buildList(context, snapshot.data.documents);
+        int ultimaPosUsada = 0;
+        List<DocumentSnapshot> docs = snapshot.data.documents;
+        if(favoritos != null) {
+          for (DocumentSnapshot snapshot in docs) {
+            if (favoritos
+                .where((f) => f.id == snapshot.reference.documentID)
+                .length > 0) {
+              docs.remove(snapshot);
+              // Usado apenas pra mostrar a estrela na lista
+              snapshot.data.addAll({'favorito': true});
+              docs.insert(ultimaPosUsada, snapshot);
+              ultimaPosUsada +=
+              1; //Faz com que os favoritos continuem na ordem de data
+            }
+          }
+        }
+        return _buildList(context, docs);
       },
     );
   }
@@ -179,7 +213,7 @@ class _EventosListaState extends State<EventosLista> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
-                                    Flexible(
+                                    Expanded(
                                       child: Text(
                                         record.nome,
                                         style: TextStyle(
@@ -188,12 +222,16 @@ class _EventosListaState extends State<EventosLista> {
                                         ),
                                         maxLines: 1,
                                         overflow: TextOverflow.clip,
-                                        softWrap: false,
                                       ),
                                     ),
+                                    data.data['favorito'] != null && data.data['favorito'] ?
+                                      Container(
+                                        padding: EdgeInsets.only(top: 10),
+                                        child: Icon(Icons.star, color: Tema.primaryColor, size: 16)
+                                      )
+                                      : Container(),
                                     Container(
                                       padding: EdgeInsets.only(top: 10),
-                                      alignment: Alignment.bottomRight,
                                       child: Column(
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         mainAxisSize: MainAxisSize.min,
