@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:redesign/modulos/eventos/evento.dart';
 import 'package:redesign/modulos/eventos/evento_form.dart';
+import 'package:redesign/modulos/usuario/favorito.dart';
 import 'package:redesign/servicos/meu_app.dart';
 import 'package:redesign/widgets/dados_asincronos.dart';
 import 'package:redesign/widgets/tela_base.dart';
@@ -17,8 +19,19 @@ class EventoForm extends StatefulWidget {
 
 class _EventoExibir extends State<EventoForm> {
   final Evento evento;
+  bool ehFavorito = false;
 
-  _EventoExibir({this.evento});
+  _EventoExibir({this.evento}){
+    MeuApp.getReferenciaUsuario().collection(Favorito.collectionName)
+        .where("id", isEqualTo: evento.reference.documentID)
+        .snapshots().first.then((QuerySnapshot favorito) {
+      if (favorito.documents.length != 0) {
+        setState(() {
+          ehFavorito = true;
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,8 +73,32 @@ class _EventoExibir extends State<EventoForm> {
     //TODO Mostrar erro
   }
 
-  void alternaFavorito(){
-    //TODO adicionar ou remover favoritos.
+  bool ocupado = false;
+  void alternaFavorito() {
+    if(ocupado) return;
+    ocupado = true;
+    MeuApp.getReferenciaUsuario().collection(Favorito.collectionName)
+        .where("id", isEqualTo: evento.reference.documentID)
+        .snapshots().first.then((QuerySnapshot vazio){
+          if(vazio.documents.length == 0) {
+            MeuApp.getReferenciaUsuario().collection(Favorito.collectionName)
+                .add((new Favorito(id: evento.reference.documentID,
+                classe: evento.runtimeType.toString()).toJson()))
+                .then((v){
+                  setState(() {
+                    ehFavorito = true;
+                  });
+                  ocupado = false;
+                }).catchError((e) => print(e));
+          } else {
+            vazio.documents.first.reference.delete().then((v){
+              setState(() {
+                ehFavorito = false;
+              });
+              ocupado = false;
+            }).catchError((e) => print(e));
+          }
+    }).catchError((e) => print(e));
   }
 
   Widget _corpo() {
@@ -140,13 +177,18 @@ class _EventoExibir extends State<EventoForm> {
                               child: Container(
                                 alignment: Alignment.bottomRight,
                                 padding: EdgeInsets.only(right: 10),
-                                child: Icon(Icons.collections_bookmark, color: Tema.primaryColor),
+                                child: Icon(Icons.face, color: Tema.primaryColor, size: 28,),
+                              ),
+                              onTap: (){}, //TODO Facebook
+                            ),
+                            GestureDetector(
+                              child: Container(
+                                alignment: Alignment.bottomRight,
+                                child: ehFavorito ?
+                                    Icon(Icons.star, color: Tema.primaryColor, size: 28 ,)
+                                    : Icon(Icons.star_border, color: Tema.primaryColor, size: 28,),
                               ),
                               onTap: () => alternaFavorito(),
-                            ),
-                            Container(
-                              alignment: Alignment.bottomRight,
-                              child: Icon(Icons.star_border, color: Tema.primaryColor),
                             ),
                           ],
                         ),

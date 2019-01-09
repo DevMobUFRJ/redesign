@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:redesign/estilos/tema.dart';
 import 'package:redesign/modulos/chat/chat_tela.dart';
+import 'package:redesign/modulos/usuario/favorito.dart';
 import 'package:redesign/modulos/usuario/instituicao.dart';
 import 'package:redesign/modulos/usuario/perfil_pessoa.dart';
 import 'package:redesign/modulos/usuario/usuario.dart';
@@ -23,8 +24,47 @@ class PerfilInstituicao extends StatefulWidget {
 
 class _PerfilInstituicaoState extends State<PerfilInstituicao> {
   final Instituicao instituicao;
+  bool ehFavorito = false;
 
-  _PerfilInstituicaoState(this.instituicao);
+  _PerfilInstituicaoState(this.instituicao){
+    MeuApp.getReferenciaUsuario().collection(Favorito.collectionName)
+        .where("id", isEqualTo: instituicao.reference.documentID)
+        .snapshots().first.then((QuerySnapshot favorito) {
+      if (favorito.documents.length != 0) {
+        setState(() {
+          ehFavorito = true;
+        });
+      }
+    });
+  }
+
+  bool ocupado = false;
+  void alternaFavorito() {
+    if(ocupado) return;
+    ocupado = true;
+    MeuApp.getReferenciaUsuario().collection(Favorito.collectionName)
+        .where("id", isEqualTo: instituicao.reference.documentID)
+        .snapshots().first.then((QuerySnapshot vazio){
+      if(vazio.documents.length == 0) {
+        MeuApp.getReferenciaUsuario().collection(Favorito.collectionName)
+            .add((new Favorito(id: instituicao.reference.documentID,
+            classe: instituicao.runtimeType.toString()).toJson()))
+            .then((v){
+          setState(() {
+            ehFavorito = true;
+          });
+          ocupado = false;
+        }).catchError((e) => print(e));
+      } else {
+        vazio.documents.first.reference.delete().then((v){
+          setState(() {
+            ehFavorito = false;
+          });
+          ocupado = false;
+        }).catchError((e) => print(e));
+      }
+    }).catchError((e) => print(e));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +114,7 @@ class _PerfilInstituicaoState extends State<PerfilInstituicao> {
                 ),
                 GestureDetector(
                   child: Icon(
-                    Icons.directions, size: 26,
+                    Icons.directions, size: 28,
                     color: instituicao.lat == 0 || instituicao.lng == 0 ?
                       Colors.black26 : Tema.primaryColor,
                   ),
@@ -95,9 +135,11 @@ class _PerfilInstituicaoState extends State<PerfilInstituicao> {
                   },
                 ),
                 IconButton(
-                  icon: Icon(Icons.star_border, color: Tema.primaryColor,),
-                  iconSize: 26,
-                  onPressed: (){},
+                  icon: ehFavorito ?
+                    Icon(Icons.star, color: Tema.primaryColor,)
+                    : Icon(Icons.star_border, color: Tema.primaryColor,),
+                  iconSize: 28,
+                  onPressed: () => alternaFavorito(),
                 ),
               ],
             ),
