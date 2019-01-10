@@ -14,7 +14,7 @@ class RedeTela extends StatelessWidget{
         child: Container(
           child: Column(
             children: <Widget>[
-              ItemListaSimples('Favoritos', () => listarFavoritos(context), iconeExtra: Icon(Icons.star, color: Tema.principal.primaryColor,),),
+              ItemListaSimples('Favoritos', () => listar("Favoritos", context), iconeExtra: Icon(Icons.star, color: Tema.principal.primaryColor,),),
               ItemListaSimples('Laboratórios', () => listar(Ocupacao.laboratorio, context)),
               ItemListaSimples('Escolas', () => listar(Ocupacao.escola, context)),
               ItemListaSimples('Incubadoras',  () => listar(Ocupacao.incubadora, context)),
@@ -24,10 +24,6 @@ class RedeTela extends StatelessWidget{
         ),
       ),
     );
-  }
-
-  listarFavoritos(context){
-    //TODO
   }
 
   listar(String ocupacao, context){

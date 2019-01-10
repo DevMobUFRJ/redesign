@@ -2,10 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:redesign/estilos/tema.dart';
+import 'package:redesign/modulos/usuario/favorito.dart';
 import 'package:redesign/modulos/usuario/instituicao.dart';
 import 'package:redesign/modulos/usuario/perfil_instituicao.dart';
 import 'package:redesign/modulos/usuario/perfil_pessoa.dart';
 import 'package:redesign/modulos/usuario/usuario.dart';
+import 'package:redesign/servicos/meu_app.dart';
 import 'package:redesign/widgets/item_lista_simples.dart';
 import 'package:redesign/widgets/tela_base.dart';
 
@@ -31,7 +33,9 @@ class RedeListaState extends State<RedeLista> {
   Widget build(BuildContext context) {
     return TelaBase(
         title: ocupacao,
-        body: _buildBody(context),
+        body: ocupacao == "Favoritos" ?
+          _buildFavoritos(context)
+          : _buildBody(context),
         actions: <IconButton>[
           IconButton(
             icon: Icon(
@@ -121,29 +125,71 @@ class RedeListaState extends State<RedeLista> {
 
     return ItemListaSimples(
       usuario != null ? usuario.nome : instituicao.nome,
-      usuario != null ? () => callbackUsuario(usuario) :
-                        () => callbackInstituicao(instituicao),
+      usuario != null ? () => callbackUsuario(context, usuario) :
+                        () => callbackInstituicao(context, instituicao),
       corTexto: Tema.textoEscuro,
       key: ValueKey(data.documentID),
     );
-
   }
 
-  void callbackUsuario(Usuario usuario){
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => PerfilPessoa(usuario),
-      ),
+  Widget _buildFavoritos(BuildContext context){
+    return StreamBuilder<QuerySnapshot>(
+      stream: MeuApp.getReferenciaUsuario().collection(Favorito.collectionName)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) return LinearProgressIndicator();
+
+        if(snapshot.data.documents.length == 0)
+          return Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Text("Você ainda não salvou favoritos"),
+            ],
+          );
+
+        return _buildFavoritosList(context, snapshot.data.documents);
+      },
     );
   }
 
-  void callbackInstituicao(Instituicao instituicao){
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => PerfilInstituicao(instituicao),
-      ),
+  Widget _buildFavoritosList(BuildContext context, List<DocumentSnapshot> snapshot) {
+    return Column(
+        children: [
+          Expanded(
+            child:  ListView(
+              children: [
+                buscando ?
+                Container(
+                    margin: EdgeInsets.only(bottom: 5),
+                    decoration: ShapeDecoration(shape: StadiumBorder() ),
+                    child: Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              onChanged: textoBuscaMudou,
+                              controller: _buscaController,
+                              cursorColor: Tema.cinzaClaro,
+                              decoration: InputDecoration(
+                                  hintText: "Buscar",
+                                  prefixIcon: Icon(Icons.search, color: Tema.primaryColor)
+                              ),
+                            ),
+                          ),
+                        ]
+                    )
+                )
+                    : Container(),
+              ]
+                ..addAll(snapshot
+                    .where((snap) =>
+                        snap.data['classe'] == 'Instituicao'
+                        || snap.data['classe'] == 'Usuario')
+                    .map((data) => _FavoritoItem(data['id'])).toList()),
+            ),
+          ),
+        ]
     );
   }
 
@@ -162,4 +208,65 @@ class RedeListaState extends State<RedeLista> {
       busca = texto.toLowerCase();
     });
   }
+}
+
+class _FavoritoItem extends StatefulWidget {
+  final String userId;
+
+  _FavoritoItem(this.userId);
+
+  @override
+  _FavoritoItemState createState() => _FavoritoItemState();
+}
+
+class _FavoritoItemState extends State<_FavoritoItem> {
+  Usuario usuario;
+  Instituicao instituicao;
+
+  @override
+  void initState() {
+    super.initState();
+    Firestore.instance.collection(Usuario.collectionName)
+        .document(widget.userId).get().then((DocumentSnapshot snapshot){
+          setState(() {
+            if(snapshot.data['tipo'] == TipoUsuario.instituicao.index){
+              instituicao = Instituicao.fromMap(snapshot.data, reference: snapshot.reference);
+            } else {
+              usuario = Usuario.fromMap(snapshot.data, reference: snapshot.reference);
+            }
+          });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if(usuario == null && instituicao == null){
+      return Container();
+    }
+
+    return ItemListaSimples(
+      usuario != null ? usuario.nome : instituicao.nome,
+      usuario != null ? () => callbackUsuario(context, usuario) :
+          () => callbackInstituicao(context, instituicao),
+      corTexto: Tema.textoEscuro
+    );
+  }
+}
+
+void callbackUsuario(BuildContext context, Usuario usuario){
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => PerfilPessoa(usuario),
+    ),
+  );
+}
+
+void callbackInstituicao(BuildContext context, Instituicao instituicao){
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => PerfilInstituicao(instituicao),
+    ),
+  );
 }
