@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:redesign/estilos/tema.dart';
 import 'package:redesign/modulos/eventos/evento.dart';
 import 'package:redesign/servicos/meu_app.dart';
+import 'package:redesign/servicos/validadores.dart';
 import 'package:redesign/widgets/botao_padrao.dart';
 import 'package:redesign/widgets/tela_base.dart';
 import 'package:intl/intl.dart';
@@ -150,6 +151,7 @@ class _EventoCriarState extends State<EventoCriarPage>{
                   labelText: 'Link do Evento no facebook',
                 ),
                 initialValue: evento.facebookUrl,
+                validator: (val) => Validadores.facebookUrl(val) ? null : 'Link inválido',
                 keyboardType: TextInputType.emailAddress,
                 inputFormatters: [new LengthLimitingTextInputFormatter(80)],
                 onSaved: (val) => evento.facebookUrl = val,
