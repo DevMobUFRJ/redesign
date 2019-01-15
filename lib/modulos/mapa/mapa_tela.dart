@@ -2,7 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:redesign/estilos/tema.dart';
 import 'package:redesign/modulos/mapa/drawer_screen.dart';
+import 'package:redesign/modulos/mapa/mapa_estudante.dart';
 import 'package:redesign/modulos/usuario/instituicao.dart';
 import 'package:redesign/modulos/usuario/perfil_instituicao.dart';
 import 'package:redesign/modulos/usuario/perfil_pessoa.dart';
@@ -41,9 +43,9 @@ class _MapaTelaState extends State<MapaTela> {
   /// Tenta logar o usuário pegando do cache logo ao criar a tela
   _getCurrentUser() async {
     FirebaseAuth _auth = FirebaseAuth.instance;
-    mCurrentUser = await _auth.currentUser();
-    if(mCurrentUser != null){
-      authSucesso(mCurrentUser);
+    FirebaseUser _currentUser = await _auth.currentUser();
+    if(_currentUser != null){
+      authSucesso(_currentUser);
     } else {
       erroEncontrarUsuario(null);
     }
@@ -51,26 +53,27 @@ class _MapaTelaState extends State<MapaTela> {
 
   /// Usuario já estava em cache, então vai pro mapa.
   void authSucesso(FirebaseUser user){
+    mCurrentUser = user;
     MeuApp.firebaseUser = user;
     Firestore.instance.collection(Usuario.collectionName).document(user.uid).get()
         .then(encontrouUsuario).catchError(erroEncontrarUsuario);
   }
 
   void encontrouUsuario(DocumentSnapshot snapshot){
-    print("Sucesos, achou!");
     if(snapshot.data['tipo'] == TipoUsuario.instituicao.index){
       MeuApp.setUsuario(Instituicao.fromMap(snapshot.data, reference: snapshot.reference));
     } else {
       MeuApp.setUsuario(Usuario.fromMap(snapshot.data, reference: snapshot.reference));
     }
     // Finalmente pode fazer o que tem que fazer.
-    temUsuario = true;
+    setState((){
+      temUsuario = true;
+    });
     MeuApp.startup();
     getInstituicoesColocaMarcadores();
   }
 
   void erroEncontrarUsuario(e){
-    print("Não achou :(");
     Navigator.pushReplacementNamed(
         context,
         '/login'
@@ -79,32 +82,56 @@ class _MapaTelaState extends State<MapaTela> {
 
   @override
   Widget build(BuildContext context) {
+    if(!temUsuario){
+      return Scaffold(
+        body: Row(
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            Expanded(
+              child: Container(
+                color: Tema.darkBackground,
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),),
+            ),
+          ],
+        ),
+      );
+    }
+
     return Scaffold(
       drawer: DrawerScreen(),
       appBar: AppBar(
         title: Text("REDEsign"),
-        backgroundColor: Theme.of(context).primaryColor,
-        actions: [
+        backgroundColor: Theme
+            .of(context)
+            .primaryColor,
+        actions: MeuApp.ehEstudante() ? null : [
           Builder(
-            builder: (context) => IconButton(
-              icon: Icon(
-                Icons.more_vert,
-                color: Colors.white,
-              ),
-              onPressed: () => Scaffold.of(context).openEndDrawer(),
-              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-            ),
+            builder: (context) =>
+                IconButton(
+                  icon: Icon(
+                    Icons.more_vert,
+                    color: Colors.white,
+                  ),
+                  onPressed: () => Scaffold.of(context).openEndDrawer(),
+                  tooltip: MaterialLocalizations
+                      .of(context)
+                      .openAppDrawerTooltip,
+                ),
           ),
         ],
       ),
-      endDrawer: filtro,
-      body: GoogleMap(
-        initialCameraPosition: CameraPosition(
-          target: LatLng(-22.8544375, -43.2296038),
-          zoom: 12.0,
+      endDrawer: MeuApp.ehEstudante() ? null : filtro,
+      body: MeuApp.ehEstudante() ?
+        MapaEstudante() :
+        GoogleMap(
+          initialCameraPosition: CameraPosition(
+            target: LatLng(-22.8544375, -43.2296038),
+            zoom: 12.0,
+          ),
+          onMapCreated: _onMapCreated,
         ),
-        onMapCreated: _onMapCreated,
-      ),
     );
   }
 

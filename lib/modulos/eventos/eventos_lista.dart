@@ -47,15 +47,16 @@ class _EventosListaState extends State<EventosLista> {
     return TelaBase(
         title: 'Eventos',
         body: _buildBody(context),
-        fab: FloatingActionButton(
+        fab: MeuApp.ehEstudante() ? null :
+          FloatingActionButton(
           onPressed: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => EventoCriar(),
+              context,
+              MaterialPageRoute(
+                builder: (context) => EventoCriar(),
+              ),
             ),
-          ),
-          child: Icon(Icons.add),
-          backgroundColor: Tema.principal.primaryColor,
+            child: Icon(Icons.add),
+            backgroundColor: Tema.principal.primaryColor,
         ),
         actions: <IconButton>[
           IconButton(

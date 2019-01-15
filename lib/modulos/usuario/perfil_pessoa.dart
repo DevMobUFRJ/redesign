@@ -31,7 +31,7 @@ class _PerfilPessoaState extends State<PerfilPessoa> {
           Corpo()
         ],
       ),
-      fab: usuario.reference.documentID != MeuApp.userId() ?
+      fab: usuario.reference.documentID != MeuApp.userId() && !MeuApp.ehEstudante() ?
       FloatingActionButton(
         child: Icon(Icons.chat_bubble),
         backgroundColor: Tema.principal.primaryColor,

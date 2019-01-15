@@ -72,7 +72,7 @@ class MaterialListaState extends State<MaterialLista> {
 
     return ItemListaSimples(
       material.titulo,
-      (){ _launchURL(material.url); }, //TODO abrir a url
+      (){ _launchURL(material.url); },
       iconeExtra: Icon(
         Icons.link,
         color: Tema.principal.primaryColor,

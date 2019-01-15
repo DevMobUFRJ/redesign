@@ -130,7 +130,6 @@ class _UsuarioFormState extends State<_UsuarioForm> {
                     shape: BoxShape.circle,
                     image: DecorationImage(
                       fit: BoxFit.cover,
-                      //TODO Imagem do usuário if tem imagem. Else, placeholder.
                       image: imagemNova == null ? imagemAtual == null ?
                           AssetImage("images/perfil_placeholder.png") :
                           MemoryImage(imagemAtual):
@@ -333,7 +332,6 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
                       shape: BoxShape.circle,
                       image: DecorationImage(
                         fit: BoxFit.cover,
-                        //TODO Imagem do usuário if tem imagem. Else, placeholder.
                         image: imagemNova == null ? imagemAtual == null ?
                         AssetImage("images/perfil_placeholder.png") :
                         MemoryImage(imagemAtual):
@@ -452,7 +450,7 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
 
   save(Instituicao instituicao){
     instituicao.reference.updateData(instituicao.toJson())
-        .then(saved).catchError(saveError); //TODO pegar o erro
+        .then(saved).catchError(saveError);
   }
 
   saved(dynamic){

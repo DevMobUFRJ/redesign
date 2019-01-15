@@ -21,6 +21,7 @@ class MeuApp {
   static String userId() => firebaseUser != null ? firebaseUser.uid : null;
   static String nome() => usuario != null ? usuario.nome : instituicao != null ? instituicao.nome : "";
   static String ocupacao() => usuario != null ? usuario.ocupacao : instituicao != null ? instituicao.ocupacao : "";
+  static bool ehEstudante() => usuario != null && usuario.ocupacao == Ocupacao.aluno; //Alunos tem regras especiais no app
 
   static bool ehLabDis() => instituicao != null &&
       instituicao.email == Helper.emailLabdis;

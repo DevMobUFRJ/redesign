@@ -80,6 +80,7 @@ class DrawerScreenState extends State<DrawerScreen> {
                                 );
                               },
                             ),
+                            MeuApp.ehEstudante() ? Container() :
                             Expanded(
                               child: RoundIconButton(
                                 icon: Icon(Icons.chat_bubble),
