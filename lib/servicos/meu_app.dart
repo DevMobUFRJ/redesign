@@ -9,10 +9,8 @@ import 'package:redesign/modulos/usuario/usuario.dart';
 import 'package:redesign/servicos/helper.dart';
 
 class MeuApp {
-  static final FirebaseStorage storage = FirebaseStorage.instance;
   static FirebaseUser firebaseUser;
   static List<int> imagemMemory;
-
   /// Deve usar apenas um dos campos abaixo, usuario ou instituicao
   /// de acordo com o tipo do firebaseUser;
   static Usuario usuario;
@@ -25,7 +23,7 @@ class MeuApp {
   static bool ehEstudante() => usuario != null && usuario.ocupacao == Ocupacao.aluno; //Alunos tem regras especiais no app
 
   static bool ehLabDis() => instituicao != null &&
-      instituicao.email == Helper.emailLabdis;
+      firebaseUser.email == Helper.emailLabdis;
 
   /// Retorna uma função a ser
   static void irProprioPerfil(BuildContext context){
@@ -72,7 +70,7 @@ class MeuApp {
 
   static void atualizarImagem(){
     if(imagemMemory == null && userId() != null){
-      storage.ref().child("perfil/" + userId() + ".jpg").getData(38000).then(salvaImagem);
+      FirebaseStorage.instance.ref().child("perfil/" + userId() + ".jpg").getData(38000).then(salvaImagem);
     }
   }
 
