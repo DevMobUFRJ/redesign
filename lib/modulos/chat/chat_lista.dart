@@ -158,7 +158,7 @@ class _TileContentState extends State<_TileContent> {
                     child: NomeTextAsync(
                       chat.idOutroUsuario(),
                       TextStyle(
-                        color: Colors.black54,
+                        color: color,
                       ),
                       prefixo: "",
                     )
