@@ -196,11 +196,21 @@ class _LoginFormState extends State<_LoginForm> {
     } else {
       MeuApp.setUsuario(Usuario.fromMap(snapshot.data, reference: snapshot.reference));
     }
+
+    if(!MeuApp.ativo()){
+      _logando(false);
+      erroUsuarioInativo();
+      return;
+    }
     _logando(false);
     Navigator.pushReplacementNamed(
         context,
         '/'
     );
+  }
+
+  void erroUsuarioInativo(){
+    _errorContaInativa();
   }
   
   void erroEncontrarUsuario(e){
@@ -214,15 +224,48 @@ class _LoginFormState extends State<_LoginForm> {
       MaterialPageRoute(builder: (context) => EsqueciSenha()),
     );
   }
+
+  Future<void> _errorContaInativa() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Conta Inativa'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Sua conta ainda está inativa. Caso você participe de'
+                    ' algum dos projetos do LabDIS ou tenha sido indicado, sua '
+                    'conta será liberada assim que possível!'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Ok'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
 
 void _mostraErro(){
+  _mostraErroMsg("Ocorreu um erro.");
+}
+
+void _mostraErroMsg(String mensagem){
   _scaffoldKey.currentState.showSnackBar(
       SnackBar(
         backgroundColor: Colors.red,
         content: Row(
           children: <Widget>[
-            Text("Ocorreu um erro."),
+            Text(mensagem),
           ],
         ),
         duration: Duration(seconds: 4),

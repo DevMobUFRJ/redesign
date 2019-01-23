@@ -65,6 +65,10 @@ class _MapaTelaState extends State<MapaTela> {
     } else {
       MeuApp.setUsuario(Usuario.fromMap(snapshot.data, reference: snapshot.reference));
     }
+    if(!MeuApp.ativo()){
+      erroEncontrarUsuario(null);
+      return;
+    }
     // Finalmente pode fazer o que tem que fazer.
     setState((){
       temUsuario = true;
@@ -74,10 +78,7 @@ class _MapaTelaState extends State<MapaTela> {
   }
 
   void erroEncontrarUsuario(e){
-    Navigator.pushReplacementNamed(
-        context,
-        '/login'
-    );
+    MeuApp.logout(context);
   }
 
   @override

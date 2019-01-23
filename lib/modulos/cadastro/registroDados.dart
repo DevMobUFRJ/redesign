@@ -236,23 +236,50 @@ class _SenhaFormState extends State<_SenhaForm> {
   adicionaBanco(FirebaseUser user){
     Firestore.instance.collection(Usuario.collectionName).document(user.uid)
         .setData(_usuario.toJson())
-        .then(entrar).catchError(erroCadastro) ;
+        .then(sucessoCadastro).catchError(erroCadastro) ;
     MeuApp.firebaseUser = user;
     _usuario.reference = Firestore.instance.collection(Usuario.collectionName).document(user.uid);
   }
 
-  entrar(dynamic) {
-    MeuApp.setUsuario(_usuario);
+  sucessoCadastro(dynamic) {
+    _auth.signOut();
     botaoBloqueado = false;
-    Navigator.pushNamed(
-        context,
-      '/'
-    );
+    _aguardeAtivacaoDialog();
   }
 
   erroCadastro(){
     mostrarMensagem("Erro no cadastro");
     botaoBloqueado = false;
+  }
+
+  Future<void> _aguardeAtivacaoDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Aguarde a ativação'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Sua conta foi criada, mas ainda precisa ser ativada pela'
+            ' nossa equipe. Você receberá um email assim que puder usá-la.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Ok'),
+              onPressed: () {
+                Navigator.popUntil(context,
+                    ModalRoute.withName('/login')
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
 
