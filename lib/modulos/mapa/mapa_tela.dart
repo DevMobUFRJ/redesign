@@ -175,7 +175,9 @@ class _MapaTelaState extends State<MapaTela> {
     }
 
     Stream<QuerySnapshot> query = Firestore.instance.collection(Usuario.collectionName)
-        .where("tipo", isEqualTo: TipoUsuario.instituicao.index).snapshots();
+        .where("tipo", isEqualTo: TipoUsuario.instituicao.index)
+        .where("ativo", isEqualTo: 1)
+        .snapshots();
     query.forEach((element){
       for(DocumentSnapshot d in element.documents){
         Instituicao instituicao = Instituicao.fromMap(d.data, reference: d.reference);

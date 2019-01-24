@@ -52,6 +52,7 @@ class RedeListaState extends State<RedeLista> {
     return StreamBuilder<QuerySnapshot>(
       stream: Firestore.instance.collection(Usuario.collectionName)
           .where("ocupacao", isEqualTo: this.ocupacao)
+          .where("ativo", isEqualTo: 1)
           .orderBy("nome")
           .snapshots(),
       builder: (context, snapshot) {
