@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:redesign/estilos/tema.dart';
+import 'package:redesign/modulos/autorizacao/autorizacao.dart';
 import 'package:redesign/modulos/chat/chat_lista.dart';
 import 'package:redesign/modulos/forum/forum_tema_lista.dart';
 import 'package:redesign/modulos/material/material_lista.dart';
@@ -167,6 +168,18 @@ class DrawerScreenState extends State<DrawerScreen> {
             );
           }
         ),
+        MeuApp.ehLabDis() ?
+        ListaDrawer(
+          icon: Icons.assignment_ind,
+          iconColor: Tema.primaryColor,
+          text: 'Autorizar Usuários',
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AutorizacaoTela())
+            );
+          }
+        ) : Container(),
       ],
     ),
     );

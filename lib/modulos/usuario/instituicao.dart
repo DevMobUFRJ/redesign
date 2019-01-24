@@ -37,7 +37,7 @@ class Instituicao extends Usuario {
       'tipo': tipo.index ?? '',
       'ocupacao': ocupacao ?? '',
       'endereco': endereco ?? '',
-      'ativo': ativo ?? false,
+      'ativo': ativo ?? 0,
       'cidade': cidade ?? '',
       'lat': lat ?? 0.0,
       'lng': lng ?? 0.0,

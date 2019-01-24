@@ -30,13 +30,13 @@ class Usuario {
   /// Se for TipoUsuario.instituicao, é da classe Instituicao.
   TipoUsuario tipo;
   String ocupacao;
-  bool ativo;
+  int ativo;
 
   DocumentReference reference;
 
   Usuario({this.nome, this.email, this.descricao='', this.site='', this.facebook='',
     this.ocupacao='', this.instituicaoId='', this.tipo: TipoUsuario.pessoa,
-    this.ativo: false, this.reference});
+    this.ativo: 0, this.reference});
 
   Usuario.fromMap(Map<String, dynamic> map, {this.reference})
       : nome = map['nome'] ?? '',
@@ -47,7 +47,7 @@ class Usuario {
         instituicaoId = map['instituicaoId'] ?? '',
         tipo = TipoUsuario.values[map['tipo']],
         ocupacao = map['ocupacao'] ?? '',
-        ativo = map['ativo'] ?? false;
+        ativo = map['ativo'] ?? 0;
 
   Map<String, dynamic> toJson() =>
       {
@@ -59,6 +59,6 @@ class Usuario {
         'instituicaoId': instituicaoId ?? '',
         'tipo': tipo.index ?? '',
         'ocupacao': ocupacao ?? '',
-        'ativo': ativo ?? false,
+        'ativo': ativo ?? 0,
       };
 }

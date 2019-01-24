@@ -16,7 +16,7 @@ class MeuApp {
   static Usuario usuario;
   static Instituicao instituicao;
 
-  static bool ativo() => firebaseUser != null ? (usuario != null ? usuario.ativo : instituicao.ativo) : false;
+  static bool ativo() => firebaseUser != null ? (usuario != null ? usuario.ativo == 1 : instituicao.ativo == 1) : false;
   static String userId() => firebaseUser != null ? firebaseUser.uid : null;
   static String nome() => usuario != null ? usuario.nome : instituicao != null ? instituicao.nome : "";
   static String ocupacao() => usuario != null ? usuario.ocupacao : instituicao != null ? instituicao.ocupacao : "";
