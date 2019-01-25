@@ -209,7 +209,7 @@ class _PostState extends State<_PostItem> {
               ],
             ),
             Padding(
-              padding: EdgeInsets.only(top: 10, bottom: 5),
+              padding: EdgeInsets.only(top: 4, bottom: 4),
               child: Divider(
                 color: Colors.black54,
               ),
