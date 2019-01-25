@@ -5,11 +5,12 @@ import 'package:redesign/estilos/tema.dart';
 class ItemListaSimples extends StatelessWidget {
 
   final String titulo;
+  final String subtitulo;
   final VoidCallback callback;
   final Icon iconeExtra;
   final Color corTexto;
 
-  ItemListaSimples(this.titulo, this.callback, {Key key, this.iconeExtra, this.corTexto = Tema.primaryColor}) : super(key: key);
+  ItemListaSimples(this.titulo, this.callback, {Key key, this.iconeExtra, this.corTexto = Tema.primaryColor, this.subtitulo}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +36,10 @@ class ItemListaSimples extends StatelessWidget {
                 ),
               ].where((w) => w != null).toList(),
             ),
+            subtitle: subtitulo != null && subtitulo.isNotEmpty ? Text(this.subtitulo) : null,
+            contentPadding: EdgeInsets.only(top: 2, bottom: 2),
+            //isThreeLine: subtitulo != null ? true : false,
+
           ),
           Divider(color: Colors.black38),
         ],

@@ -39,9 +39,17 @@ class MaterialFormState extends State<MaterialForm> {
                   icon: const Icon(Icons.short_text),
                   labelText: 'Título',
                 ),
-                validator: (val) => val.isEmpty ? 'Título é obrigatório' : null,
+                validator: (val) => val.trim().isEmpty ? 'Título é obrigatório' : null,
                 inputFormatters: [LengthLimitingTextInputFormatter(40)],
-                onSaved: (val) => material.titulo = val,
+                onSaved: (val) => material.titulo = val.trim(),
+              ),
+              TextFormField(
+                decoration: const InputDecoration(
+                  icon: const Icon(Icons.description),
+                  labelText: 'Descrição',
+                ),
+                inputFormatters: [LengthLimitingTextInputFormatter(200)],
+                onSaved: (val) => material.descricao = val.trim(),
               ),
               TextFormField(
                 decoration: const InputDecoration(
