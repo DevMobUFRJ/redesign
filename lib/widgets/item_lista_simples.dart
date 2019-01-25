@@ -9,8 +9,9 @@ class ItemListaSimples extends StatelessWidget {
   final VoidCallback callback;
   final Icon iconeExtra;
   final Color corTexto;
+  final VoidCallback onLongPress;
 
-  ItemListaSimples(this.titulo, this.callback, {Key key, this.iconeExtra, this.corTexto = Tema.primaryColor, this.subtitulo}) : super(key: key);
+  ItemListaSimples(this.titulo, this.callback, {Key key, this.iconeExtra, this.corTexto = Tema.primaryColor, this.subtitulo, this.onLongPress}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -38,8 +39,7 @@ class ItemListaSimples extends StatelessWidget {
             ),
             subtitle: subtitulo != null && subtitulo.isNotEmpty ? Text(this.subtitulo) : null,
             contentPadding: EdgeInsets.only(top: 2, bottom: 2),
-            //isThreeLine: subtitulo != null ? true : false,
-
+            onLongPress: onLongPress,
           ),
           Divider(color: Colors.black38),
         ],

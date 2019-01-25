@@ -68,7 +68,7 @@ class MaterialListaState extends State<MaterialLista> {
   }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
-    MaterialDidatico material = MaterialDidatico.fromMap(data.data);
+    MaterialDidatico material = MaterialDidatico.fromMap(data.data, reference: data.reference);
 
     return ItemListaSimples(
       material.titulo,
@@ -79,6 +79,7 @@ class MaterialListaState extends State<MaterialLista> {
         color: Tema.principal.primaryColor,
       ),
       key: ValueKey(data.documentID),
+      onLongPress: MeuApp.ehLabDis() ? () => _apagarMaterial(material) : null,
     );
   }
 
@@ -93,5 +94,42 @@ class MaterialListaState extends State<MaterialLista> {
     if (await canLaunch(url)) {
       await launch(url);
     }
+  }
+
+
+  Future<void> _apagarMaterial(MaterialDidatico material) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Apagar Material'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Deseja apagar o material "' + material.titulo + '"?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              textColor: Colors.deepOrange,
+              child: Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              textColor: Colors.deepOrange,
+              child: Text('Apagar'),
+              onPressed: () {
+                material.reference.delete();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
