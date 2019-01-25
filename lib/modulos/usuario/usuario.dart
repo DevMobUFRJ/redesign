@@ -61,4 +61,6 @@ class Usuario {
         'ocupacao': ocupacao ?? '',
         'ativo': ativo ?? 0,
       };
+
+  bool estaAtivo() => this.ativo == 1;
 }
