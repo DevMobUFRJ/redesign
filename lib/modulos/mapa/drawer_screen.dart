@@ -6,6 +6,7 @@ import 'package:redesign/modulos/forum/forum_tema_lista.dart';
 import 'package:redesign/modulos/material/material_lista.dart';
 import 'package:redesign/modulos/rede/rede_tela.dart';
 import 'package:redesign/modulos/eventos/eventos_lista.dart';
+import 'package:redesign/modulos/sobre/sobre_tela.dart';
 import 'package:redesign/modulos/usuario/perfil_form.dart';
 import 'package:redesign/servicos/meu_app.dart';
 
@@ -18,170 +19,197 @@ class DrawerScreenState extends State<DrawerScreen> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: ListView(
-      padding: EdgeInsets.zero,
-      children: <Widget>[
-        DrawerHeader(
-          child: Container(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                GestureDetector(
-                  onTap: () => MeuApp.irProprioPerfil(context),
-                  child: Container(
-                    width: 90.0,
-                    height: 90.0,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: MeuApp.imagemMemory == null ?
-                            AssetImage("images/perfil_placeholder.png") :
-                            MemoryImage(MeuApp.imagemMemory),
-                      )
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        children: <Widget>[
+          DrawerHeader(
+            child: Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  GestureDetector(
+                    onTap: () => MeuApp.irProprioPerfil(context),
+                    child: Container(
+                      width: 90.0,
+                      height: 90.0,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: MeuApp.imagemMemory == null ?
+                              AssetImage("images/perfil_placeholder.png") :
+                              MemoryImage(MeuApp.imagemMemory),
+                        )
+                      ),
                     ),
                   ),
-                ),
-                Container(
-                  width:160.0 ,
-                  margin: EdgeInsets.all(10.0),
-                  child: Column (
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 2),
-                        child: Text(MeuApp.nome(),
+                  Container(
+                    width:160.0 ,
+                    margin: EdgeInsets.all(10.0),
+                    child: Column (
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 2),
+                          child: Text(MeuApp.nome(),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold, fontSize: 20.0),
+                            maxLines: 1,
+                          ),
+                        ),
+                        Text(MeuApp.ocupacao(),
                           style: TextStyle(
                             color: Colors.white,
-                            fontWeight: FontWeight.bold, fontSize: 20.0),
+                            fontWeight: FontWeight.normal, fontSize: 16.0),
                           maxLines: 1,
                         ),
-                      ),
-                      Text(MeuApp.ocupacao(),
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.normal, fontSize: 16.0),
-                        maxLines: 1,
-                      ),
-                      Container(
-                        padding: EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 0.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget> [
-                            RoundIconButton(
-                              icon: Icon(Icons.edit),
-                              iconColor: Colors.white,
-                              circleColor: Color(0xff00838f),
-                              size: 40.0,
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => PerfilForm())
-                                );
-                              },
-                            ),
-                            MeuApp.ehEstudante() ? Container() :
-                            Expanded(
-                              child: RoundIconButton(
-                                icon: Icon(Icons.chat_bubble),
+                        Container(
+                          padding: EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 0.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget> [
+                              RoundIconButton(
+                                icon: Icon(Icons.edit),
                                 iconColor: Colors.white,
                                 circleColor: Color(0xff00838f),
                                 size: 40.0,
-                                onPressed:  () {
+                                onPressed: () {
                                   Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) => ChatLista())
+                                      MaterialPageRoute(builder: (context) => PerfilForm())
                                   );
-                                }
+                                },
                               ),
-                            ),
-                            RoundIconButton(
-                              icon: Icon(Icons.exit_to_app),
-                              iconColor: Colors.white,
-                              circleColor: Color(0xff00838f),
-                              size: 40.0,
-                              onPressed: () => logout(context),
-                            ),
-                          ],
+                              MeuApp.ehEstudante() ? Container() :
+                              Expanded(
+                                child: RoundIconButton(
+                                  icon: Icon(Icons.chat_bubble),
+                                  iconColor: Colors.white,
+                                  circleColor: Color(0xff00838f),
+                                  size: 40.0,
+                                  onPressed:  () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => ChatLista())
+                                    );
+                                  }
+                                ),
+                              ),
+                              RoundIconButton(
+                                icon: Icon(Icons.exit_to_app),
+                                iconColor: Colors.white,
+                                circleColor: Color(0xff00838f),
+                                size: 40.0,
+                                onPressed: () => logout(context),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
+            ),
+            decoration: BoxDecoration(
+                color: Tema.darkBackground
             ),
           ),
-          decoration: BoxDecoration(
-              color: Tema.darkBackground
+          ListaDrawer(
+            icon: Icons.explore,
+            iconColor: Tema.primaryColor,
+            text: 'Mapa',
+            onPressed: () {
+              Navigator.pop(context);
+            }
           ),
-        ),
-        ListaDrawer(
-          icon: Icons.explore,
-          iconColor: Tema.primaryColor,
-          text: 'Mapa',
-          onPressed: () {
-            Navigator.pop(context);
-          }
-        ),
-        ListaDrawer(
-          icon: Icons.people,
-          iconColor: Tema.primaryColor,
-          text: 'Rede',
-          onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => RedeTela())
-            );
-          }
-        ),
-        ListaDrawer(
-          icon: Icons.forum,
-          iconColor: Tema.primaryColor,
-          text: 'Fórum',
-          onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ForumTemaLista())
-            );
-          }
-        ),
-        ListaDrawer(
-          icon: Icons.library_books,
-          iconColor: Tema.primaryColor,
-          text: 'Materiais',
+          ListaDrawer(
+            icon: Icons.people,
+            iconColor: Tema.primaryColor,
+            text: 'Rede',
             onPressed: () {
               Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MaterialLista())
+                  MaterialPageRoute(builder: (context) => RedeTela())
               );
             }
-        ),
-        ListaDrawer(
-          icon: Icons.event,
-          iconColor: Tema.primaryColor,
-          text: 'Eventos',
-          onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => EventosTela())
-            );
-          }
-        ),
-        MeuApp.ehLabDis() ?
-        ListaDrawer(
-          icon: Icons.assignment_ind,
-          iconColor: Tema.primaryColor,
-          text: 'Autorizar Usuários',
-          onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => AutorizacaoTela())
-            );
-          }
-        ) : Container(),
-      ],
-    ),
+          ),
+          ListaDrawer(
+            icon: Icons.forum,
+            iconColor: Tema.primaryColor,
+            text: 'Fórum',
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ForumTemaLista())
+              );
+            }
+          ),
+          ListaDrawer(
+            icon: Icons.library_books,
+            iconColor: Tema.primaryColor,
+            text: 'Materiais',
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => MaterialLista())
+                );
+              }
+          ),
+          ListaDrawer(
+            icon: Icons.event,
+            iconColor: Tema.primaryColor,
+            text: 'Eventos',
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => EventosTela())
+              );
+            }
+          ),
+          MeuApp.ehLabDis() ?
+          ListaDrawer(
+            icon: Icons.assignment_ind,
+            iconColor: Tema.primaryColor,
+            text: 'Autorizar Usuários',
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AutorizacaoTela())
+              );
+            }
+          ) : Container(),
+          Expanded(child: Container()),
+          Container(
+            // This align moves the children to the bottom
+              child: Align(
+                  alignment: FractionalOffset.bottomCenter,
+                  // This container holds all the children that will be aligned
+                  // on the bottom and should not scroll with the above ListView
+                  child: Container(
+                      child: Column(
+                        children: <Widget>[
+                          Divider(color: Colors.black54, height: 0,),
+                          ListaDrawer(
+                            icon: Icons.help,
+                            iconColor: Tema.primaryColor,
+                            text: 'Sobre',
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => SobreTela())
+                              );
+                            },
+                          )
+                        ],
+                      )
+                  )
+              )
+          ),
+        ],
+      ),
     );
   }
 
