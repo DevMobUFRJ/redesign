@@ -267,7 +267,7 @@ class _FiltroState extends State<_FiltroDrawer>  {
       width: 180,
       child: Theme(
         data: Theme.of(context).copyWith(
-          canvasColor: Colors.white70,
+          canvasColor: Colors.white,
         ),
         child: Drawer(
           semanticLabel: "Filtro do Mapa",
