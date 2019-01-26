@@ -26,9 +26,14 @@ class _MapaTelaState extends State<MapaTela> {
   List<Marker> marcadores = [];
   List<Instituicao> instituicoes = [];
   Marker _selectedMarker;
-  _FiltroDrawer filtro = _FiltroDrawer();
   bool mapaCarregou = false;
   bool temUsuario = false;
+
+  //Filtros
+  bool laboratorios = true;
+  bool escolas = true;
+  bool incubadoras = true;
+  bool empreendedores = true;
 
   @override
   void initState() {
@@ -123,7 +128,7 @@ class _MapaTelaState extends State<MapaTela> {
           ),
         ],
       ),
-      endDrawer: MeuApp.ehEstudante() ? null : filtro,
+      endDrawer: MeuApp.ehEstudante() ? null : _FiltroDrawer(this),
       body: MeuApp.ehEstudante() ?
         MapaEstudante() :
         GoogleMap(
@@ -132,6 +137,7 @@ class _MapaTelaState extends State<MapaTela> {
             zoom: 12.0,
           ),
           onMapCreated: _onMapCreated,
+          myLocationEnabled: false,
         ),
     );
   }
@@ -210,77 +216,184 @@ class _MapaTelaState extends State<MapaTela> {
       }
     });
   }
+
+  void onFiltroMudou(){
+    for(int i = 0; i < instituicoes.length; i++){
+      Instituicao instituicao = instituicoes[i];
+
+      if (instituicao.ocupacao == Ocupacao.incubadora) {
+        if(incubadoras){
+          mapController.updateMarker(marcadores[i], MarkerOptions(visible: true));
+        } else {
+          mapController.updateMarker(marcadores[i], MarkerOptions(visible: false));
+        }
+      } else if (instituicao.ocupacao == Ocupacao.escola) {
+        if(escolas){
+          mapController.updateMarker(marcadores[i], MarkerOptions(visible: true));
+        } else {
+          mapController.updateMarker(marcadores[i], MarkerOptions(visible: false));
+        }
+      } else if (instituicao.ocupacao == Ocupacao.laboratorio && instituicao.email != Helper.emailLabdis) {
+        if(laboratorios){
+          mapController.updateMarker(marcadores[i], MarkerOptions(visible: true));
+        } else {
+          mapController.updateMarker(marcadores[i], MarkerOptions(visible: false));
+        }
+      } else if (instituicao.ocupacao == Ocupacao.empreendedor) {
+        if(empreendedores){
+          mapController.updateMarker(marcadores[i], MarkerOptions(visible: true));
+        } else {
+          mapController.updateMarker(marcadores[i], MarkerOptions(visible: false));
+        }
+      }
+    }
+  }
 }
 
 class _FiltroDrawer extends StatefulWidget {
+
+  final _MapaTelaState parent;
+
+  _FiltroDrawer(this.parent);
+
   @override
   _FiltroState createState() => _FiltroState();
 }
 
 class _FiltroState extends State<_FiltroDrawer>  {
-  bool favoritos = true;
-  bool laboratorios = true;
-  bool escolas = true;
-  bool incubadoras = false;
-  //TODO Botar isso repetido no mapa, passar o mapa pra cá numa var Parent,
-  //e setar sempre o state de ambos os widgets pra atualizar lá e aqui. (4/1/19)
-
-  _FiltroState();
-
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-        width: 180,
+      width: 180,
+      child: Theme(
+        data: Theme.of(context).copyWith(
+          canvasColor: Colors.white70,
+        ),
         child: Drawer(
+          semanticLabel: "Filtro do Mapa",
           child: Container(
             color: Colors.transparent,
             child: ListView(
               children: <Widget>[
-                Checkbox(
-                  value: favoritos,
-                  onChanged: checkFavoritos,
+                Padding(
+                  padding: EdgeInsets.only(left: 14.0, top: 2.0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: <Widget>[
+                      Expanded(
+                        child: Text( "Filtro",
+                          style: TextStyle(
+                            color: Tema.primaryColor,
+                            fontSize: 18.0,
+                          ),
+                        )
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          Icons.more_vert,
+                          color: Tema.primaryColor,
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                      )
+                    ],
+                  ),
                 ),
-                Checkbox(
-                  value: laboratorios,
-                  onChanged: checkLabs,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
+                  children: <Widget>[
+                    Checkbox(
+                      value: widget.parent.laboratorios,
+                      onChanged: checkLabs,
+                      activeColor: Tema.primaryColor,
+                    ),
+                    Expanded(child: Text("Laboratórios",
+                      style: TextStyle(
+                        color: Colors.black54,
+                        fontSize: 16.0,
+                      ),
+                    )),
+                  ],
                 ),
-                Checkbox(
-                  value: escolas,
-                  onChanged: checkEscolas,
+                Row(
+                  children: <Widget>[
+                    Checkbox(
+                      value: widget.parent.escolas,
+                      onChanged: checkEscolas,
+                      activeColor: Tema.primaryColor,
+                    ),
+                    Expanded(child: Text("Escolas",
+                      style: TextStyle(
+                        color: Colors.black54,
+                        fontSize: 16.0,
+                      ),
+                    )),
+                  ],
                 ),
-                Checkbox(
-                  value: incubadoras,
-                  onChanged: checkIncubadoras,
+                Row(
+                  children: <Widget>[
+                    Checkbox(
+                      value: widget.parent.incubadoras,
+                      onChanged: checkIncubadoras,
+                      activeColor: Tema.primaryColor,
+                    ),
+                    Expanded(child: Text("Incubadoras",
+                      style: TextStyle(
+                        color: Colors.black54,
+                        fontSize: 16.0,
+                      ),
+                    )),
+                  ],
+                ),
+                Row(
+                  children: <Widget>[
+                    Checkbox(
+                      value: widget.parent.empreendedores,
+                      onChanged: checkEmpreendedores,
+                      activeColor: Tema.primaryColor,
+                    ),
+                    Expanded(child: Text("Empreendedores",
+                      style: TextStyle(
+                        color: Colors.black54,
+                        fontSize: 16.0,
+                      ),
+                    )),
+                  ],
                 ),
               ],
             ),
           ),
-        )
+        ),
+      ),
     );
   }
 
-  checkFavoritos(bool novo){
+  checkEmpreendedores(bool novo){
     setState(() {
-      favoritos = novo;
+      widget.parent.empreendedores = novo;
     });
+    widget.parent.onFiltroMudou();
   }
 
   checkLabs(bool novo){
     setState(() {
-      laboratorios = novo;
+      widget.parent.laboratorios = novo;
     });
+    widget.parent.onFiltroMudou();
   }
 
   checkEscolas(bool novo){
     setState(() {
-      escolas = novo;
+      widget.parent.escolas = novo;
     });
+    widget.parent.onFiltroMudou();
   }
 
   checkIncubadoras(bool novo){
     setState(() {
-      incubadoras = novo;
+      widget.parent.incubadoras = novo;
     });
+    widget.parent.onFiltroMudou();
   }
 
 }
