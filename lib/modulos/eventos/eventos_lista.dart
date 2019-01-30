@@ -33,7 +33,6 @@ class _EventosListaState extends State<EventosLista> {
         .listen((QuerySnapshot query){
           List<Favorito> novosFavoritos = [];
           for(DocumentSnapshot d in query.documents){
-            print(d.data);
             novosFavoritos.add(new Favorito.fromMap(d.data));
           }
           setState(() {

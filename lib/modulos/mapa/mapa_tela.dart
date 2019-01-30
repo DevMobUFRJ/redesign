@@ -175,8 +175,7 @@ class _MapaTelaState extends State<MapaTela> {
   }
 
   getInstituicoesColocaMarcadores(){
-    if(!mapaCarregou || !temUsuario){
-      print("Aguardando condições pra botar o marcador");
+    if(!mapaCarregou || !temUsuario){ //Aguardando condições pra botar o marcador
       return;
     }
 

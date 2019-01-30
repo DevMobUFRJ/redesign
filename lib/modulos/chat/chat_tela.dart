@@ -113,7 +113,6 @@ class _ChatTelaState extends State<ChatTela> {
   }
 
   encontraChat(){
-    print("Encontra chat");
     Firestore.instance.collection(Chat.collectionName)
         .document(_chat.getIdReferencia()).get()
         .then(encontrouChat)
@@ -122,7 +121,6 @@ class _ChatTelaState extends State<ChatTela> {
 
   encontrouChat(DocumentSnapshot doc){
     if(doc.exists){
-      print("Chat existe");
       setState(() {
         _chat.reference = doc.reference;
         _mensagensReference = doc.reference.collection(Mensagem.collectionName);

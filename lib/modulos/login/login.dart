@@ -184,7 +184,6 @@ class _LoginFormState extends State<_LoginForm> {
   }
 
   void authSucesso(FirebaseUser user){
-    print("Auth sucesso");
     MeuApp.firebaseUser = user;
     Firestore.instance.collection(Usuario.collectionName).document(user.uid).get()
     .then(encontrouUsuario).catchError(erroEncontrarUsuario);

@@ -222,7 +222,6 @@ class _SenhaFormState extends State<_SenhaForm> {
     mostrarMensagem("Aguarde...", cor: Colors.green, loading: true);
     if(_senhaConfirmaController.text.isNotEmpty && _senhaController.text.isNotEmpty
         && _senhaController.text == _senhaConfirmaController.text){
-      print(_usuario.toJson());
       _auth.createUserWithEmailAndPassword(
           email: _usuario.email,
           password: _senhaController.text).then(adicionaBanco)
