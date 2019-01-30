@@ -58,12 +58,12 @@ class _ChatTelaState extends State<ChatTela> {
 
     return TelaBase(
       title: usuario != null ? usuario.nome : "",
-      bodyPadding: EdgeInsets.only(top: 10),
+      bodyPadding: EdgeInsets.only(top: 4),
       body: Column(
         children: <Widget>[
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.only(left: 12.0, right: 12, bottom: 1, top: 0),
               child: _ListaMensagens(this),
             ),
           ),
@@ -188,7 +188,7 @@ class __ListaMensagensState extends State<_ListaMensagens> {
           .limit(100)
           .snapshots(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) return LinearProgressIndicator();
+        if (!snapshot.hasData) return Container();
 
         return _buildList(context, snapshot.data.documents);
       },
@@ -209,7 +209,7 @@ class __ListaMensagensState extends State<_ListaMensagens> {
     if(propria) {
       return Container(
         key: ValueKey(data.documentID),
-        padding: EdgeInsets.only(left: 60, bottom: 6, top: 6),
+        padding: EdgeInsets.only(left: 60, bottom: 6, top: 4),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
@@ -244,7 +244,7 @@ class __ListaMensagensState extends State<_ListaMensagens> {
 
       return Container(
         key: ValueKey(data.documentID),
-        padding: EdgeInsets.only(right: 60, bottom: 6, top: 6),
+        padding: EdgeInsets.only(right: 60, bottom: 6, top: 4),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
