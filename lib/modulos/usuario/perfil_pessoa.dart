@@ -55,9 +55,17 @@ class _PerfilPessoaState extends State<PerfilPessoa> {
                 Container(
                   child: Column(
                     children: <Widget>[
-                      CircleAvatarAsync(
-                        usuario.reference.documentID,
-                        radius: 40.0,
+                      Hero(
+                        tag: usuario.reference.documentID,
+                        child: this.widget.imagemPerfil != null ?
+                        CircleAvatar(
+                          backgroundImage: MemoryImage(this.widget.imagemPerfil),
+                          radius: 40.0,
+                        ) :
+                        CircleAvatarAsync(
+                          usuario.reference.documentID,
+                          radius: 40.0,
+                        ),
                       ),
                       Padding(
                         padding: EdgeInsets.only(top: 10),

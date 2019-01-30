@@ -96,7 +96,10 @@ class _PerfilInstituicaoState extends State<PerfilInstituicao> {
           Container(
             child: Row(
               children: <Widget>[
-                CircleAvatarAsync(instituicao.reference.documentID, radius: 30,),
+                Hero(
+                  tag: instituicao.reference.documentID,
+                  child: CircleAvatarAsync(instituicao.reference.documentID, radius: 30,)
+                ),
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),

@@ -30,17 +30,20 @@ class DrawerScreenState extends State<DrawerScreen> {
                 children: <Widget>[
                   GestureDetector(
                     onTap: () => MeuApp.irProprioPerfil(context),
-                    child: Container(
-                      width: 90.0,
-                      height: 90.0,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: MeuApp.imagemMemory == null ?
-                              AssetImage("images/perfil_placeholder.png") :
-                              MemoryImage(MeuApp.imagemMemory),
-                        )
+                    child: Hero(
+                      tag: MeuApp.userId(),
+                      child: Container(
+                        width: 90.0,
+                        height: 90.0,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: MeuApp.imagemMemory == null ?
+                                AssetImage("images/perfil_placeholder.png") :
+                                MemoryImage(MeuApp.imagemMemory),
+                          )
+                        ),
                       ),
                     ),
                   ),
