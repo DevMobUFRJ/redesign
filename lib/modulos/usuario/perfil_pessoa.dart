@@ -57,12 +57,7 @@ class _PerfilPessoaState extends State<PerfilPessoa> {
                     children: <Widget>[
                       Hero(
                         tag: usuario.reference.documentID,
-                        child: this.widget.imagemPerfil != null ?
-                        CircleAvatar(
-                          backgroundImage: MemoryImage(this.widget.imagemPerfil),
-                          radius: 40.0,
-                        ) :
-                        CircleAvatarAsync(
+                        child: CircleAvatarAsync(
                           usuario.reference.documentID,
                           radius: 40.0,
                         ),

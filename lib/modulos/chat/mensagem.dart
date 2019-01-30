@@ -25,4 +25,9 @@ class Mensagem {
         'lida': lida,
         'criadaPor': criadaPor
       };
+
+  String horario(){
+    return data.hour.toString() + ":" + ((data.minute < 10) ? "0" : "") + data.minute.toString();
+  }
+
 }

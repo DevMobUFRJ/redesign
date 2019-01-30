@@ -75,4 +75,12 @@ class Helper {
         return "Professores";
     }
   }
+
+  static String convertToDMYString(DateTime d){
+    try{
+      return d.day.toString() + "/" + d.month.toString() + "/" + d.year.toString();
+    } catch (e) {
+      return null;
+    }
+  }
 }

@@ -85,7 +85,7 @@ class _CircleAvatarAsyncState extends State<CircleAvatarAsync> {
         FirebaseStorage.instance.ref()
             .child("perfil/" + idUsuario + ".jpg")
             .getData(36000).then(chegouFotoPerfil)
-            .catchError((e) => debugPrint("Erro foto"));
+            .catchError((e){});
       }
     }
   }

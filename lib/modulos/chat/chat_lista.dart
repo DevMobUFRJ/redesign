@@ -126,7 +126,7 @@ class _TileContentState extends State<_TileContent> {
                 reference: snapshot.documents[0].reference);
             setState(() {
               ultimaMsg = msg.descricao;
-              ultimaMsgHora = msg.data.hour.toString() + ":" + msg.data.minute.toString();
+              ultimaMsgHora = msg.horario();
 
               if(msg.criadaPor != MeuApp.userId() && !msg.lida){
                 color = Tema.primaryColor;

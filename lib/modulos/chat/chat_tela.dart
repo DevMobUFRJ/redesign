@@ -6,6 +6,7 @@ import 'package:redesign/modulos/chat/chat.dart';
 import 'package:redesign/modulos/chat/mensagem.dart';
 import 'package:redesign/modulos/usuario/instituicao.dart';
 import 'package:redesign/modulos/usuario/usuario.dart';
+import 'package:redesign/servicos/helper.dart';
 import 'package:redesign/servicos/meu_app.dart';
 import 'package:redesign/widgets/dados_asincronos.dart';
 import 'package:redesign/widgets/tela_base.dart';
@@ -171,6 +172,7 @@ class _ListaMensagens extends StatefulWidget {
 
 class __ListaMensagensState extends State<_ListaMensagens> {
   final _ChatTelaState parent;
+  String ultimaData = "";
 
   __ListaMensagensState(this.parent);
 
@@ -196,7 +198,28 @@ class __ListaMensagensState extends State<_ListaMensagens> {
   Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
     return ListView(
       reverse: true,
-      children: snapshot.map((data) => _buildListItem(context, data)).toList(),
+      children: snapshot.map((data){
+        bool dataMudou = false;
+        if(Helper.convertToDMYString(DateTime.tryParse(data.data['data'])) != ultimaData){
+          ultimaData = Helper.convertToDMYString(DateTime.tryParse(data.data['data']));
+          dataMudou = true;
+        }
+        return Column(
+          children: <Widget>[
+            dataMudou ?
+            Padding(
+              padding: EdgeInsets.only(top: 8),
+              child: Text(ultimaData,
+                style: TextStyle(
+                  color: Colors.black38,
+                  fontSize: 12.0,
+                ),
+              )
+            ) : Container(),
+            _buildListItem(context, data),
+          ],
+        );
+      }).toList(),
     );
   }
 
@@ -207,7 +230,7 @@ class __ListaMensagensState extends State<_ListaMensagens> {
     if(propria) {
       return Container(
         key: ValueKey(data.documentID),
-        padding: EdgeInsets.only(left: 60, bottom: 6, top: 4),
+        padding: EdgeInsets.only(left: 60, bottom: 6, top: 0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
@@ -216,7 +239,7 @@ class __ListaMensagensState extends State<_ListaMensagens> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   Container(
-                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 14),
+                    padding: EdgeInsets.symmetric(vertical: 6, horizontal: 14),
                     decoration: ShapeDecoration(
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(15))),
                       color: Tema.primaryColor,
@@ -242,10 +265,10 @@ class __ListaMensagensState extends State<_ListaMensagens> {
 
       return Container(
         key: ValueKey(data.documentID),
-        padding: EdgeInsets.only(right: 60, bottom: 6, top: 4),
+        padding: EdgeInsets.only(right: 60, bottom: 6, top: 0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.only(right: 10.0),
@@ -256,7 +279,7 @@ class __ListaMensagensState extends State<_ListaMensagens> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Container(
-                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 14),
+                    padding: EdgeInsets.symmetric(vertical: 6, horizontal: 14),
                     decoration: ShapeDecoration(
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(15))),
                       color: Tema.darkBackground,
