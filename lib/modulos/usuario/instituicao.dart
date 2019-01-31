@@ -42,4 +42,8 @@ class Instituicao extends Usuario {
       'lat': lat ?? 0.0,
       'lng': lng ?? 0.0,
     };
+
+  //Métodos necessários para fazer o dropdown funcionar
+  bool operator ==(o) => o is Instituicao && nome == o.nome && email == o.email;
+  int get hashCode => nome.hashCode + email.hashCode;
 }

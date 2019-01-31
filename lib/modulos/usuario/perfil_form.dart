@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -61,6 +62,7 @@ class _UsuarioFormState extends State<_UsuarioForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   Usuario usuario;
+  Instituicao instituicaoRelacionada;
 
   _UsuarioFormState(this.usuario){
     reference.getData(38000).then((value) => setState((){
@@ -175,6 +177,26 @@ class _UsuarioFormState extends State<_UsuarioForm> {
             initialValue: usuario.descricao,
             onSaved: (val) => usuario.descricao = val,
           ),
+          _buildDropdown(),
+          Container(
+            padding: EdgeInsets.only(top: 4),
+            child: instituicaoRelacionada == null ? Container() :
+                GestureDetector(
+                  child: Text("Remover seleção",
+                    textAlign: TextAlign.end,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.red,
+                    ),
+                  ),
+                  onTap: (){
+                    setState(() {
+                      usuario.instituicaoId = "";
+                      instituicaoRelacionada = null;
+                    });
+                  },
+                ),
+          ),
           TextFormField(
             decoration: const InputDecoration(
               icon: const Icon(Icons.link,
@@ -250,6 +272,69 @@ class _UsuarioFormState extends State<_UsuarioForm> {
     carregando(false);
     blocked = false;
     showMessage("Erro ao atualizar informações");
+  }
+
+  Widget _buildDropdown(){
+    return StreamBuilder<QuerySnapshot>(
+      stream: Firestore.instance.collection(Usuario.collectionName)
+          .where("tipo", isEqualTo: TipoUsuario.instituicao.index)
+          .where("ativo", isEqualTo: 1)
+          .orderBy("nome")
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) return CircularProgressIndicator();
+
+        if (snapshot.data.documents.length == 0){
+          return Text("Não há instituições cadastradas");
+        }
+
+        return _buildItems(context, snapshot.data.documents);
+      },
+    );
+  }
+
+  Widget _buildItems(BuildContext context, List<DocumentSnapshot> data){
+    return DropdownButtonFormField<Instituicao>(
+      items: data.map( (DocumentSnapshot doc) {
+        Instituicao instituicao = Instituicao.fromMap(doc.data, reference: doc.reference);
+
+        // Verificar se o tipo do usuário é compatível com a instituição
+        if(instituicao.ocupacao == Ocupacao.incubadora){
+          if(usuario.ocupacao != Ocupacao.empreendedor) return null;
+        } else if (instituicao.ocupacao == Ocupacao.laboratorio){
+          if(usuario.ocupacao != Ocupacao.professor &&
+              usuario.ocupacao != Ocupacao.bolsista &&
+              usuario.ocupacao != Ocupacao.discente) return null;
+        } else if (instituicao.ocupacao == Ocupacao.escola){
+          if(usuario.ocupacao != Ocupacao.professor &&
+            usuario.ocupacao != Ocupacao.aluno) return null;
+        }
+
+        if(instituicao.reference.documentID == usuario.instituicaoId){
+          instituicaoRelacionada = instituicao;
+        }
+
+        return DropdownMenuItem<Instituicao>(
+          value: instituicao,
+          child: Text(instituicao.nome),
+          key: ValueKey(instituicao.reference.documentID),
+        );
+      }).where((d) => d != null).toList(),
+      onChanged: (Instituicao c){
+        print("Changed state");
+        setState(() {
+          instituicaoRelacionada = c;
+          usuario.instituicaoId = instituicaoRelacionada.reference.documentID;
+        });
+      },
+      value: instituicaoRelacionada,
+      decoration: const InputDecoration(
+        icon: const Icon(Icons.account_balance,
+          color: Tema.primaryColor,
+        ),
+        labelText: 'Instituição',
+      ),
+    );
   }
 }
 
