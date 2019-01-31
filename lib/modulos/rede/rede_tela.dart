@@ -18,7 +18,6 @@ class RedeTela extends StatelessWidget{
               ItemListaSimples('Favoritos', () => listar("Favoritos", context), iconeExtra: Icon(Icons.star, color: Tema.principal.primaryColor,),),
               MeuApp.ehEstudante() ? null : ItemListaSimples('Laboratórios', () => listar(Ocupacao.laboratorio, context)),
               ItemListaSimples('Escolas', () => listar(Ocupacao.escola, context)),
-              ItemListaSimples('Bolsitas', () => listar(Ocupacao.bolsista, context)),
               MeuApp.ehEstudante() ? null : ItemListaSimples('Incubadoras',  () => listar(Ocupacao.incubadora, context)),
             ].where((w) => w != null).toList(),
           ),

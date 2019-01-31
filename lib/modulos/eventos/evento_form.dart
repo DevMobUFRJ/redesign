@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:redesign/estilos/fb_icon_icons.dart';
 import 'package:redesign/estilos/tema.dart';
 import 'package:redesign/modulos/eventos/evento.dart';
 import 'package:redesign/servicos/meu_app.dart';
@@ -147,7 +148,7 @@ class _EventoCriarState extends State<EventoCriarPage>{
               ),
               TextFormField(
                 decoration: const InputDecoration(
-                  icon: const Icon(Icons.email),
+                  icon: const Icon(FbIcon.facebook_official),
                   labelText: 'Link do Evento no facebook',
                 ),
                 initialValue: evento.facebookUrl,

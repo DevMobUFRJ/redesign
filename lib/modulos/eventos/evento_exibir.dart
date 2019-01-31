@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:redesign/estilos/fb_icon_icons.dart';
 import 'package:redesign/modulos/eventos/evento.dart';
 import 'package:redesign/modulos/eventos/evento_form.dart';
 import 'package:redesign/modulos/usuario/favorito.dart';
@@ -177,7 +178,7 @@ class _EventoExibir extends State<EventoForm> {
                               child: Container(
                                 alignment: Alignment.bottomRight,
                                 padding: EdgeInsets.only(right: 10),
-                                child: Icon(Icons.face, color: Tema.primaryColor, size: 28,),
+                                child: Icon(FbIcon.facebook_official, color: Tema.primaryColor, size: 28,),
                               ),
                               onTap: (){}, //TODO Facebook
                             ),

@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:redesign/estilos/fb_icon_icons.dart';
 import 'package:redesign/estilos/tema.dart';
 import 'package:redesign/modulos/usuario/instituicao.dart';
 import 'package:redesign/modulos/usuario/usuario.dart';
@@ -216,7 +217,7 @@ class _UsuarioFormState extends State<_UsuarioForm> {
           ),
           TextFormField(
             decoration: const InputDecoration(
-              icon: const Icon(Icons.face,
+              icon: const Icon(FbIcon.facebook_official,
                 color: Tema.primaryColor,
               ),
               labelText: 'Facebook',
@@ -481,7 +482,7 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
           ),
           TextFormField(
             decoration: const InputDecoration(
-              icon: const Icon(Icons.face,
+              icon: const Icon(FbIcon.facebook_official,
                 color: Tema.primaryColor,
               ),
               labelText: 'Facebook',

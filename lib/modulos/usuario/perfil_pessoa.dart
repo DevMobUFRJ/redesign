@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:redesign/estilos/fb_icon_icons.dart';
 import 'package:redesign/estilos/tema.dart';
 import 'package:redesign/modulos/chat/chat_tela.dart';
 import 'package:redesign/modulos/usuario/usuario.dart';
@@ -112,7 +113,7 @@ class _PerfilPessoaState extends State<PerfilPessoa> {
                 GestureDetector(
                   child: Container(
                     padding: EdgeInsets.only(top: 15),
-                    child: usuario.facebook.isEmpty ? null : redesPessoais(Icons.public, usuario.facebook)
+                    child: usuario.facebook.isEmpty ? null : redesPessoais(FbIcon.facebook_official, usuario.facebook)
                   ),
                   onTap: usuario.facebook.isEmpty ? null : () => _launchURL(usuario.facebook),
                 ), // email

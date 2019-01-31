@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:redesign/estilos/fb_icon_icons.dart';
 import 'package:redesign/estilos/tema.dart';
 import 'package:redesign/modulos/chat/chat_tela.dart';
 import 'package:redesign/modulos/usuario/favorito.dart';
@@ -167,7 +168,7 @@ class _PerfilInstituicaoState extends State<PerfilInstituicao> {
                 GestureDetector(
                   child: Container(
                       padding: EdgeInsets.only(top: 15),
-                      child: instituicao.facebook.isEmpty ? null : redesPessoais(Icons.public, instituicao.facebook)
+                      child: instituicao.facebook.isEmpty ? null : redesPessoais(FbIcon.facebook_official, instituicao.facebook)
                   ),
                   onTap: instituicao.facebook.isEmpty ? null : () => _launchURL(instituicao.facebook),
                 ), // email
