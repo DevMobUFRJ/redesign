@@ -31,34 +31,41 @@ class ForumPostExibirState extends State<ForumPostExibir> {
         children: <Widget>[
           Container(
             color: Tema.darkBackground,
-            padding: EdgeInsets.only(top: 8, bottom: 8, left: 16, right: 16),
+            padding: EdgeInsets.only(top: 8, bottom: 8, left: 16, right: 10),
             child: Column(
               children: <Widget>[
                 Row(
                   children: <Widget>[
-                    CircleAvatarAsync(post.criadoPor, radius: 23),
+                    CircleAvatarAsync(post.criadoPor, radius: 26, clicavel: true,),
                     Expanded(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Container(
-                            padding: EdgeInsets.only(left: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  post.titulo,
-                                  style: TextStyle(
-                                      color: Tema.primaryColorLighter, fontSize: 20, fontWeight: FontWeight.w500),
-                                ),
-                                //TODO Considerar pegar o usuário de uma vez,
-                                //ao invés de só o nome, pra poder mandar pro
-                                //perfil ao clicar na foto (George, 03/01/2019)
-                                NomeTextAsync(
-                                  post.criadoPor,
-                                  TextStyle(color: Colors.white),
-                                )
-                              ],
+                          Flexible(
+                            child: Container(
+                              padding: EdgeInsets.only(left: 6),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(
+                                    post.titulo + "iuasdhiuash iuahsdiu hasuidh",
+                                    style: TextStyle(
+                                      color: Tema.primaryColorLighter,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    maxLines: 2,
+                                    softWrap: false,
+                                    overflow: TextOverflow.clip,
+                                  ),
+                                  NomeTextAsync(
+                                    post.criadoPor,
+                                    TextStyle(color: Colors.white),
+                                  )
+                                ],
+                              ),
                             ),
                           ),
                         ],
@@ -149,7 +156,7 @@ class _ListaComentariosState extends State<_ListaComentarios> {
                   key: ValueKey(data.documentID),
                   child: Row(
                     children: <Widget>[
-                      CircleAvatarAsync(comentario.criadoPor, radius: 23),
+                      CircleAvatarAsync(comentario.criadoPor, radius: 23, clicavel: true,),
                       Expanded(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -117,7 +117,7 @@ class _ChatTelaState extends State<ChatTela> {
     Firestore.instance.collection(Chat.collectionName)
         .document(_chat.getIdReferencia()).get()
         .then(encontrouChat)
-        .catchError((e) => print(e));
+        .catchError((e){});
   }
 
   encontrouChat(DocumentSnapshot doc){
@@ -272,7 +272,7 @@ class __ListaMensagensState extends State<_ListaMensagens> {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.only(right: 10.0),
-              child: CircleAvatarAsync(mensagem.criadaPor, radius: 18 ,),
+              child: CircleAvatarAsync(mensagem.criadaPor, radius: 18, clicavel: true,),
             ),
             Expanded(
               child: Column(

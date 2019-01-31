@@ -2,6 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:redesign/modulos/usuario/instituicao.dart';
+import 'package:redesign/modulos/usuario/perfil_instituicao.dart';
+import 'package:redesign/modulos/usuario/perfil_pessoa.dart';
 import 'package:redesign/modulos/usuario/usuario.dart';
 import 'package:redesign/servicos/meu_app.dart';
 
@@ -65,27 +68,35 @@ class _NomeTextState extends State<NomeTextAsync> {
 class CircleAvatarAsync extends StatefulWidget {
   final String idUsuario;
   final double radius;
+  final bool clicavel;
 
-  CircleAvatarAsync(this.idUsuario, {this.radius=20.0});
+  CircleAvatarAsync(this.idUsuario, {this.radius=20.0, this.clicavel=false});
 
   @override
-  _CircleAvatarAsyncState createState() => _CircleAvatarAsyncState(idUsuario, radius);
+  _CircleAvatarAsyncState createState() => _CircleAvatarAsyncState();
 }
 
 class _CircleAvatarAsyncState extends State<CircleAvatarAsync> {
-  final String idUsuario;
-  final double radius;
   List<int> imagem;
+  Usuario usuario;
 
-  _CircleAvatarAsyncState(this.idUsuario, this.radius){
+  _CircleAvatarAsyncState();
+
+  @override
+  void initState(){
     if(imagem == null){
-      if(idUsuario == MeuApp.userId()){
+      if(widget.idUsuario == MeuApp.userId()){
         imagem = MeuApp.imagemMemory;
       } else {
         FirebaseStorage.instance.ref()
-            .child("perfil/" + idUsuario + ".jpg")
+            .child("perfil/" + widget.idUsuario + ".jpg")
             .getData(36000).then(chegouFotoPerfil)
             .catchError((e){});
+        if(widget.clicavel != null) {
+          Firestore.instance.collection(Usuario.collectionName).document(
+              widget.idUsuario).get().then(chegouUsuario)
+              .catchError((e){});
+        }
       }
     }
   }
@@ -96,13 +107,38 @@ class _CircleAvatarAsyncState extends State<CircleAvatarAsync> {
     });
   }
 
+  chegouUsuario(DocumentSnapshot doc){
+    if(doc.data['tipo'] == TipoUsuario.instituicao.index){
+      usuario = Instituicao.fromMap(doc.data, reference: doc.reference);
+    } else {
+      usuario = Usuario.fromMap(doc.data, reference: doc.reference);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return CircleAvatar(
-      backgroundImage: imagem == null ?
-          AssetImage("images/perfil_placeholder.png")
-          : MemoryImage(imagem),
-      radius: radius,
+    return GestureDetector(
+      child: CircleAvatar(
+        backgroundImage: imagem == null ?
+            AssetImage("images/perfil_placeholder.png")
+            : MemoryImage(imagem),
+        radius: widget.radius,
+      ),
+      onTap: (){
+        if(usuario != null && this.widget.clicavel){
+          if(usuario.tipo == TipoUsuario.instituicao){
+            Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => PerfilInstituicao(usuario))
+            );
+          } else {
+            Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => PerfilPessoa(usuario))
+            );
+          }
+        }
+      },
     );
   }
 

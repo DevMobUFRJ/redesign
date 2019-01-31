@@ -55,16 +55,16 @@ class _PerfilInstituicaoState extends State<PerfilInstituicao> {
             ehFavorito = true;
           });
           ocupado = false;
-        }).catchError((e) => print(e));
+        }).catchError((e){});
       } else {
         vazio.documents.first.reference.delete().then((v){
           setState(() {
             ehFavorito = false;
           });
           ocupado = false;
-        }).catchError((e) => print(e));
+        }).catchError((e){});
       }
-    }).catchError((e) => print(e));
+    }).catchError((e){});
   }
 
   @override
@@ -289,7 +289,10 @@ class _UsuariosListaState extends State<_UsuariosLista> {
         maxLines: 2,
         overflow: TextOverflow.clip,
       ),
-      leading: CircleAvatarAsync(usuario.reference.documentID),
+      leading: Hero(
+        tag: usuario.reference.documentID,
+        child: CircleAvatarAsync(usuario.reference.documentID, clicavel: true)
+      ),
       onTap: () =>
           Navigator.push(
             context,
