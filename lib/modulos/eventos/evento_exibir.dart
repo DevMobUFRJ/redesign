@@ -87,16 +87,16 @@ class _EventoExibir extends State<EventoForm> {
                     ehFavorito = true;
                   });
                   ocupado = false;
-                }).catchError((e) => print(e));
+                }).catchError((e){});
           } else {
             vazio.documents.first.reference.delete().then((v){
               setState(() {
                 ehFavorito = false;
               });
               ocupado = false;
-            }).catchError((e) => print(e));
+            }).catchError((e){});
           }
-    }).catchError((e) => print(e));
+    }).catchError((e){});
   }
 
   Widget _corpo() {

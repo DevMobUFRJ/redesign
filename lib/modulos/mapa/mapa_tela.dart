@@ -41,6 +41,7 @@ class _MapaTelaState extends State<MapaTela> {
       _getCurrentUser();
     } else {
       temUsuario = true;
+      posLogin();
     }
   }
 
@@ -77,12 +78,16 @@ class _MapaTelaState extends State<MapaTela> {
     setState((){
       temUsuario = true;
     });
-    MeuApp.startup();
-    getInstituicoesColocaMarcadores();
+    posLogin();
   }
 
   void erroEncontrarUsuario(e){
     MeuApp.logout(context);
+  }
+
+  void posLogin(){
+    getInstituicoesColocaMarcadores();
+    MeuApp.startup();
   }
 
   @override

@@ -45,6 +45,7 @@ class MeuApp {
   }
 
   static void startup(){
+    imagemMemory = null;
     atualizarImagem();
   }
 

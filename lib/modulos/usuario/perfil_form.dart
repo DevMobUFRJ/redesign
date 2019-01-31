@@ -88,8 +88,14 @@ class _UsuarioFormState extends State<_UsuarioForm> {
     image = ImageHelper.copyResize(image, 100, 100);
 
     setState(() {
-      imagemNova = ImageHelper.encodeJpg(image, quality: 90);
+      imagemNova = ImageHelper.encodeJpg(image, quality: 85);
     });
+
+    if(imagemNova.length > 38000){
+      showMessage("Erro: Imagem muito grande");
+      imagemNova = null;
+      return;
+    }
 
     //Upload the file to firebase
     StorageUploadTask uploadTask = reference.putData(imagemNova);
@@ -373,8 +379,14 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
     image = ImageHelper.copyResize(image, 100, 100);
 
     setState(() {
-      imagemNova = ImageHelper.encodeJpg(image, quality: 90);
+      imagemNova = ImageHelper.encodeJpg(image, quality: 85);
     });
+
+    if(imagemNova.length > 38000){
+      showMessage("Erro: Imagem muito grande");
+      imagemNova = null;
+      return;
+    }
 
     //Upload the file to firebase
     StorageUploadTask uploadTask = reference.putData(imagemNova);
