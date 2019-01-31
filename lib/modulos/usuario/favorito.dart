@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 /// Uma classe bem simples que salva a classe/tipo do item favoritado,
 /// e o ID dele do firebase. Devemos manter, então, uma List<Favorito> no
 /// usuário para salvar todos os favoritos dele, e em cada activity procurar

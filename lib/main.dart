@@ -9,7 +9,7 @@ import 'package:firebase_analytics/observer.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  FirebaseAnalytics analytics = FirebaseAnalytics();
+  final FirebaseAnalytics analytics = FirebaseAnalytics();
 
   @override
   Widget build(BuildContext context) {

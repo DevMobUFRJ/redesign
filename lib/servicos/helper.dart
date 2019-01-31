@@ -9,8 +9,8 @@ class Helper {
   ///
   /// Ex: Para laboratórios, retorna "Bolsista".
   /// Para Escolas, retorna "Aluno"
-  static String getOcupacaoSecundariaParaInstituicao(String ocupacao_instituicao){
-    switch(ocupacao_instituicao){
+  static String getOcupacaoSecundariaParaInstituicao(String ocupacaoInstituicao){
+    switch(ocupacaoInstituicao){
       case Ocupacao.incubadora:
         return "";
 
@@ -26,8 +26,8 @@ class Helper {
   }
 
   /// Retorna um titulo no plural para a instituicao.
-  static String getTituloOcupacaoSecundaria(String ocupacao_instituicao){
-    switch(ocupacao_instituicao){
+  static String getTituloOcupacaoSecundaria(String ocupacaoInstituicao){
+    switch(ocupacaoInstituicao){
       case Ocupacao.incubadora:
         return "";
 
@@ -47,8 +47,8 @@ class Helper {
   ///
   /// Ex: Para laboratórios, retorna "Professor".
   /// Para Escolas, retorna "Professor"
-  static String getOcupacaoPrimariaParaInstituicao(String ocupacao_instituicao){
-    switch(ocupacao_instituicao){
+  static String getOcupacaoPrimariaParaInstituicao(String ocupacaoInstituicao){
+    switch(ocupacaoInstituicao){
       case Ocupacao.incubadora:
         return Ocupacao.empreendedor;
 
@@ -62,8 +62,8 @@ class Helper {
   }
 
   /// Retorna um titulo no plural para a instituicao.
-  static String getTituloOcupacaoPrimaria(String ocupacao_instituicao){
-    switch(ocupacao_instituicao){
+  static String getTituloOcupacaoPrimaria(String ocupacaoInstituicao){
+    switch(ocupacaoInstituicao){
       case Ocupacao.incubadora:
         return "Empreendedores";
 

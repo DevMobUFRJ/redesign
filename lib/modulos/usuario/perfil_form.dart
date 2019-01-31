@@ -76,14 +76,14 @@ class _UsuarioFormState extends State<_UsuarioForm> {
 
   Future getImage() async {
     carregando(true, mensagem: "Enviando foto...");
-    File image_file = await ImagePicker.pickImage(source: ImageSource.gallery);
+    File imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
 
-    if(image_file == null){
+    if(imageFile == null){
       carregando(false);
       return;
     }
 
-    ImageHelper.Image image = ImageHelper.decodeImage(image_file.readAsBytesSync());
+    ImageHelper.Image image = ImageHelper.decodeImage(imageFile.readAsBytesSync());
 
     image = ImageHelper.copyResize(image, 100, 100);
 
@@ -157,15 +157,6 @@ class _UsuarioFormState extends State<_UsuarioForm> {
           ),
           TextFormField(
             decoration: const InputDecoration(
-              icon: const Icon(Icons.email),
-              labelText: 'Email (não editável)',
-            ),
-            inputFormatters: [LengthLimitingTextInputFormatter(500)],
-            initialValue: usuario.email,
-            enabled: false,
-          ),
-          TextFormField(
-            decoration: const InputDecoration(
               icon: const Icon(Icons.description,
                 color: Tema.primaryColor,
               ),
@@ -197,6 +188,15 @@ class _UsuarioFormState extends State<_UsuarioForm> {
                     });
                   },
                 ),
+          ),
+          TextFormField(
+            decoration: const InputDecoration(
+              icon: const Icon(Icons.email),
+              labelText: 'Email (não editável)',
+            ),
+            inputFormatters: [LengthLimitingTextInputFormatter(500)],
+            initialValue: usuario.email,
+            enabled: false,
           ),
           TextFormField(
             decoration: const InputDecoration(
@@ -361,14 +361,14 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
 
   Future getImage() async {
     carregando(true, mensagem: "Enviando foto...");
-    File image_file = await ImagePicker.pickImage(source: ImageSource.gallery);
+    File imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
 
-    if(image_file == null){
+    if(imageFile == null){
       carregando(false);
       return;
     }
 
-    ImageHelper.Image image = ImageHelper.decodeImage(image_file.readAsBytesSync());
+    ImageHelper.Image image = ImageHelper.decodeImage(imageFile.readAsBytesSync());
 
     image = ImageHelper.copyResize(image, 100, 100);
 
@@ -442,15 +442,6 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
           ),
           TextFormField(
             decoration: const InputDecoration(
-              icon: const Icon(Icons.email),
-              labelText: 'Email (não editável)',
-            ),
-            inputFormatters: [LengthLimitingTextInputFormatter(500)],
-            initialValue: instituicao.email,
-            enabled: false,
-          ),
-          TextFormField(
-            decoration: const InputDecoration(
               icon: const Icon(Icons.description,
                 color: Tema.primaryColor,
               ),
@@ -462,6 +453,15 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
             inputFormatters: [LengthLimitingTextInputFormatter(500)],
             initialValue: instituicao.descricao,
             onSaved: (val) => instituicao.descricao = val,
+          ),
+          TextFormField(
+            decoration: const InputDecoration(
+              icon: const Icon(Icons.email),
+              labelText: 'Email (não editável)',
+            ),
+            inputFormatters: [LengthLimitingTextInputFormatter(500)],
+            initialValue: instituicao.email,
+            enabled: false,
           ),
           TextFormField(
             decoration: const InputDecoration(

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:redesign/estilos/tema.dart';
 import 'package:redesign/modulos/usuario/usuario.dart';
-import 'package:redesign/servicos/meu_app.dart';
 import 'package:redesign/widgets/tela_base.dart';
 
 class AutorizacaoTela extends StatefulWidget {

@@ -25,7 +25,6 @@ class _MapaTelaState extends State<MapaTela> {
   GoogleMapController mapController;
   List<Marker> marcadores = [];
   List<Instituicao> instituicoes = [];
-  Marker _selectedMarker;
   bool mapaCarregou = false;
   bool temUsuario = false;
 
@@ -155,10 +154,6 @@ class _MapaTelaState extends State<MapaTela> {
         ),
       ));
     });
-  }
-
-  void _updateMarker(MarkerOptions changes) {
-    mapController.updateMarker(_selectedMarker, changes);
   }
 
   void _infoTapped(Marker marker){

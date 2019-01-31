@@ -29,7 +29,7 @@ class _PerfilPessoaState extends State<PerfilPessoa> {
       title: "Perfil",
       body: ListView(
         children: <Widget>[
-          Corpo()
+          _corpo()
         ],
       ),
       fab: usuario.reference.documentID != MeuApp.userId() && !MeuApp.ehEstudante() ?
@@ -45,7 +45,7 @@ class _PerfilPessoaState extends State<PerfilPessoa> {
     );
   }
 
-  Widget Corpo (){
+  Widget _corpo (){
     return Container(
       padding: EdgeInsets.only(top: 20),
       child: Column(
