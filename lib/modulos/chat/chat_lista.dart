@@ -130,7 +130,7 @@ class _TileContentState extends State<_TileContent> {
 
               if(msg.criadaPor != MeuApp.userId() && !msg.lida){
                 color = Tema.primaryColor;
-                weight = FontWeight.w600;
+                weight = FontWeight.w800;
               } else {
                 color = Colors.black45;
                 weight = FontWeight.w400;
@@ -142,51 +142,53 @@ class _TileContentState extends State<_TileContent> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      children: <Widget>[
-        Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  Expanded(
-                    //TODO ajustar pra cor mudar se tiver mensagem nova (6/1/19)
-                    child: NomeTextAsync(
-                      chat.idOutroUsuario(),
-                      TextStyle(
-                        color: color,
-                      ),
-                      prefixo: "",
-                    )
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 4, right: 10),
-                    child: Text(ultimaMsgHora,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: color,
-                        fontWeight: weight,
+    return Container(
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        children: <Widget>[
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: <Widget>[
+                    Expanded(
+                      child: NomeTextAsync(
+                        chat.idOutroUsuario(),
+                        TextStyle(
+                          color: color,
+                          fontWeight: weight,
+                        ),
+                        prefixo: "",
+                      )
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4, right: 10),
+                      child: Text(ultimaMsgHora,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: color,
+                          fontWeight: weight,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              Text(ultimaMsg,
-                style: TextStyle(
-                  color: color,
-                  fontSize: 14,
-                  fontWeight: weight,
+                  ],
                 ),
-              ),
-            ],
+                Text(ultimaMsg,
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 14,
+                    fontWeight: weight,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        Icon(Icons.arrow_forward_ios, size: 16, color: Colors.black54,),
-      ],
+          Icon(Icons.arrow_forward_ios, size: 16, color: Colors.black54,),
+        ],
+      ),
     );
   }
 }

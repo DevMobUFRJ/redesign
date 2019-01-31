@@ -18,16 +18,16 @@ class NomeTextAsync extends StatefulWidget {
   const NomeTextAsync(this.idUsuario, this.style, {this.prefixo = "por"});
 
   @override
-  _NomeTextState createState() => _NomeTextState(idUsuario, style, prefixo);
+  _NomeTextState createState() => _NomeTextState(idUsuario, prefixo);
 }
 
 class _NomeTextState extends State<NomeTextAsync> {
   final String usuario;
-  final TextStyle style;
+//  TextStyle style;
   final String prefixo;
   String nome = "";
 
-  _NomeTextState(this.usuario, this.style, this.prefixo){
+  _NomeTextState(this.usuario, this.prefixo){
     if(usuario != null && usuario.isNotEmpty){
       // Dentro do construtor pois se fosse no build seria repetido toda hora.
       DocumentReference ref = Firestore.instance.collection(
@@ -48,7 +48,7 @@ class _NomeTextState extends State<NomeTextAsync> {
       texto += nome;
     }
 
-    return Text(texto, style: style, overflow: TextOverflow.clip, maxLines: 1,);
+    return Text(texto, style: widget.style, overflow: TextOverflow.clip, maxLines: 1,);
   }
 
   atualizarNome(DocumentSnapshot user){
