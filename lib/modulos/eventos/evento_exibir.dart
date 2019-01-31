@@ -8,6 +8,7 @@ import 'package:redesign/servicos/meu_app.dart';
 import 'package:redesign/widgets/dados_asincronos.dart';
 import 'package:redesign/widgets/tela_base.dart';
 import 'package:redesign/estilos/tema.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class EventoForm extends StatefulWidget {
   final Evento evento;
@@ -63,15 +64,11 @@ class _EventoExibir extends State<EventoForm> {
   }
 
   void excluirEvento(context) {
-    evento.reference.delete().then(removido).catchError(naoRemovido);
+    evento.reference.delete().then(removido).catchError((e){});
   }
 
   void removido(dynamic d) {
     Navigator.pop(context);
-  }
-
-  void naoRemovido() {
-    //TODO Mostrar erro
   }
 
   bool ocupado = false;
@@ -180,7 +177,7 @@ class _EventoExibir extends State<EventoForm> {
                                 padding: EdgeInsets.only(right: 10),
                                 child: Icon(FbIcon.facebook_official, color: Tema.primaryColor, size: 28,),
                               ),
-                              onTap: (){}, //TODO Facebook
+                              onTap: () => _launchURL(evento.facebookUrl),
                             ),
                             GestureDetector(
                               child: Container(
@@ -271,5 +268,11 @@ class _EventoExibir extends State<EventoForm> {
 
     List<String> dayOfWeek = ["Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado","Domingo"];
     return dayOfWeek[day-1];
+  }
+
+  _launchURL(String url) async{
+    if (await canLaunch(url)) {
+      await launch(url);
+    }
   }
 }
