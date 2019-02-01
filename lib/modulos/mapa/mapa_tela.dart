@@ -306,11 +306,14 @@ class _FiltroState extends State<_FiltroDrawer>  {
                       onChanged: checkLabs,
                       activeColor: Tema.primaryColor,
                     ),
-                    Expanded(child: Text("Laboratórios",
-                      style: TextStyle(
-                        color: Colors.black54,
-                        fontSize: 16.0,
+                    Expanded(child: GestureDetector(
+                      child: Text("Laboratórios",
+                        style: TextStyle(
+                          color: Colors.black54,
+                          fontSize: 16.0,
+                        ),
                       ),
+                      onTap: alternarLabs,
                     )),
                   ],
                 ),
@@ -321,11 +324,14 @@ class _FiltroState extends State<_FiltroDrawer>  {
                       onChanged: checkEscolas,
                       activeColor: Tema.primaryColor,
                     ),
-                    Expanded(child: Text("Escolas",
-                      style: TextStyle(
-                        color: Colors.black54,
-                        fontSize: 16.0,
+                    Expanded(child: GestureDetector(
+                      child: Text("Escolas",
+                        style: TextStyle(
+                          color: Colors.black54,
+                          fontSize: 16.0,
+                        ),
                       ),
+                      onTap: alternarEscolas,
                     )),
                   ],
                 ),
@@ -336,11 +342,14 @@ class _FiltroState extends State<_FiltroDrawer>  {
                       onChanged: checkIncubadoras,
                       activeColor: Tema.primaryColor,
                     ),
-                    Expanded(child: Text("Incubadoras",
-                      style: TextStyle(
-                        color: Colors.black54,
-                        fontSize: 16.0,
+                    Expanded(child: GestureDetector(
+                      child: Text("Incubadoras",
+                        style: TextStyle(
+                          color: Colors.black54,
+                          fontSize: 16.0,
+                        ),
                       ),
+                      onTap: alternarIncubadoras,
                     )),
                   ],
                 ),
@@ -351,11 +360,14 @@ class _FiltroState extends State<_FiltroDrawer>  {
                       onChanged: checkEmpreendedores,
                       activeColor: Tema.primaryColor,
                     ),
-                    Expanded(child: Text("Empreendedores",
-                      style: TextStyle(
-                        color: Colors.black54,
-                        fontSize: 16.0,
+                    Expanded(child: GestureDetector(
+                      child: Text("Empreendedores",
+                        style: TextStyle(
+                          color: Colors.black54,
+                          fontSize: 16.0,
+                        ),
                       ),
+                      onTap: alternarEmpreendedores,
                     )),
                   ],
                 ),
@@ -374,9 +386,23 @@ class _FiltroState extends State<_FiltroDrawer>  {
     widget.parent.onFiltroMudou();
   }
 
+  alternarEmpreendedores(){
+    setState(() {
+      widget.parent.empreendedores = !widget.parent.empreendedores;
+    });
+    widget.parent.onFiltroMudou();
+  }
+
   checkLabs(bool novo){
     setState(() {
       widget.parent.laboratorios = novo;
+    });
+    widget.parent.onFiltroMudou();
+  }
+
+  alternarLabs(){
+    setState(() {
+      widget.parent.laboratorios = !widget.parent.laboratorios;
     });
     widget.parent.onFiltroMudou();
   }
@@ -388,6 +414,13 @@ class _FiltroState extends State<_FiltroDrawer>  {
     widget.parent.onFiltroMudou();
   }
 
+  alternarEscolas(){
+    setState(() {
+      widget.parent.escolas = !widget.parent.escolas;
+    });
+    widget.parent.onFiltroMudou();
+  }
+
   checkIncubadoras(bool novo){
     setState(() {
       widget.parent.incubadoras = novo;
@@ -395,4 +428,10 @@ class _FiltroState extends State<_FiltroDrawer>  {
     widget.parent.onFiltroMudou();
   }
 
+  alternarIncubadoras(){
+    setState(() {
+      widget.parent.incubadoras = !widget.parent.incubadoras;
+    });
+    widget.parent.onFiltroMudou();
+  }
 }
