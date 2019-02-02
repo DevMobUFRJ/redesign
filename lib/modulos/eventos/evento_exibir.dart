@@ -171,7 +171,7 @@ class _EventoExibir extends State<EventoForm> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           mainAxisSize: MainAxisSize.max,
                           children: <Widget>[
-                            GestureDetector(
+                            evento.facebookUrl.isEmpty ? Container() : GestureDetector(
                               child: Container(
                                 alignment: Alignment.bottomRight,
                                 padding: EdgeInsets.only(right: 10),
