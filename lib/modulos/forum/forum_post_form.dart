@@ -32,43 +32,57 @@ class ForumPostFormState extends State<ForumPostForm> {
   @override
   Widget build(BuildContext context) {
     return TelaBase(
-      title: "Nova Postagem",
+      title: "Novo Problema",
       body: Scaffold(
         key: _scaffoldKey,
         resizeToAvoidBottomPadding: false,
-        body: Form(
-          key: _formKey,
-          autovalidate: true,
-          child: ListView(
-            children: <Widget>[
-              TextFormField(
-                decoration: const InputDecoration(
-                  icon: const Icon(Icons.short_text),
-                  labelText: 'Título',
-                ),
-                validator: (val) => val.isEmpty ? 'Título é obrigatório' : null,
-                inputFormatters: [LengthLimitingTextInputFormatter(50)],
-                onSaved: (val) => post.titulo = val,
+        body: Stack(
+          alignment: Alignment.bottomCenter,
+          children: <Widget>[
+            Form(
+              key: _formKey,
+              autovalidate: true,
+              child: Column(
+                children: <Widget>[
+                  Expanded(
+                    child: ListView(
+                      children: <Widget>[
+                        TextFormField(
+                          decoration: const InputDecoration(
+                            icon: const Icon(Icons.short_text),
+                            labelText: 'Título',
+                          ),
+                          validator: (val) => val.isEmpty ? 'Título é obrigatório' : null,
+                          inputFormatters: [LengthLimitingTextInputFormatter(50)],
+                          onSaved: (val) => post.titulo = val,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 70.0),
+                          child: TextFormField(
+                            decoration: const InputDecoration(
+                              icon: const Icon(Icons.description),
+                              labelText: 'Descrição',
+                            ),
+                            keyboardType: TextInputType.multiline,
+                            maxLines: 4,
+                            validator: (val) => val.isEmpty ? 'Descrição é obrigatório' :
+                            val.length > 15 ? null : 'Descreva melhor seu problema',
+                            inputFormatters: [LengthLimitingTextInputFormatter(500)],
+                            onSaved: (val) => post.descricao = val,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
               ),
-              TextFormField(
-                decoration: const InputDecoration(
-                  icon: const Icon(Icons.description),
-                  labelText: 'Descrição',
-                ),
-                keyboardType: TextInputType.multiline,
-                maxLines: 4,
-                validator: (val) => val.isEmpty ? 'Descrição é obrigatório' :
-                val.length > 15 ? null : 'Descreva melhor seu problema',
-                inputFormatters: [LengthLimitingTextInputFormatter(500)],
-                onSaved: (val) => post.descricao = val,
-              ),
-              Container(
-                  padding: const EdgeInsets.only(top: 20.0),
-                  child: BotaoPadrao("Salvar", _submitForm,
-                      Tema.principal.primaryColor, Tema.cinzaClaro)
-              ),
-            ],
-          ),
+            ),
+            Container(
+              child: BotaoPadrao("Salvar", _submitForm,
+                Tema.principal.primaryColor, Tema.cinzaClaro
+              )
+            ),
+          ],
         ),
       ),
     );

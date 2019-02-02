@@ -35,39 +35,53 @@ class ForumComentarioFormState extends State<ForumComentarioForm> {
       body: Scaffold(
         key: _scaffoldKey,
         resizeToAvoidBottomPadding: false,
-        body: Form(
-          key: _formKey,
-          autovalidate: true,
-          child: ListView(
-            children: <Widget>[
-              TextFormField(
-                decoration: const InputDecoration(
-                  icon: const Icon(Icons.short_text),
-                  labelText: 'Título',
-                ),
-                validator: (val) => val.isEmpty ? 'Título é obrigatório' : null,
-                inputFormatters: [LengthLimitingTextInputFormatter(50)],
-                onSaved: (val) => comentario.titulo = val,
+        body: Stack(
+          alignment: Alignment.bottomCenter,
+          children: <Widget>[
+            Form(
+              key: _formKey,
+              autovalidate: true,
+              child: Column(
+                children: <Widget>[
+                  Expanded(
+                    child: ListView(
+                      children: <Widget>[
+                        TextFormField(
+                          decoration: const InputDecoration(
+                            icon: const Icon(Icons.short_text),
+                            labelText: 'Título',
+                          ),
+                          validator: (val) => val.isEmpty ? 'Título é obrigatório' : null,
+                          inputFormatters: [LengthLimitingTextInputFormatter(50)],
+                          onSaved: (val) => comentario.titulo = val,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 70.0),
+                          child: TextFormField(
+                            decoration: const InputDecoration(
+                              icon: const Icon(Icons.description),
+                              labelText: 'Solução',
+                            ),
+                            keyboardType: TextInputType.multiline,
+                            maxLines: 4,
+                            validator: (val) => val.isEmpty ? 'Descrição é obrigatório' :
+                              val.length > 15 ? null : 'Descreva melhor sua solução',
+                            inputFormatters: [LengthLimitingTextInputFormatter(500)],
+                            onSaved: (val) => comentario.descricao = val,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              TextFormField(
-                decoration: const InputDecoration(
-                  icon: const Icon(Icons.description),
-                  labelText: 'Solução',
-                ),
-                keyboardType: TextInputType.multiline,
-                maxLines: 4,
-                validator: (val) => val.isEmpty ? 'Descrição é obrigatório' :
-                  val.length > 15 ? null : 'Descreva melhor sua solução',
-                inputFormatters: [LengthLimitingTextInputFormatter(500)],
-                onSaved: (val) => comentario.descricao = val,
-              ),
-              Container(
-                  padding: const EdgeInsets.only(top: 20.0),
-                  child: BotaoPadrao("Enviar", _submitForm,
-                      Tema.principal.primaryColor, Tema.cinzaClaro)
-              ),
-            ],
-          ),
+            ),
+            Container(
+              padding: const EdgeInsets.only(top: 20.0),
+              child: BotaoPadrao("Enviar", _submitForm,
+                  Tema.principal.primaryColor, Tema.cinzaClaro)
+            ),
+          ],
         ),
       ),
     );

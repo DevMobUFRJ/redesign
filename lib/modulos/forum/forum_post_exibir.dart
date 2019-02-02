@@ -131,9 +131,13 @@ class _ListaComentariosState extends State<_ListaComentarios> {
                 style: TextStyle(color: Colors.white),
               ),
             )
-          ]..addAll(
-                  snapshot.map((data) => _buildListItem(context, data)).toList(),
-                )),
+          ]
+            ..addAll(
+              snapshot.map((data) => _buildListItem(context, data)).toList()
+            )
+            // Padding extra no final da lista
+            ..add(Container(padding: EdgeInsets.only(bottom: 60.0),))
+          ),
           Padding(
             padding: const EdgeInsets.only(left: 16, right: 16),
             child: BotaoPadrao("Contribuir", contribuir, Tema.principal.primaryColor,
@@ -192,7 +196,9 @@ class _ListaComentariosState extends State<_ListaComentarios> {
           children: <Widget>[
             Padding(
               padding: EdgeInsets.only(left: 15, right: 15),
-              child: Text(comentario.descricao),
+              child: Text(comentario.descricao,
+                textAlign: TextAlign.justify,
+              ),
             )
           ],
         ),
