@@ -7,7 +7,7 @@ class ItemListaSimples extends StatelessWidget {
   final String titulo;
   final String subtitulo;
   final VoidCallback callback;
-  final Icon iconeExtra;
+  final Widget iconeExtra;
   final Color corTexto;
   final VoidCallback onLongPress;
 

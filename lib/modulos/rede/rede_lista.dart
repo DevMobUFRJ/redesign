@@ -7,6 +7,7 @@ import 'package:redesign/modulos/usuario/instituicao.dart';
 import 'package:redesign/modulos/usuario/perfil_instituicao.dart';
 import 'package:redesign/modulos/usuario/perfil_pessoa.dart';
 import 'package:redesign/modulos/usuario/usuario.dart';
+import 'package:redesign/servicos/helper.dart';
 import 'package:redesign/servicos/meu_app.dart';
 import 'package:redesign/widgets/item_lista_simples.dart';
 import 'package:redesign/widgets/tela_base.dart';
@@ -245,11 +246,27 @@ class _FavoritoItemState extends State<_FavoritoItem> {
       return Container();
     }
 
+    Widget icone;
+    if(instituicao != null){
+      if(instituicao.email == Helper.emailLabdis){
+        icone = Image.asset("images/icones/ic_labdis.png", height: 35.0,);
+      } else if(instituicao.ocupacao == Ocupacao.laboratorio){
+        icone = Image.asset("images/icones/ic_laboratorio.png", height: 35.0,);
+      } else if(instituicao.ocupacao == Ocupacao.escola){
+        icone = Image.asset("images/icones/ic_escola.png", height: 35.0,);
+      } else if(instituicao.ocupacao == Ocupacao.incubadora){
+        icone = Image.asset("images/icones/ic_incubadora.png", height: 35.0,);
+      } else if(instituicao.ocupacao == Ocupacao.empreendedor){
+        icone = Image.asset("images/icones/ic_empreendedor.png", height: 35.0,);
+      }
+    }
+
     return ItemListaSimples(
       usuario != null ? usuario.nome : instituicao.nome,
       usuario != null ? () => callbackUsuario(context, usuario) :
           () => callbackInstituicao(context, instituicao),
-      corTexto: Tema.textoEscuro
+      corTexto: Tema.textoEscuro,
+      iconeExtra: icone,
     );
   }
 }
