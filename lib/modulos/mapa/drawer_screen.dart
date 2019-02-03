@@ -3,11 +3,13 @@ import 'package:redesign/estilos/tema.dart';
 import 'package:redesign/modulos/autorizacao/autorizacao.dart';
 import 'package:redesign/modulos/chat/chat_lista.dart';
 import 'package:redesign/modulos/forum/forum_tema_lista.dart';
+import 'package:redesign/modulos/mapa/mapa_estudante.dart';
 import 'package:redesign/modulos/material/material_lista.dart';
 import 'package:redesign/modulos/rede/rede_tela.dart';
 import 'package:redesign/modulos/eventos/eventos_lista.dart';
 import 'package:redesign/modulos/sobre/sobre_tela.dart';
 import 'package:redesign/modulos/usuario/perfil_form.dart';
+import 'package:redesign/modulos/usuario/usuario.dart';
 import 'package:redesign/servicos/meu_app.dart';
 
 class DrawerScreen extends StatefulWidget {
@@ -126,6 +128,17 @@ class DrawerScreenState extends State<DrawerScreen> {
             text: 'Mapa',
             onPressed: () {
               Navigator.pop(context);
+            }
+          ),
+          MeuApp.ocupacao() != Ocupacao.professor ? Container() : ListaDrawer(
+            icon: Icons.explore,
+            iconColor: Tema.primaryColor,
+            text: 'Mapa do Pegada',
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MapaEstudante())
+              );
             }
           ),
           ListaDrawer(
