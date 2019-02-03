@@ -97,6 +97,7 @@ class _LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<_LoginForm> {
 
+  bool bloqueado = false;
   TextEditingController emailController = TextEditingController();
   TextEditingController senhaController = TextEditingController();
 
@@ -171,10 +172,14 @@ class _LoginFormState extends State<_LoginForm> {
 
   /// Tenta logar o usuário pelo email e senha do formulário
   entrar() async{
+    if(bloqueado) return;
+
     if(emailController.text == null || emailController.text == "" || senhaController.text == null || senhaController.text == ""){
       emailController.text = "george@hotmail.com";
       senhaController.text = "123456";
     }
+
+    bloqueado = true;
 
     _logando(true);
     await _auth.signInWithEmailAndPassword(
@@ -184,6 +189,7 @@ class _LoginFormState extends State<_LoginForm> {
   }
 
   void authSucesso(FirebaseUser user){
+    print("autenticado");
     MeuApp.firebaseUser = user;
     Firestore.instance.collection(Usuario.collectionName).document(user.uid).get()
     .then(encontrouUsuario).catchError(erroEncontrarUsuario);
@@ -206,15 +212,18 @@ class _LoginFormState extends State<_LoginForm> {
         context,
         '/'
     );
+    bloqueado = false;
   }
 
   void erroUsuarioInativo(){
     _errorContaInativa();
+    bloqueado = false;
   }
   
   void erroEncontrarUsuario(e){
     _logando(false);
     _mostraErro();
+    bloqueado = false;
   }
 
   void esqueciSenha(){
