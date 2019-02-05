@@ -1,8 +1,11 @@
+import 'package:async/async.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:redesign/estilos/tema.dart';
+import 'package:redesign/modulos/chat/chat.dart';
+import 'package:redesign/modulos/chat/mensagem.dart';
 import 'package:redesign/modulos/mapa/drawer_screen.dart';
 import 'package:redesign/modulos/mapa/mapa_estudante.dart';
 import 'package:redesign/modulos/usuario/instituicao.dart';
@@ -27,6 +30,8 @@ class _MapaTelaState extends State<MapaTela> {
   List<Instituicao> instituicoes = [];
   bool mapaCarregou = false;
   bool temUsuario = false;
+  int mensagensNaoLidas = 1;
+  List<String> naoLidas = [];
 
   //Filtros
   bool laboratorios = true;
@@ -88,6 +93,7 @@ class _MapaTelaState extends State<MapaTela> {
   void posLogin(){
     getInstituicoesColocaMarcadores();
     MeuApp.startup();
+    contaMensagensNaoLidas();
   }
 
   @override
@@ -110,7 +116,7 @@ class _MapaTelaState extends State<MapaTela> {
     }
 
     return Scaffold(
-      drawer: DrawerScreen(),
+      drawer: DrawerScreen(mensagensNaoLidas: mensagensNaoLidas,),
       appBar: AppBar(
         title: Text("REDEsign"),
         backgroundColor: Theme
@@ -246,6 +252,41 @@ class _MapaTelaState extends State<MapaTela> {
         }
       }
     }
+  }
+
+  void contaMensagensNaoLidas(){
+    mensagensNaoLidas = 0;
+    getData().first.then((snaps) => snaps.forEach((query){
+        query.documents.forEach((doc){
+          doc.reference.collection(Mensagem.collectionName)
+              .where("lida", isEqualTo: false).snapshots()
+              .forEach((queryMsg){
+             if(queryMsg.documents.length < 0) return;
+
+             queryMsg.documents.forEach((msg){
+               if(msg.data['criadaPor'] != MeuApp.userId()){
+                 // Previne adição repetida
+                 if(naoLidas.contains(doc.reference.documentID)) return;
+                 naoLidas.add(doc.reference.documentID);
+                 setState(() {
+                   mensagensNaoLidas++;
+                 });
+                 print(msg.data);
+                 return;
+               }
+             });
+          });
+        });
+      })
+    );
+  }
+
+  Stream<List<QuerySnapshot>> getData() {
+    Stream stream1 = Firestore.instance.collection(Chat.collectionName)
+        .where('user1', isEqualTo: MeuApp.userId()).snapshots();
+    Stream stream2 = Firestore.instance.collection(Chat.collectionName)
+        .where('user2', isEqualTo: MeuApp.userId()).snapshots();
+    return StreamZip([stream1, stream2]);
   }
 }
 

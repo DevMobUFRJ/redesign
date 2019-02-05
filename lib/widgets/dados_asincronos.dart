@@ -36,7 +36,7 @@ class _NomeTextState extends State<NomeTextAsync> {
       DocumentReference ref = Firestore.instance.collection(
           Usuario.collectionName).document(usuario);
       try {
-        ref.get().then(atualizarNome);
+        ref.get().then(atualizarNome).catchError((e){});
       } catch (e) {}
     }
   }
@@ -84,7 +84,8 @@ class _CircleAvatarAsyncState extends State<CircleAvatarAsync> {
 
   @override
   void initState(){
-    if(imagem == null){
+    super.initState();
+    if(imagem == null && widget.idUsuario != null){
       if(widget.idUsuario == MeuApp.userId()){
         imagem = MeuApp.imagemMemory;
       } else {

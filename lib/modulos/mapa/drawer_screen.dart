@@ -13,11 +13,16 @@ import 'package:redesign/modulos/usuario/usuario.dart';
 import 'package:redesign/servicos/meu_app.dart';
 
 class DrawerScreen extends StatefulWidget {
+  final int mensagensNaoLidas;
+
+  DrawerScreen({this.mensagensNaoLidas=0});
+
   @override
   DrawerScreenState createState() => DrawerScreenState();
 }
 
 class DrawerScreenState extends State<DrawerScreen> {
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -71,9 +76,9 @@ class DrawerScreenState extends State<DrawerScreen> {
                           maxLines: 1,
                         ),
                         Container(
-                          padding: EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 0.0),
+                          padding: EdgeInsets.fromLTRB(0.0, 16.0, 0.0, 0.0),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget> [
                               RoundIconButton(
                                 icon: Icon(Icons.edit),
@@ -88,19 +93,18 @@ class DrawerScreenState extends State<DrawerScreen> {
                                 },
                               ),
                               MeuApp.ehEstudante() ? Container() :
-                              Expanded(
-                                child: RoundIconButton(
-                                  icon: Icon(Icons.chat_bubble),
-                                  iconColor: Colors.white,
-                                  circleColor: Color(0xff00838f),
-                                  size: 40.0,
-                                  onPressed:  () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => ChatLista())
-                                    );
-                                  }
-                                ),
+                              MessageIconButton(
+                                mensagensNaoLidas: widget.mensagensNaoLidas,
+                                icon: Icon(Icons.chat_bubble),
+                                iconColor: Colors.white,
+                                circleColor: Color(0xff00838f),
+                                size: 40.0,
+                                onPressed:  () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => ChatLista())
+                                  );
+                                }
                               ),
                               RoundIconButton(
                                 icon: Icon(Icons.exit_to_app),
@@ -291,6 +295,57 @@ class ListaDrawer extends StatelessWidget{
           color: Colors.black45),
       ),
       onTap: onPressed,
+    );
+  }
+}
+
+class MessageIconButton extends StatelessWidget {
+  final int mensagensNaoLidas;
+  final Icon icon;
+  final Color iconColor;
+  final Color circleColor;
+  final double size;
+  final VoidCallback onPressed;
+
+  MessageIconButton({
+    this.icon,
+    this.iconColor,
+    this.circleColor,
+    this.size,
+    this.onPressed,
+    @required this.mensagensNaoLidas,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.topRight,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: Container(
+            width: size,
+            height: size,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: circleColor,
+            ),
+            child: IconButton(
+              alignment: Alignment.center,
+              icon: icon,
+              color: iconColor,
+              onPressed: onPressed,
+            ),
+          ),
+        ),
+        mensagensNaoLidas == 0 ? Container() : CircleAvatar(
+          radius: 10,
+          backgroundColor: Colors.red,
+          child: Text(mensagensNaoLidas.toString(),
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      ],
     );
   }
 }
