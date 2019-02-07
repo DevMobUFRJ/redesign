@@ -6,6 +6,7 @@ class Chat {
 
   String user1;
   String user2;
+  DateTime ultimaMensagem;
 
   DocumentReference reference;
 
@@ -23,7 +24,9 @@ class Chat {
   }
 
   Chat.fromMap(Map<String, dynamic> data, {this.reference}) :
-        user1 = data['user1'], user2 = data['user2'];
+      user1 = data['user1'],
+      user2 = data['user2'],
+      ultimaMensagem = DateTime.tryParse(data['ultima_mensagem'] ?? DateTime.now().toIso8601String());
 
   String getIdReferencia(){
     if(user1.hashCode <= user2.hashCode){
@@ -44,7 +47,8 @@ class Chat {
   Map<String, dynamic> toJson() =>
       {
         'user1': user1,
-        'user2': user2
+        'user2': user2,
+        'ultima_mensagem': ultimaMensagem.toIso8601String(),
       };
 
 }

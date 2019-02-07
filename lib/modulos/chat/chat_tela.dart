@@ -146,6 +146,7 @@ class _ChatTelaState extends State<ChatTela> {
     }
     Mensagem novaMensagem = Mensagem(descricao: _controller.text, criadaPor: MeuApp.userId(), data: DateTime.now());
     _mensagensReference.add(novaMensagem.toJson());
+    _chat.reference.updateData({'ultima_mensagem': novaMensagem.data.toIso8601String()});
     _controller.text = "";
   }
 
