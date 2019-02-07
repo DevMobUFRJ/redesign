@@ -5,6 +5,7 @@ import 'package:redesign/estilos/tema.dart';
 import 'package:redesign/modulos/forum/forum_comentario.dart';
 import 'package:redesign/modulos/forum/forum_comentario_form.dart';
 import 'package:redesign/modulos/forum/forum_post.dart';
+import 'package:redesign/servicos/helper.dart';
 import 'package:redesign/widgets/botao_padrao.dart';
 import 'package:redesign/widgets/dados_asincronos.dart';
 import 'package:redesign/widgets/tela_base_forum_post.dart';
@@ -50,7 +51,7 @@ class ForumPostExibirState extends State<ForumPostExibir> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
                                   Text(
-                                    post.titulo + "iuasdhiuash iuahsdiu hasuidh",
+                                    post.titulo,
                                     style: TextStyle(
                                       color: Tema.primaryColorLighter,
                                       fontSize: 18,
@@ -152,6 +153,7 @@ class _ListaComentariosState extends State<_ListaComentarios> {
     ForumComentario comentario =
         ForumComentario.fromMap(data.data, reference: data.reference);
     return Column(
+      key: Key(data.documentID),
       children: <Widget>[
         ExpansionTile(
           title: Column(
@@ -194,7 +196,18 @@ class _ListaComentariosState extends State<_ListaComentarios> {
             ],
           ),
           children: <Widget>[
-            Padding(
+            Container(
+              alignment: Alignment.topLeft,
+              padding: EdgeInsets.only(left: 15, bottom: 5),
+              child: Text("Em " + Helper.convertToDMYString(comentario.data),
+                 style: TextStyle(
+                   fontSize: 11,
+                   color: Colors.black45,
+                 ),
+              ),
+            ),
+            Container(
+              alignment: Alignment.topLeft,
               padding: EdgeInsets.only(left: 15, right: 15),
               child: Text(comentario.descricao,
                 textAlign: TextAlign.justify,

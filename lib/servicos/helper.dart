@@ -78,7 +78,7 @@ class Helper {
 
   static String convertToDMYString(DateTime d){
     try{
-      return d.day.toString() + "/" + d.month.toString() + "/" + d.year.toString();
+      return (d.day < 10 ? "0" : "") + d.day.toString() + "/" + (d.month < 10 ? "0" : "") + d.month.toString() + "/" + d.year.toString();
     } catch (e) {
       return null;
     }

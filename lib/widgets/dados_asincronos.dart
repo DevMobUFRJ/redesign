@@ -119,6 +119,7 @@ class _CircleAvatarAsyncState extends State<CircleAvatarAsync> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      key: ValueKey(widget.idUsuario + "circleavatarasync"),
       child: CircleAvatar(
         backgroundImage: imagem == null ?
             AssetImage("images/perfil_placeholder.png")
