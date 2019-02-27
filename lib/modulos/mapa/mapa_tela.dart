@@ -140,7 +140,7 @@ class _MapaTelaState extends State<MapaTela> {
       ),
       endDrawer: MeuApp.ehEstudante() ? null : _FiltroDrawer(this),
       body: MeuApp.ehEstudante() ?
-        MapaEstudante() :
+        MapaEstudante(context) :
         GoogleMap(
           initialCameraPosition: CameraPosition(
             target: LatLng(-22.8544375, -43.2296038),

@@ -143,7 +143,7 @@ class ForumPostListaState extends State<ForumPostLista> {
 class _PostItem extends StatefulWidget {
   final ForumPost post;
 
-  _PostItem(this.post);
+  _PostItem(this.post) : super(key: Key(post.reference.documentID));
 
   @override
   _PostState createState() => _PostState(post);

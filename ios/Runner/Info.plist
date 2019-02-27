@@ -51,5 +51,7 @@
 	<string>Used to use a profile photo, if desired</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Used by the image picker library to select a profile image.</string>
+	<key>io.flutter.embedded_views_preview</key>
+	<string>YES</string>
 </dict>
 </plist>

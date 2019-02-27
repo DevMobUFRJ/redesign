@@ -215,7 +215,7 @@ class RedeListaState extends State<RedeLista> {
 class _FavoritoItem extends StatefulWidget {
   final String userId;
 
-  _FavoritoItem(this.userId);
+  _FavoritoItem(this.userId) : super(key: Key(userId));
 
   @override
   _FavoritoItemState createState() => _FavoritoItemState();

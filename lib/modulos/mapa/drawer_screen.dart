@@ -141,7 +141,7 @@ class DrawerScreenState extends State<DrawerScreen> {
             onPressed: () {
               Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MapaEstudante())
+                  MaterialPageRoute(builder: (context) => MapaEstudante(context))
               );
             }
           ),

@@ -1,0 +1,82 @@
+[
+  {
+    "tema": "Lixo",
+    "escola": "LabDIS",
+    "ano": "",
+    "turma": "",
+    "bottomRight":{"x":3390.0,"y":2774.0},
+    "uriString":"http://blog.lidis.ufrj.br",
+    "topLeft":{"x":1050.0,"y":1200.0}
+  },
+  {
+    "tema": "Energia",
+    "escola": "LabDIS",
+    "ano": "2009",
+    "turma": "",
+    "bottomRight":{"x":3305.0,"y":4170.0},
+    "uriString":"https://www.youtube.com/watch?v=7bAwh-6dqEE",
+    "topLeft":{"x":1050.0,"y":2800.0}
+  },
+  {
+    "tema": "Água",
+    "escola": "LabDIS",
+    "ano": "2011",
+    "turma": "",
+    "bottomRight":{"x":3595.0,"y":5900.0},
+    "uriString":"https://www.facebook.com/labdiseba/videos/212584375601166/",
+    "topLeft":{"x":1210.0,"y":4342.0}
+  },
+  {
+    "tema": "Consumo",
+    "escola": "LabDIS",
+    "ano": "2009",
+    "turma": "",
+    "bottomRight":{"x":4637.0,"y":2620.0},
+    "uriString":"https://www.youtube.com/watch?v=oOqDYT9MPfU",
+    "topLeft":{"x":3650.0,"y":1220.0}
+  },
+  {
+    "tema": "Consumo",
+    "escola": "EM Ten. General Napion",
+    "ano": "2011",
+    "turma": "903",
+    "bottomRight":{"x":5800.0,"y":2615.0},
+    "uriString":"https://www.youtube.com/watch?v=jnR46Kwwwio",
+    "topLeft":{"x":4640.0,"y":1200.0}
+  },
+  {
+    "tema": "Alimentação",
+    "escola": "EM Ten. General Napion",
+    "ano": "2011",
+    "turma": "1501",
+    "bottomRight":{"x":4721.0,"y":4060.0},
+    "uriString":"https://www.youtube.com/watch?v=WcYDHa3rmMs",
+    "topLeft":{"x":3560.0,"y":2790.0}
+  },
+  {
+    "tema": "Alimentação",
+    "escola": "CIEP João Mangabeira",
+    "ano": "",
+    "turma": "",
+    "bottomRight":{"x":5850.0,"y":4050.0},
+    "uriString":"http://blog.lidis.ufrj.br/",
+    "topLeft":{"x":4725.0,"y":2750.0}
+  },
+  {
+    "tema": "Transporte",
+    "escola": "LabDIS",
+    "ano": "2009",
+    "bottomRight":{"x":5980.0,"y":5760.0},
+    "uriString":"https://www.youtube.com/watch?v=Nkg5yWQEq6M",
+    "topLeft":{"x":3710.0,"y":4220.0}
+  },
+  {
+    "tema": "Consumo",
+    "escola": "Colégio Pedro II (Tijuca II)",
+    "ano": "2017",
+    "turma": "802",
+    "bottomRight":{"x":6550.0,"y":3680.0},
+    "uriString":"http://blog.lidis.ufrj.br/?p=1656",
+    "topLeft":{"x":5960.0,"y":1700.0}
+  }
+]
