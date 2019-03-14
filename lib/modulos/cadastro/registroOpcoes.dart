@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:redesign/modulos/cadastro/registroDados.dart';
-import 'package:redesign/widgets/botao_padrao.dart';
-import 'package:redesign/estilos/tema.dart';
-import 'package:redesign/modulos/usuario/usuario.dart';
+import 'package:redesign/widgets/standard_button.dart';
+import 'package:redesign/estilos/style.dart';
+import 'package:redesign/modulos/usuario/user.dart';
 
 class RegistroOpcoes extends StatelessWidget {
 
@@ -98,15 +98,15 @@ class _RegisterState extends State<_RegisterPage> {
         child: ListView(
           children: <Widget>[
             texto("Olá! para começar, informe sua origem."),
-            BotaoPadrao("Universidade", UniversidadeRegistro, Tema.buttonBlue,
-                Tema.cinzaClaro),
-            BotaoPadrao( "Escola", EscolaRegistro, Tema.buttonBlue,
-                Tema.cinzaClaro),
-            BotaoPadrao("Incubadora", IncubadoraRegistro, Tema.buttonBlue,
-                Tema.cinzaClaro),
-            BotaoPadrao("Outra",
-                () => cadastroDados(TipoUsuario.pessoa, Ocupacao.outra),
-                Tema.buttonGrey, Tema.cinzaClaro),
+            StandardButton("Universidade", UniversidadeRegistro, Style.buttonBlue,
+                Style.lightGrey),
+            StandardButton( "Escola", EscolaRegistro, Style.buttonBlue,
+                Style.lightGrey),
+            StandardButton("Incubadora", IncubadoraRegistro, Style.buttonBlue,
+                Style.lightGrey),
+            StandardButton("Outra",
+                () => cadastroDados(UserType.person, Occupation.outra),
+                Style.buttonGrey, Style.lightGrey),
           ],
         ),
       ),
@@ -120,11 +120,11 @@ class _RegisterState extends State<_RegisterPage> {
         child: ListView(
           children: <Widget>[
             texto("Você é ..."),
-            BotaoPadrao("Bolsista", () => cadastroDados(TipoUsuario.pessoa, Ocupacao.bolsista), Tema.buttonBlue, Tema.cinzaClaro),
-            BotaoPadrao("Professor(a)", () => cadastroDados(TipoUsuario.pessoa, Ocupacao.professor), Tema.buttonBlue, Tema.cinzaClaro),
-            BotaoPadrao("Estudante", () => cadastroDados(TipoUsuario.pessoa, Ocupacao.discente), Tema.buttonBlue, Tema.cinzaClaro),
-            BotaoPadrao("Laboratório", () => cadastroDados(TipoUsuario.instituicao, Ocupacao.laboratorio), Tema.buttonBlue, Tema.cinzaClaro),
-            BotaoPadrao("Outro(a)", () => cadastroDados(TipoUsuario.pessoa, Ocupacao.outra), Tema.buttonGrey, Tema.cinzaClaro),
+            StandardButton("Bolsista", () => cadastroDados(UserType.person, Occupation.bolsista), Style.buttonBlue, Style.lightGrey),
+            StandardButton("Professor(a)", () => cadastroDados(UserType.person, Occupation.professor), Style.buttonBlue, Style.lightGrey),
+            StandardButton("Estudante", () => cadastroDados(UserType.person, Occupation.discente), Style.buttonBlue, Style.lightGrey),
+            StandardButton("Laboratório", () => cadastroDados(UserType.institution, Occupation.laboratorio), Style.buttonBlue, Style.lightGrey),
+            StandardButton("Outro(a)", () => cadastroDados(UserType.person, Occupation.outra), Style.buttonGrey, Style.lightGrey),
           ],
         ),
       ),
@@ -137,9 +137,9 @@ class _RegisterState extends State<_RegisterPage> {
         child: ListView(
           children: <Widget>[
             texto("Você é ..."),
-            BotaoPadrao("Aluno(a)", () => cadastroDados(TipoUsuario.pessoa, Ocupacao.aluno), Tema.purple, Tema.cinzaClaro),
-            BotaoPadrao("Professor(a)", () => cadastroDados(TipoUsuario.pessoa, Ocupacao.professor), Tema.purple, Tema.cinzaClaro),
-            BotaoPadrao("Escola", () => cadastroDados(TipoUsuario.instituicao, Ocupacao.escola), Tema.purple, Tema.cinzaClaro),
+            StandardButton("Aluno(a)", () => cadastroDados(UserType.person, Occupation.aluno), Style.purple, Style.lightGrey),
+            StandardButton("Professor(a)", () => cadastroDados(UserType.person, Occupation.professor), Style.purple, Style.lightGrey),
+            StandardButton("Escola", () => cadastroDados(UserType.institution, Occupation.escola), Style.purple, Style.lightGrey),
           ],
         ),
       ),
@@ -152,15 +152,15 @@ class _RegisterState extends State<_RegisterPage> {
         child: ListView(
           children: <Widget>[
             texto("Você é ..."),
-            BotaoPadrao("Empreendedor(a)", () => cadastroDados(TipoUsuario.instituicao, Ocupacao.empreendedor), Tema.yellow, Tema.cinzaClaro),
-            BotaoPadrao("Incubadora", () => cadastroDados(TipoUsuario.instituicao, Ocupacao.incubadora), Tema.yellow, Tema.cinzaClaro),
+            StandardButton("Empreendedor(a)", () => cadastroDados(UserType.institution, Occupation.empreendedor), Style.yellow, Style.lightGrey),
+            StandardButton("Incubadora", () => cadastroDados(UserType.institution, Occupation.incubadora), Style.yellow, Style.lightGrey),
           ],
         ),
       ),
     );
   }
 
-  cadastroDados(TipoUsuario tipoUsuario , String ocupacao) {
+  cadastroDados(UserType tipoUsuario , String ocupacao) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => RegistroDados(tipo: tipoUsuario, ocupacao: ocupacao,)),

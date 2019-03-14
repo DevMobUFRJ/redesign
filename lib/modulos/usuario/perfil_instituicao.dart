@@ -2,20 +2,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:redesign/estilos/fb_icon_icons.dart';
-import 'package:redesign/estilos/tema.dart';
+import 'package:redesign/estilos/style.dart';
 import 'package:redesign/modulos/chat/chat_tela.dart';
-import 'package:redesign/modulos/usuario/favorito.dart';
-import 'package:redesign/modulos/usuario/instituicao.dart';
+import 'package:redesign/modulos/usuario/favorite.dart';
+import 'package:redesign/modulos/usuario/institution.dart';
 import 'package:redesign/modulos/usuario/perfil_pessoa.dart';
-import 'package:redesign/modulos/usuario/usuario.dart';
-import 'package:redesign/servicos/meu_app.dart';
+import 'package:redesign/modulos/usuario/user.dart';
+import 'package:redesign/services/my_app.dart';
 import 'package:redesign/widgets/dados_asincronos.dart';
-import 'package:redesign/widgets/tela_base.dart';
+import 'package:redesign/widgets/base_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:redesign/servicos/helper.dart';
+import 'package:redesign/services/helper.dart';
 
 class PerfilInstituicao extends StatefulWidget {
-  final Instituicao instituicao;
+  final Institution instituicao;
 
   PerfilInstituicao(this.instituicao);
 
@@ -24,11 +24,11 @@ class PerfilInstituicao extends StatefulWidget {
 }
 
 class _PerfilInstituicaoState extends State<PerfilInstituicao> {
-  final Instituicao instituicao;
+  final Institution instituicao;
   bool ehFavorito = false;
 
   _PerfilInstituicaoState(this.instituicao){
-    MeuApp.getReferenciaUsuario().collection(Favorito.collectionName)
+    MyApp.getUserReference().collection(Favorite.collectionName)
         .where("id", isEqualTo: instituicao.reference.documentID)
         .snapshots().first.then((QuerySnapshot favorito) {
       if (favorito.documents.length != 0) {
@@ -43,13 +43,13 @@ class _PerfilInstituicaoState extends State<PerfilInstituicao> {
   void alternaFavorito() {
     if(ocupado) return;
     ocupado = true;
-    MeuApp.getReferenciaUsuario().collection(Favorito.collectionName)
+    MyApp.getUserReference().collection(Favorite.collectionName)
         .where("id", isEqualTo: instituicao.reference.documentID)
         .snapshots().first.then((QuerySnapshot vazio){
       if(vazio.documents.length == 0) {
-        MeuApp.getReferenciaUsuario().collection(Favorito.collectionName)
-            .add((new Favorito(id: instituicao.reference.documentID,
-            classe: instituicao.runtimeType.toString()).toJson()))
+        MyApp.getUserReference().collection(Favorite.collectionName)
+            .add((new Favorite(id: instituicao.reference.documentID,
+            className: instituicao.runtimeType.toString()).toJson()))
             .then((v){
           setState(() {
             ehFavorito = true;
@@ -69,17 +69,17 @@ class _PerfilInstituicaoState extends State<PerfilInstituicao> {
 
   @override
   Widget build(BuildContext context) {
-    return TelaBase(
+    return BaseScreen(
       title: "Perfil",
       body: ListView(
         children: <Widget>[
           _corpo()
         ],
       ),
-      fab: instituicao.reference.documentID != MeuApp.userId() ?
+      fab: instituicao.reference.documentID != MyApp.userId() ?
       FloatingActionButton(
         child: Icon(Icons.chat_bubble),
-        backgroundColor: Tema.principal.primaryColor,
+        backgroundColor: Style.main.primaryColor,
         onPressed: () =>
             Navigator.push(
                 context,
@@ -105,11 +105,11 @@ class _PerfilInstituicaoState extends State<PerfilInstituicao> {
                   child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                     child: Text(
-                      instituicao.nome,
+                      instituicao.name,
                       textAlign: TextAlign.left,
                       style: TextStyle(
                         fontSize: 20,
-                        color: Tema.primaryColor,
+                        color: Style.primaryColor,
                         fontWeight: FontWeight.w500
                       ),
                       maxLines: 2,
@@ -120,17 +120,17 @@ class _PerfilInstituicaoState extends State<PerfilInstituicao> {
                   child: Icon(
                     Icons.directions, size: 28,
                     color: instituicao.lat == 0 || instituicao.lng == 0 ?
-                      Colors.black26 : Tema.primaryColor,
+                      Colors.black26 : Style.primaryColor,
                   ),
                   onTap: () async {
                     if(instituicao.lat == 0 || instituicao.lng == 0) return;
 
                     String urlAndroid = "geo:0,0?q=" +
-                        Uri.encodeQueryComponent(instituicao.endereco
-                            + " - " + instituicao.cidade);
+                        Uri.encodeQueryComponent(instituicao.address
+                            + " - " + instituicao.city);
                     String urlios = "http://maps.apple.com/?address=" +
-                        Uri.encodeFull(instituicao.endereco
-                            + " - " + instituicao.cidade);
+                        Uri.encodeFull(instituicao.address
+                            + " - " + instituicao.city);
                     if(await canLaunch(urlAndroid)){
                       launch(urlAndroid);
                     } else if(await canLaunch(urlios)){
@@ -140,8 +140,8 @@ class _PerfilInstituicaoState extends State<PerfilInstituicao> {
                 ),
                 IconButton(
                   icon: ehFavorito ?
-                    Icon(Icons.star, color: Tema.primaryColor,)
-                    : Icon(Icons.star_border, color: Tema.primaryColor,),
+                    Icon(Icons.star, color: Style.primaryColor,)
+                    : Icon(Icons.star_border, color: Style.primaryColor,),
                   iconSize: 28,
                   onPressed: () => alternaFavorito(),
                 ),
@@ -177,11 +177,11 @@ class _PerfilInstituicaoState extends State<PerfilInstituicao> {
             ),
           ),
           // Se o método retornar "", então esconde um divider e esconde a lista secundária
-          Helper.getTituloOcupacaoSecundaria(instituicao.ocupacao) == "" ? Container() :
+          Helper.getSecondaryOccupationTitle(instituicao.occupation) == "" ? Container() :
           Padding(padding: EdgeInsets.only(top:15),child: Divider(color: Colors.black54,),),
-          Helper.getTituloOcupacaoSecundaria(instituicao.ocupacao) == "" ? Container() :
+          Helper.getSecondaryOccupationTitle(instituicao.occupation) == "" ? Container() :
           ExpansionTile(
-            title: Text(Helper.getTituloOcupacaoSecundaria(instituicao.ocupacao),
+            title: Text(Helper.getSecondaryOccupationTitle(instituicao.occupation),
               style: TextStyle(
                   color: Colors.black87,
                   fontSize: 22
@@ -189,12 +189,12 @@ class _PerfilInstituicaoState extends State<PerfilInstituicao> {
               ,),
             children: <Widget>[
               Divider(color: Colors.black54,),
-              _UsuariosLista(Helper.getOcupacaoSecundariaParaInstituicao(instituicao.ocupacao), instituicao.reference.documentID),
+              _UsuariosLista(Helper.getSecondaryOccupationToInstitution(instituicao.occupation), instituicao.reference.documentID),
             ],
           ),
           Divider(color: Colors.black54,),
           ExpansionTile(
-            title: Text(Helper.getTituloOcupacaoPrimaria(instituicao.ocupacao),
+            title: Text(Helper.getPrimaryOccupationTitle(instituicao.occupation),
               style: TextStyle(
                   color: Colors.black87,
                   fontSize: 22
@@ -202,7 +202,7 @@ class _PerfilInstituicaoState extends State<PerfilInstituicao> {
               ,),
             children: <Widget>[
               Divider(color: Colors.black54,),
-              _UsuariosLista(Helper.getOcupacaoPrimariaParaInstituicao(instituicao.ocupacao), instituicao.reference.documentID),
+              _UsuariosLista(Helper.getOcupacaoPrimariaParaInstituicao(instituicao.occupation), instituicao.reference.documentID),
             ],
           ),
           Divider(color: Colors.black54,),
@@ -215,7 +215,7 @@ class _PerfilInstituicaoState extends State<PerfilInstituicao> {
     return Row(
       children: <Widget>[
         Container(
-          child: Icon(icon, color: Tema.buttonBlue,),
+          child: Icon(icon, color: Style.buttonBlue,),
         ),
         Container(
           padding: EdgeInsets.only(left: 15),
@@ -257,7 +257,7 @@ class _UsuariosListaState extends State<_UsuariosLista> {
 
   Widget _buildBody(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance.collection(Usuario.collectionName)
+      stream: Firestore.instance.collection(User.collectionName)
           .where("ocupacao", isEqualTo: ocupacao)
           .where("instituicaoId", isEqualTo: instituicaoId)
           .snapshots(),
@@ -276,12 +276,12 @@ class _UsuariosListaState extends State<_UsuariosLista> {
   }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
-    final Usuario usuario = Usuario.fromMap(data.data, reference: data.reference);
+    final User usuario = User.fromMap(data.data, reference: data.reference);
 
     return ListTile(
       key: ValueKey(data.reference.documentID),
       title: Text(
-        usuario.nome,
+        usuario.name,
         style: TextStyle(
           color: Colors.black87,
           fontSize: 16,

@@ -1,31 +1,31 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:redesign/modulos/usuario/instituicao.dart';
-import 'package:redesign/servicos/meu_app.dart';
-import 'package:redesign/servicos/validadores.dart';
-import 'package:redesign/widgets/botao_padrao.dart';
-import 'package:redesign/modulos/usuario/usuario.dart';
-import 'package:redesign/estilos/tema.dart';
+import 'package:redesign/modulos/usuario/institution.dart';
+import 'package:redesign/services/my_app.dart';
+import 'package:redesign/services/validators.dart';
+import 'package:redesign/widgets/standard_button.dart';
+import 'package:redesign/modulos/usuario/user.dart';
+import 'package:redesign/estilos/style.dart';
 
-Usuario _usuario;
+User _usuario;
 FirebaseAuth _auth = FirebaseAuth.instance;
 GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 class RegistroDados extends StatelessWidget {
 
   String ocupacao ;
-  TipoUsuario tipo;
+  UserType tipo;
 
   RegistroDados({ this.ocupacao, this.tipo }){
     if(_usuario == null) {
-      if (tipo == TipoUsuario.pessoa) {
-        _usuario = Usuario();
+      if (tipo == UserType.person) {
+        _usuario = User();
       } else {
-        _usuario = Instituicao();
+        _usuario = Institution();
       }
-      _usuario.ocupacao = ocupacao;
-      _usuario.tipo = tipo;
+      _usuario.occupation = ocupacao;
+      _usuario.type = tipo;
     }
   }
 
@@ -83,10 +83,10 @@ class _RegisterFormState extends State<_RegisterForm> {
               padding: EdgeInsets.only(bottom: 10),
               child: TextField(
                 style: TextStyle(
-                    decorationColor: Tema.cinzaClaro,
+                    decorationColor: Style.lightGrey,
                     color: Colors.white
                 ),
-                cursorColor: Tema.buttonBlue,
+                cursorColor: Style.buttonBlue,
                 decoration: InputDecoration(
                   labelText: 'Nome',
                   labelStyle: TextStyle(color: Colors.white54),
@@ -102,7 +102,7 @@ class _RegisterFormState extends State<_RegisterForm> {
             padding: EdgeInsets.only(bottom: 10),
             child: TextFormField(
               style: TextStyle(
-                decorationColor: Tema.cinzaClaro,
+                decorationColor: Style.lightGrey,
                 color: Colors.white
               ),
               decoration: InputDecoration(
@@ -116,14 +116,14 @@ class _RegisterFormState extends State<_RegisterForm> {
               ),
               controller: _emailController,
               autovalidate: true,
-              validator: (val) => Validadores.email(val) ? null : 'Email inválido',
+              validator: (val) => Validators.email(val) ? null : 'Email inválido',
             )
           ),
             Padding(
                 padding: EdgeInsets.only(bottom: 10),
-                child: BotaoPadrao(
-                    "Próximo", mostrarSenha, Tema.principal.primaryColor,
-                    Tema.cinzaClaro)
+                child: StandardButton(
+                    "Próximo", mostrarSenha, Style.main.primaryColor,
+                    Style.lightGrey)
             ),
           ],
         )
@@ -132,9 +132,9 @@ class _RegisterFormState extends State<_RegisterForm> {
 
   mostrarSenha() {
     setState(() {
-      if(_nomeController.text.isNotEmpty && _emailController.text.isNotEmpty && Validadores.email(_emailController.text)){
+      if(_nomeController.text.isNotEmpty && _emailController.text.isNotEmpty && Validators.email(_emailController.text)){
         _usuario.email = _emailController.text.trim();
-        _usuario.nome = _nomeController.text.trim();
+        _usuario.name = _nomeController.text.trim();
         registroSenha = true;
       } else {
         mostrarMensagem("Preencha todos os campos");
@@ -164,7 +164,7 @@ class _SenhaFormState extends State<_SenhaForm> {
               padding: EdgeInsets.only(bottom: 10),
               child: TextFormField(
                 style: TextStyle(
-                  decorationColor: Tema.cinzaClaro,
+                  decorationColor: Style.lightGrey,
                   color: Colors.white
                 ),
                 decoration: InputDecoration(
@@ -187,7 +187,7 @@ class _SenhaFormState extends State<_SenhaForm> {
                 child: TextFormField(
 
                   style: TextStyle(
-                      decorationColor: Tema.cinzaClaro,
+                      decorationColor: Style.lightGrey,
                       color: Colors.white
                   ),
                   decoration: InputDecoration(
@@ -207,8 +207,8 @@ class _SenhaFormState extends State<_SenhaForm> {
             ),
             Padding(
               padding: EdgeInsets.only(top: 10),
-              child: BotaoPadrao("Confirmar", criaUsuario,
-                  Tema.principal.primaryColor, Tema.cinzaClaro),
+              child: StandardButton("Confirmar", criaUsuario,
+                  Style.main.primaryColor, Style.lightGrey),
             ),
           ],
         )
@@ -233,11 +233,11 @@ class _SenhaFormState extends State<_SenhaForm> {
   }
 
   adicionaBanco(FirebaseUser user){
-    Firestore.instance.collection(Usuario.collectionName).document(user.uid)
+    Firestore.instance.collection(User.collectionName).document(user.uid)
         .setData(_usuario.toJson())
         .then(sucessoCadastro).catchError(erroCadastro) ;
-    MeuApp.firebaseUser = user;
-    _usuario.reference = Firestore.instance.collection(Usuario.collectionName).document(user.uid);
+    MyApp.firebaseUser = user;
+    _usuario.reference = Firestore.instance.collection(User.collectionName).document(user.uid);
   }
 
   sucessoCadastro(dynamic) {

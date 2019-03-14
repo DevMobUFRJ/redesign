@@ -1,16 +1,16 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:redesign/estilos/fb_icon_icons.dart';
-import 'package:redesign/estilos/tema.dart';
+import 'package:redesign/estilos/style.dart';
 import 'package:redesign/modulos/chat/chat_tela.dart';
-import 'package:redesign/modulos/usuario/usuario.dart';
-import 'package:redesign/servicos/meu_app.dart';
+import 'package:redesign/modulos/usuario/user.dart';
+import 'package:redesign/services/my_app.dart';
 import 'package:redesign/widgets/dados_asincronos.dart';
-import 'package:redesign/widgets/tela_base.dart';
+import 'package:redesign/widgets/base_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PerfilPessoa extends StatefulWidget {
-  final Usuario usuario;
+  final User usuario;
 
   PerfilPessoa(this.usuario);
 
@@ -19,23 +19,23 @@ class PerfilPessoa extends StatefulWidget {
 }
 
 class _PerfilPessoaState extends State<PerfilPessoa> {
-  final Usuario usuario;
+  final User usuario;
 
   _PerfilPessoaState(this.usuario);
 
   @override
   Widget build(BuildContext context) {
-    return TelaBase(
+    return BaseScreen(
       title: "Perfil",
       body: ListView(
         children: <Widget>[
           _corpo()
         ],
       ),
-      fab: usuario.reference.documentID != MeuApp.userId() && !MeuApp.ehEstudante() ?
+      fab: usuario.reference.documentID != MyApp.userId() && !MyApp.isStudent() ?
       FloatingActionButton(
         child: Icon(Icons.chat_bubble),
-        backgroundColor: Tema.principal.primaryColor,
+        backgroundColor: Style.main.primaryColor,
         onPressed: () =>
           Navigator.push(
             context,
@@ -66,7 +66,7 @@ class _PerfilPessoaState extends State<PerfilPessoa> {
                       Padding(
                         padding: EdgeInsets.only(top: 10),
                         child: Text(
-                          usuario.nome,
+                          usuario.name,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 18,
@@ -76,7 +76,7 @@ class _PerfilPessoaState extends State<PerfilPessoa> {
                         ),
                       ),
                       Padding(padding: EdgeInsets.only(top: 5),
-                        child: Text(usuario.ocupacao,style: TextStyle(fontSize: 15),),
+                        child: Text(usuario.occupation,style: TextStyle(fontSize: 15),),
                       )
                     ],
                   ),
@@ -84,7 +84,7 @@ class _PerfilPessoaState extends State<PerfilPessoa> {
                 Container(
                   padding: EdgeInsets.only(top:  15,left: 15,right: 15),
                   child: Text(
-                    usuario.descricao.isEmpty ?  "Nenhuma descrição" : usuario.descricao,
+                    usuario.description.isEmpty ?  "Nenhuma descrição" : usuario.description,
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Colors.black54, fontSize: 15),
                   ),
@@ -130,7 +130,7 @@ class _PerfilPessoaState extends State<PerfilPessoa> {
     return Row(
         children: <Widget>[
           Container(
-            child: Icon(icon, color: Tema.buttonBlue,),
+            child: Icon(icon, color: Style.buttonBlue,),
           ),
           Container(
             padding: EdgeInsets.only(left: 15),

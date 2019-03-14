@@ -1,4 +1,4 @@
-import 'package:redesign/modulos/usuario/usuario.dart';
+import 'package:redesign/modulos/usuario/user.dart';
 
 class Helper {
 
@@ -9,32 +9,32 @@ class Helper {
   ///
   /// Ex: Para laboratórios, retorna "Bolsista".
   /// Para Escolas, retorna "Aluno"
-  static String getOcupacaoSecundariaParaInstituicao(String ocupacaoInstituicao){
-    switch(ocupacaoInstituicao){
-      case Ocupacao.incubadora:
+  static String getSecondaryOccupationToInstitution(String institutionOccupation){
+    switch(institutionOccupation){
+      case Occupation.incubadora:
         return "";
 
-      case Ocupacao.laboratorio:
-        return Ocupacao.bolsista;
+      case Occupation.laboratorio:
+        return Occupation.bolsista;
 
-      case Ocupacao.escola:
-        return Ocupacao.aluno;
+      case Occupation.escola:
+        return Occupation.aluno;
 
       default:
-        return Ocupacao.bolsista;
+        return Occupation.bolsista;
     }
   }
 
   /// Retorna um titulo no plural para a instituicao.
-  static String getTituloOcupacaoSecundaria(String ocupacaoInstituicao){
-    switch(ocupacaoInstituicao){
-      case Ocupacao.incubadora:
+  static String getSecondaryOccupationTitle(String institutionOccupation){
+    switch(institutionOccupation){
+      case Occupation.incubadora:
         return "";
 
-      case Ocupacao.laboratorio:
+      case Occupation.laboratorio:
         return "Bolsistas";
 
-      case Ocupacao.escola:
+      case Occupation.escola:
         return "Alunos";
 
       default:
@@ -49,26 +49,26 @@ class Helper {
   /// Para Escolas, retorna "Professor"
   static String getOcupacaoPrimariaParaInstituicao(String ocupacaoInstituicao){
     switch(ocupacaoInstituicao){
-      case Ocupacao.incubadora:
-        return Ocupacao.empreendedor;
+      case Occupation.incubadora:
+        return Occupation.empreendedor;
 
-      case Ocupacao.laboratorio:
-      case Ocupacao.escola:
-        return Ocupacao.professor;
+      case Occupation.laboratorio:
+      case Occupation.escola:
+        return Occupation.professor;
 
       default:
-        return Ocupacao.professor;
+        return Occupation.professor;
     }
   }
 
   /// Retorna um titulo no plural para a instituicao.
-  static String getTituloOcupacaoPrimaria(String ocupacaoInstituicao){
-    switch(ocupacaoInstituicao){
-      case Ocupacao.incubadora:
+  static String getPrimaryOccupationTitle(String institutionOccupation){
+    switch(institutionOccupation){
+      case Occupation.incubadora:
         return "Empreendedores";
 
-      case Ocupacao.laboratorio:
-      case Ocupacao.escola:
+      case Occupation.laboratorio:
+      case Occupation.escola:
         return "Professores";
 
       default:

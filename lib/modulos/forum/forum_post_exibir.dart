@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:redesign/estilos/tema.dart';
+import 'package:redesign/estilos/style.dart';
 import 'package:redesign/modulos/forum/forum_comentario.dart';
 import 'package:redesign/modulos/forum/forum_comentario_form.dart';
 import 'package:redesign/modulos/forum/forum_post.dart';
-import 'package:redesign/servicos/helper.dart';
-import 'package:redesign/widgets/botao_padrao.dart';
+import 'package:redesign/services/helper.dart';
+import 'package:redesign/widgets/standard_button.dart';
 import 'package:redesign/widgets/dados_asincronos.dart';
 import 'package:redesign/widgets/tela_base_forum_post.dart';
 
@@ -31,7 +31,7 @@ class ForumPostExibirState extends State<ForumPostExibir> {
       body: Column(
         children: <Widget>[
           Container(
-            color: Tema.darkBackground,
+            color: Style.darkBackground,
             padding: EdgeInsets.only(top: 8, bottom: 8, left: 16, right: 10),
             child: Column(
               children: <Widget>[
@@ -53,7 +53,7 @@ class ForumPostExibirState extends State<ForumPostExibir> {
                                   Text(
                                     post.titulo,
                                     style: TextStyle(
-                                      color: Tema.primaryColorLighter,
+                                      color: Style.primaryColorLighter,
                                       fontSize: 18,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -126,7 +126,7 @@ class _ListaComentariosState extends State<_ListaComentarios> {
               children: <Widget>[
             Container(
               padding: EdgeInsets.only(left: 16, right: 16, bottom: 8),
-              color: Tema.darkBackground,
+              color: Style.darkBackground,
               child: Text(
                 post.descricao,
                 style: TextStyle(color: Colors.white),
@@ -141,7 +141,7 @@ class _ListaComentariosState extends State<_ListaComentarios> {
           ),
           Padding(
             padding: const EdgeInsets.only(left: 16, right: 16),
-            child: BotaoPadrao("Contribuir", contribuir, Tema.principal.primaryColor,
+            child: StandardButton("Contribuir", contribuir, Style.main.primaryColor,
                 Colors.white),
           ),
         ],
@@ -177,7 +177,7 @@ class _ListaComentariosState extends State<_ListaComentarios> {
                                       comentario.titulo,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
-                                          color: Tema.buttonBlue, fontSize: 18),
+                                          color: Style.buttonBlue, fontSize: 18),
                                     ),
                                     NomeTextAsync(
                                       post.criadoPor,

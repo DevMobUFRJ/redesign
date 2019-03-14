@@ -2,12 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:redesign/estilos/tema.dart';
+import 'package:redesign/estilos/style.dart';
 import 'package:redesign/modulos/forum/forum_post.dart';
 import 'package:redesign/modulos/forum/forum_tema.dart';
-import 'package:redesign/servicos/meu_app.dart';
-import 'package:redesign/widgets/botao_padrao.dart';
-import 'package:redesign/widgets/tela_base.dart';
+import 'package:redesign/services/my_app.dart';
+import 'package:redesign/widgets/standard_button.dart';
+import 'package:redesign/widgets/base_screen.dart';
 
 class ForumPostForm extends StatefulWidget {
   final ForumTema tema;
@@ -31,7 +31,7 @@ class ForumPostFormState extends State<ForumPostForm> {
 
   @override
   Widget build(BuildContext context) {
-    return TelaBase(
+    return BaseScreen(
       title: "Novo Problema",
       body: Scaffold(
         key: _scaffoldKey,
@@ -78,8 +78,8 @@ class ForumPostFormState extends State<ForumPostForm> {
               ),
             ),
             Container(
-              child: BotaoPadrao("Salvar", _submitForm,
-                Tema.principal.primaryColor, Tema.cinzaClaro
+              child: StandardButton("Salvar", _submitForm,
+                Style.main.primaryColor, Style.lightGrey
               )
             ),
           ],
@@ -98,7 +98,7 @@ class ForumPostFormState extends State<ForumPostForm> {
       showMessage('Por favor, complete todos os campos.');
     } else {
       form.save(); //Executa cada evento "onSaved" dos campos do formulário
-      post.criadoPor = MeuApp.userId();
+      post.criadoPor = MyApp.userId();
       post.temaId = tema.reference.documentID;
       post.data = DateTime.now();
       savePost(post);

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:redesign/estilos/tema.dart';
+import 'package:redesign/estilos/style.dart';
 import 'package:redesign/modulos/eventos/evento.dart';
 import 'package:redesign/modulos/eventos/evento_exibir.dart';
 import 'package:redesign/modulos/eventos/evento_form.dart';
-import 'package:redesign/modulos/usuario/favorito.dart';
-import 'package:redesign/servicos/meu_app.dart';
-import 'package:redesign/widgets/tela_base.dart';
+import 'package:redesign/modulos/usuario/favorite.dart';
+import 'package:redesign/services/my_app.dart';
+import 'package:redesign/widgets/base_screen.dart';
 import 'package:redesign/widgets/dados_asincronos.dart';
 
 class EventosTela extends StatelessWidget {
@@ -25,15 +25,15 @@ class _EventosListaState extends State<EventosLista> {
   bool buscando = false;
   TextEditingController _buscaController = TextEditingController();
   String busca = "";
-  List<Favorito> favoritos;
+  List<Favorite> favoritos;
 
   _EventosListaState(){
-    MeuApp.getReferenciaUsuario().collection(Favorito.collectionName)
+    MyApp.getUserReference().collection(Favorite.collectionName)
         .where('classe', isEqualTo: 'Evento').snapshots()
         .listen((QuerySnapshot query){
-          List<Favorito> novosFavoritos = [];
+          List<Favorite> novosFavoritos = [];
           for(DocumentSnapshot d in query.documents){
-            novosFavoritos.add(new Favorito.fromMap(d.data));
+            novosFavoritos.add(new Favorite.fromMap(d.data));
           }
           setState(() {
             favoritos = novosFavoritos;
@@ -43,10 +43,10 @@ class _EventosListaState extends State<EventosLista> {
 
   @override
   Widget build(BuildContext context) {
-    return TelaBase(
+    return BaseScreen(
         title: 'Eventos',
         body: _buildBody(context),
-        fab: MeuApp.ehEstudante() ? null :
+        fab: MyApp.isStudent() ? null :
           FloatingActionButton(
           onPressed: () => Navigator.push(
               context,
@@ -55,7 +55,7 @@ class _EventosListaState extends State<EventosLista> {
               ),
             ),
             child: Icon(Icons.add),
-            backgroundColor: Tema.principal.primaryColor,
+            backgroundColor: Style.main.primaryColor,
         ),
         actions: <IconButton>[
           IconButton(
@@ -126,10 +126,10 @@ class _EventosListaState extends State<EventosLista> {
                           child: TextField(
                             onChanged: textoBuscaMudou,
                             controller: _buscaController,
-                            cursorColor: Tema.cinzaClaro,
+                            cursorColor: Style.lightGrey,
                             decoration: InputDecoration(
                                 hintText: "Buscar",
-                                prefixIcon: Icon(Icons.search, color: Tema.primaryColor)
+                                prefixIcon: Icon(Icons.search, color: Style.primaryColor)
                             ),
                           ),
                         ),
@@ -175,7 +175,7 @@ class _EventosListaState extends State<EventosLista> {
                         Text(
                           record.data.day.toString(),
                           style: TextStyle(
-                            color: Tema.buttonBlue,
+                            color: Style.buttonBlue,
                             fontSize: 40,
                             fontWeight: FontWeight.w700,
                           ),
@@ -183,7 +183,7 @@ class _EventosListaState extends State<EventosLista> {
                         Text(
                           initialsMonth(record.data.month),
                           style: TextStyle(
-                            color: Tema.buttonBlue,
+                            color: Style.buttonBlue,
                             fontSize: 20,
                             fontWeight: FontWeight.w700,
                           ),
@@ -194,7 +194,7 @@ class _EventosListaState extends State<EventosLista> {
                   Container(
                     height: 70.0,
                     width: 1.0,
-                    color: Tema.buttonBlue,
+                    color: Style.buttonBlue,
                     margin: const EdgeInsets.only(left: 10.0, right: 10.0),
                   ),
                   Expanded(
@@ -227,7 +227,7 @@ class _EventosListaState extends State<EventosLista> {
                                     data.data['favorito'] != null && data.data['favorito'] ?
                                       Container(
                                         padding: EdgeInsets.only(top: 10),
-                                        child: Icon(Icons.star, color: Tema.primaryColor, size: 16)
+                                        child: Icon(Icons.star, color: Style.primaryColor, size: 16)
                                       )
                                       : Container(),
                                     Container(
@@ -239,7 +239,7 @@ class _EventosListaState extends State<EventosLista> {
                                           Container(
                                             //alignment: Alignment.bottomRight,
                                             //padding: EdgeInsets.only(right: 10),
-                                            child: Icon(Icons.arrow_forward_ios, color: Tema.buttonBlue,size: 20,),
+                                            child: Icon(Icons.arrow_forward_ios, color: Style.buttonBlue,size: 20,),
                                           ),
                                         ],
                                       ),

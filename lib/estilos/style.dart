@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 /// Tema padrão do app, aplicado no MaterialApp no arquivo main.dart e
 /// ao longo do app quando são necessárias cores para botões, textos etc.
-class Tema {
+class Style {
 
   // ===== TEMA PADRÃO ===== //
-  static ThemeData principal = ThemeData(
+  static ThemeData main = ThemeData(
     brightness: Brightness.light,
-    primaryColor: Tema.primaryColor,
+    primaryColor: Style.primaryColor,
     accentColor: const Color.fromARGB(255, 27, 60, 65),
     primarySwatch: Colors.blue,
     primaryColorDark: const Color.fromARGB(255, 42, 92, 102),
@@ -15,8 +15,8 @@ class Tema {
   );
 
   // ===== CORES EXTRAS ===== //
-  static const Color cinzaClaro = Color.fromARGB(255, 240, 240, 240);
-  static const Color textoEscuro = Colors.black45;
+  static const Color lightGrey = Color.fromARGB(255, 240, 240, 240);
+  static const Color darkText = Colors.black45;
   static const Color buttonBlue = Color.fromARGB(255, 52, 116, 128);
   static const Color buttonGrey = Color.fromARGB(255, 48, 67, 76);
   static const Color purple = Color.fromARGB(255, 96, 72, 137);

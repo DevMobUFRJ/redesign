@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-class BotaoPadrao extends StatelessWidget {
+class StandardButton extends StatelessWidget {
 
-  final String titulo;
-  final Color corFundo;
-  final Color corTexto;
+  final String title;
+  final Color backgroundColor;
+  final Color textColor;
   final VoidCallback callback;
 
-  BotaoPadrao(this.titulo, this.callback, this.corFundo, this.corTexto);
+  StandardButton(this.title, this.callback, this.backgroundColor, this.textColor);
 
   @override
   Widget build(BuildContext context) {
@@ -22,13 +22,13 @@ class BotaoPadrao extends StatelessWidget {
                   alignment: Alignment.center,
                   height: 50.0,
                   decoration: BoxDecoration(
-                      color: corFundo,
+                      color: backgroundColor,
                       borderRadius: BorderRadius.circular(100.0)
                   ),
                   child: Text(
-                    titulo,
+                    title,
                     style: TextStyle(
-                        color: corTexto, fontSize: 15
+                        color: textColor, fontSize: 15
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -40,16 +40,3 @@ class BotaoPadrao extends StatelessWidget {
     );
   }
 }
-//return RaisedButton(
-//child: Text(
-//this.titulo,
-//style: TextStyle(
-//color: corTexto,
-//fontSize: 16,
-//),
-//),
-//color: corFundo,
-//textColor: corTexto,
-//onPressed: callback,
-//shape: StadiumBorder(),
-//padding: EdgeInsets.all(16),

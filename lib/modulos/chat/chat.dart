@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:redesign/servicos/meu_app.dart';
+import 'package:redesign/services/my_app.dart';
 
 class Chat {
   static const String collectionName = "chat";
@@ -37,7 +37,7 @@ class Chat {
   }
 
   String idOutroUsuario(){
-    if(user1 == MeuApp.userId()){
+    if(user1 == MyApp.userId()){
       return user2;
     } else {
       return user1;

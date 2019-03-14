@@ -2,11 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:redesign/modulos/usuario/instituicao.dart';
+import 'package:redesign/modulos/usuario/institution.dart';
 import 'package:redesign/modulos/usuario/perfil_instituicao.dart';
 import 'package:redesign/modulos/usuario/perfil_pessoa.dart';
-import 'package:redesign/modulos/usuario/usuario.dart';
-import 'package:redesign/servicos/meu_app.dart';
+import 'package:redesign/modulos/usuario/user.dart';
+import 'package:redesign/services/my_app.dart';
 
 /// Idealmente, aqui ficam todos os widgets padronizados para lidar com dados
 /// que precisam ser buscados de forma asíncrona do firebase.
@@ -34,7 +34,7 @@ class _NomeTextState extends State<NomeTextAsync> {
     if(usuario != null && usuario.isNotEmpty){
       // Dentro do construtor pois se fosse no build seria repetido toda hora.
       DocumentReference ref = Firestore.instance.collection(
-          Usuario.collectionName).document(usuario);
+          User.collectionName).document(usuario);
       try {
         ref.get().then(atualizarNome).catchError((e){});
       } catch (e) {}
@@ -78,7 +78,7 @@ class CircleAvatarAsync extends StatefulWidget {
 
 class _CircleAvatarAsyncState extends State<CircleAvatarAsync> {
   List<int> imagem;
-  Usuario usuario;
+  User usuario;
 
   _CircleAvatarAsyncState();
 
@@ -86,15 +86,15 @@ class _CircleAvatarAsyncState extends State<CircleAvatarAsync> {
   void initState(){
     super.initState();
     if(imagem == null && widget.idUsuario != null){
-      if(widget.idUsuario == MeuApp.userId()){
-        imagem = MeuApp.imagemMemory;
+      if(widget.idUsuario == MyApp.userId()){
+        imagem = MyApp.imageMemory;
       } else {
         FirebaseStorage.instance.ref()
             .child("perfil/" + widget.idUsuario + ".jpg")
             .getData(36000).then(chegouFotoPerfil)
             .catchError((e){});
         if(widget.clicavel != null) {
-          Firestore.instance.collection(Usuario.collectionName).document(
+          Firestore.instance.collection(User.collectionName).document(
               widget.idUsuario).get().then(chegouUsuario)
               .catchError((e){});
         }
@@ -109,10 +109,10 @@ class _CircleAvatarAsyncState extends State<CircleAvatarAsync> {
   }
 
   chegouUsuario(DocumentSnapshot doc){
-    if(doc.data['tipo'] == TipoUsuario.instituicao.index){
-      usuario = Instituicao.fromMap(doc.data, reference: doc.reference);
+    if(doc.data['tipo'] == UserType.institution.index){
+      usuario = Institution.fromMap(doc.data, reference: doc.reference);
     } else {
-      usuario = Usuario.fromMap(doc.data, reference: doc.reference);
+      usuario = User.fromMap(doc.data, reference: doc.reference);
     }
   }
 
@@ -128,7 +128,7 @@ class _CircleAvatarAsyncState extends State<CircleAvatarAsync> {
       ),
       onTap: (){
         if(usuario != null && this.widget.clicavel){
-          if(usuario.tipo == TipoUsuario.instituicao){
+          if(usuario.type == UserType.institution){
             Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => PerfilInstituicao(usuario))

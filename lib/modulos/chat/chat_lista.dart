@@ -3,14 +3,14 @@ import 'package:async/async.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:redesign/estilos/tema.dart';
+import 'package:redesign/estilos/style.dart';
 import 'package:redesign/modulos/chat/chat.dart';
 import 'package:redesign/modulos/chat/chat_tela.dart';
 import 'package:redesign/modulos/chat/mensagem.dart';
-import 'package:redesign/modulos/usuario/usuario.dart';
-import 'package:redesign/servicos/meu_app.dart';
+import 'package:redesign/modulos/usuario/user.dart';
+import 'package:redesign/services/my_app.dart';
 import 'package:redesign/widgets/dados_asincronos.dart';
-import 'package:redesign/widgets/tela_base.dart';
+import 'package:redesign/widgets/base_screen.dart';
 
 class ChatLista extends StatefulWidget {
   @override
@@ -25,18 +25,18 @@ class ChatListaState extends State<ChatLista> {
   Stream<List<QuerySnapshot>> getData() {
     Stream stream1 = Firestore.instance
         .collection(Chat.collectionName)
-        .where('user1', isEqualTo: MeuApp.userId())
+        .where('user1', isEqualTo: MyApp.userId())
         .snapshots();
     Stream stream2 = Firestore.instance
         .collection(Chat.collectionName)
-        .where('user2', isEqualTo: MeuApp.userId())
+        .where('user2', isEqualTo: MyApp.userId())
         .snapshots();
     return StreamZip([stream1, stream2]);
   }
 
   @override
   Widget build(BuildContext context) {
-    return TelaBase(
+    return BaseScreen(
         title: "Mensagens",
         body: _buildBody(context),
         actions: <IconButton>[
@@ -97,11 +97,11 @@ class ChatListaState extends State<ChatLista> {
                         child: TextField(
                           onChanged: textoBuscaMudou,
                           controller: _buscaController,
-                          cursorColor: Tema.cinzaClaro,
+                          cursorColor: Style.lightGrey,
                           decoration: InputDecoration(
                               hintText: "Buscar",
                               prefixIcon:
-                                  Icon(Icons.search, color: Tema.primaryColor)),
+                                  Icon(Icons.search, color: Style.primaryColor)),
                         ),
                       ),
                     ]))
@@ -151,7 +151,7 @@ class _TileContent extends StatefulWidget {
 }
 
 class _TileContentState extends State<_TileContent> {
-  Usuario usuario;
+  User usuario;
   String ultimaMsg = "";
   String ultimaMsgHora = "";
   Color color = Colors.black45;
@@ -179,8 +179,8 @@ class _TileContentState extends State<_TileContent> {
           ultimaMsg = msg.descricao;
           ultimaMsgHora = msg.horario();
 
-          if (msg.criadaPor != MeuApp.userId() && !msg.lida) {
-            color = Tema.primaryColor;
+          if (msg.criadaPor != MyApp.userId() && !msg.lida) {
+            color = Style.primaryColor;
             weight = FontWeight.w800;
           } else {
             color = Colors.black45;
@@ -190,13 +190,13 @@ class _TileContentState extends State<_TileContent> {
       }
     });
     Firestore.instance
-        .collection(Usuario.collectionName)
+        .collection(User.collectionName)
         .document(widget.chat.idOutroUsuario())
         .get()
         .then((u) {
       if(this.mounted)
         setState(() {
-          usuario = Usuario.fromMap(u.data, reference: u.reference);
+          usuario = User.fromMap(u.data, reference: u.reference);
         });
     }).catchError((e){});
   }
@@ -209,7 +209,7 @@ class _TileContentState extends State<_TileContent> {
       return Container(key: ValueKey(widget.chat.reference.documentID + "fulltile"));
 
     if (usuario != null && widget.busca.isNotEmpty) {
-      if (!usuario.nome.toLowerCase().contains(widget.busca))
+      if (!usuario.name.toLowerCase().contains(widget.busca))
         return Container(key: ValueKey(widget.chat.reference.documentID + "fulltile"));
     }
 
@@ -234,7 +234,7 @@ class _TileContentState extends State<_TileContent> {
                         children: <Widget>[
                           Expanded(
                             child: Text(
-                              usuario.nome,
+                              usuario.name,
                               style: TextStyle(
                                 color: color,
                                 fontWeight: weight,

@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:redesign/estilos/tema.dart';
+import 'package:redesign/estilos/style.dart';
 import 'package:redesign/modulos/forum/forum_post.dart';
 import 'package:redesign/modulos/forum/forum_post_exibir.dart';
 import 'package:redesign/modulos/forum/forum_post_form.dart';
 import 'package:redesign/modulos/forum/forum_tema.dart';
 import 'package:redesign/widgets/dados_asincronos.dart';
-import 'package:redesign/widgets/tela_base.dart';
+import 'package:redesign/widgets/base_screen.dart';
 
 class ForumPostLista extends StatefulWidget {
   final ForumTema tema;
@@ -29,7 +29,7 @@ class ForumPostListaState extends State<ForumPostLista> {
 
   @override
   Widget build(BuildContext context) {
-    return TelaBase(
+    return BaseScreen(
       title: tema.titulo,
       body: _buildBody(context),
       fab: FloatingActionButton(
@@ -40,7 +40,7 @@ class ForumPostListaState extends State<ForumPostLista> {
               ),
             ),
         child: Icon(Icons.add),
-        backgroundColor: Tema.principal.primaryColor,
+        backgroundColor: Style.main.primaryColor,
       ),
       actions: <IconButton>[
         IconButton(
@@ -95,10 +95,10 @@ class ForumPostListaState extends State<ForumPostLista> {
                     child: TextField(
                       onChanged: textoBuscaMudou,
                       controller: _buscaController,
-                      cursorColor: Tema.cinzaClaro,
+                      cursorColor: Style.lightGrey,
                       decoration: InputDecoration(
                         hintText: "Buscar",
-                        prefixIcon: Icon(Icons.search, color: Tema.primaryColor)
+                        prefixIcon: Icon(Icons.search, color: Style.primaryColor)
                       ),
                     ),
                   ),
@@ -178,7 +178,7 @@ class _PostState extends State<_PostItem> {
                               Text(
                                 post.titulo,
                                 style: TextStyle(
-                                    color: Tema.buttonBlue, fontSize: 18),
+                                    color: Style.buttonBlue, fontSize: 18),
                                 maxLines: 1,
                                 overflow: TextOverflow.clip,
                                 softWrap: false,
@@ -199,7 +199,7 @@ class _PostState extends State<_PostItem> {
                         //padding: EdgeInsets.only(right: 10),
                         child: Icon(
                           Icons.arrow_forward_ios,
-                          color: Tema.buttonBlue,
+                          color: Style.buttonBlue,
                           size: 20,
                         ),
                       ),

@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:redesign/estilos/tema.dart';
-import 'package:redesign/modulos/usuario/usuario.dart';
-import 'package:redesign/widgets/tela_base.dart';
+import 'package:redesign/estilos/style.dart';
+import 'package:redesign/modulos/usuario/user.dart';
+import 'package:redesign/widgets/base_screen.dart';
 
 class AutorizacaoTela extends StatefulWidget {
   @override
@@ -17,7 +17,7 @@ class _AutorizacaoTelaState extends State<AutorizacaoTela> {
 
   @override
   Widget build(BuildContext context) {
-    return TelaBase(
+    return BaseScreen(
       title: "Autorizar Usuários",
       body: _buildBody(context),
       actions: <IconButton>[
@@ -34,7 +34,7 @@ class _AutorizacaoTelaState extends State<AutorizacaoTela> {
 
   Widget _buildBody(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance.collection(Usuario.collectionName)
+      stream: Firestore.instance.collection(User.collectionName)
           .where("ativo", isEqualTo: 0)
           .limit(100)
           .snapshots(),
@@ -69,10 +69,10 @@ class _AutorizacaoTelaState extends State<AutorizacaoTela> {
                       child: TextField(
                         onChanged: textoBuscaMudou,
                         controller: _buscaController,
-                        cursorColor: Tema.cinzaClaro,
+                        cursorColor: Style.lightGrey,
                         decoration: InputDecoration(
                             hintText: "Buscar",
-                            prefixIcon: Icon(Icons.search, color: Tema.primaryColor)
+                            prefixIcon: Icon(Icons.search, color: Style.primaryColor)
                         ),
                       ),
                     ),
@@ -90,16 +90,16 @@ class _AutorizacaoTelaState extends State<AutorizacaoTela> {
   }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
-    Usuario usuario = Usuario.fromMap(data.data, reference: data.reference);
+    User usuario = User.fromMap(data.data, reference: data.reference);
 
-    if(!usuario.nome.toLowerCase().contains(busca)
+    if(!usuario.name.toLowerCase().contains(busca)
         && !usuario.email.toLowerCase().contains(busca))
       return Container();
 
     return ListTile(
       isThreeLine: true,
-      title: Text(usuario.nome),
-      subtitle: Text((usuario.tipo == TipoUsuario.pessoa ? "Pessoa" : "Instituição" ) + ' | ' + usuario.email),
+      title: Text(usuario.name),
+      subtitle: Text((usuario.type == UserType.person ? "Pessoa" : "Instituição" ) + ' | ' + usuario.email),
       onTap: () => _autorizacaoDialog(usuario),
     );
   }
@@ -120,13 +120,13 @@ class _AutorizacaoTelaState extends State<AutorizacaoTela> {
     });
   }
 
-  Future<void> _autorizacaoDialog(Usuario usuario) async {
+  Future<void> _autorizacaoDialog(User usuario) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(usuario.nome),
+          title: Text(usuario.name),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[

@@ -1,4 +1,4 @@
-class Validadores {
+class Validators {
 
   static bool facebookUrl(String url) {
     if(!url.startsWith("http")){
@@ -6,7 +6,7 @@ class Validadores {
     }
 
     url = url.toLowerCase();
-    return Validadores.url(url) &&
+    return Validators.url(url) &&
         (url.contains("facebook.com") || url.contains("fb.com"));
   }
 

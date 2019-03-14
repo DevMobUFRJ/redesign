@@ -3,49 +3,49 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:redesign/estilos/tema.dart';
+import 'package:redesign/estilos/style.dart';
 import 'package:redesign/modulos/chat/chat.dart';
 import 'package:redesign/modulos/chat/mensagem.dart';
-import 'package:redesign/modulos/mapa/drawer_screen.dart';
-import 'package:redesign/modulos/mapa/mapa_estudante.dart';
-import 'package:redesign/modulos/usuario/instituicao.dart';
+import 'package:redesign/modulos/map/drawer_screen.dart';
+import 'package:redesign/modulos/map/map_student.dart';
+import 'package:redesign/modulos/usuario/institution.dart';
 import 'package:redesign/modulos/usuario/perfil_instituicao.dart';
 import 'package:redesign/modulos/usuario/perfil_pessoa.dart';
-import 'package:redesign/modulos/usuario/usuario.dart';
-import 'package:redesign/servicos/helper.dart';
-import 'package:redesign/servicos/meu_app.dart';
+import 'package:redesign/modulos/usuario/user.dart';
+import 'package:redesign/services/helper.dart';
+import 'package:redesign/services/my_app.dart';
 
 FirebaseUser mCurrentUser;
 
-class MapaTela extends StatefulWidget {
-  MapaTela({Key key}) : super(key: key);
+class MapScreen extends StatefulWidget {
+  MapScreen({Key key}) : super(key: key);
 
   @override
-  _MapaTelaState createState() => _MapaTelaState();
+  _MapScreenState createState() => _MapScreenState();
 }
 
-class _MapaTelaState extends State<MapaTela> {
+class _MapScreenState extends State<MapScreen> {
   GoogleMapController mapController;
-  List<Marker> marcadores = [];
-  List<Instituicao> instituicoes = [];
-  bool mapaCarregou = false;
-  bool temUsuario = false;
-  int mensagensNaoLidas = 1;
-  List<String> naoLidas = [];
+  List<Marker> markers = [];
+  List<Institution> institutions = [];
+  bool mapLoaded = false;
+  bool hasUser = false;
+  int unreadMessages = 1;
+  List<String> unread = [];
 
   //Filtros
-  bool laboratorios = true;
-  bool escolas = true;
-  bool incubadoras = true;
-  bool empreendedores = true;
+  bool labs = true;
+  bool schools = true;
+  bool incubators = true;
+  bool entrepreneurs = true; //empreendedor
 
   @override
   void initState() {
     super.initState();
-    if(MeuApp.userId() == null) {
+    if(MyApp.userId() == null) {
       _getCurrentUser();
     } else {
-      temUsuario = true;
+      hasUser = true;
       posLogin();
     }
   }
@@ -55,57 +55,57 @@ class _MapaTelaState extends State<MapaTela> {
     FirebaseAuth _auth = FirebaseAuth.instance;
     FirebaseUser _currentUser = await _auth.currentUser();
     if(_currentUser != null){
-      authSucesso(_currentUser);
+      authSuccess(_currentUser);
     } else {
-      erroEncontrarUsuario(null);
+      findUserError(null);
     }
   }
 
   /// Usuario já estava em cache, então vai pro mapa.
-  void authSucesso(FirebaseUser user){
+  void authSuccess(FirebaseUser user){
     mCurrentUser = user;
-    MeuApp.firebaseUser = user;
-    Firestore.instance.collection(Usuario.collectionName).document(user.uid).get()
-        .then(encontrouUsuario).catchError(erroEncontrarUsuario);
+    MyApp.firebaseUser = user;
+    Firestore.instance.collection(User.collectionName).document(user.uid).get()
+        .then(didFindUser).catchError(findUserError);
   }
 
-  void encontrouUsuario(DocumentSnapshot snapshot){
-    if(snapshot.data['tipo'] == TipoUsuario.instituicao.index){
-      MeuApp.setUsuario(Instituicao.fromMap(snapshot.data, reference: snapshot.reference));
+  void didFindUser(DocumentSnapshot snapshot){
+    if(snapshot.data['tipo'] == UserType.institution.index){
+      MyApp.setUser(Institution.fromMap(snapshot.data, reference: snapshot.reference));
     } else {
-      MeuApp.setUsuario(Usuario.fromMap(snapshot.data, reference: snapshot.reference));
+      MyApp.setUser(User.fromMap(snapshot.data, reference: snapshot.reference));
     }
-    if(!MeuApp.ativo()){
-      erroEncontrarUsuario(null);
+    if(!MyApp.active()){
+      findUserError(null);
       return;
     }
     // Finalmente pode fazer o que tem que fazer.
     setState((){
-      temUsuario = true;
+      hasUser = true;
     });
     posLogin();
   }
 
-  void erroEncontrarUsuario(e){
-    MeuApp.logout(context);
+  void findUserError(e){
+    MyApp.logout(context);
   }
 
   void posLogin(){
-    getInstituicoesColocaMarcadores();
-    MeuApp.startup();
-    contaMensagensNaoLidas();
+    getInstitutionsPutMarker();
+    MyApp.startup();
+    countUnreadMessages();
   }
 
   @override
   Widget build(BuildContext context) {
-    if(!temUsuario){
+    if(!hasUser){
       return Scaffold(
         body: Row(
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
             Expanded(
               child: Container(
-                color: Tema.darkBackground,
+                color: Style.darkBackground,
                 child: Center(
                   child: CircularProgressIndicator(),
                 ),),
@@ -116,13 +116,13 @@ class _MapaTelaState extends State<MapaTela> {
     }
 
     return Scaffold(
-      drawer: DrawerScreen(mensagensNaoLidas: mensagensNaoLidas,),
+      drawer: DrawerScreen(mensagensNaoLidas: unreadMessages,),
       appBar: AppBar(
         title: Text("REDEsign"),
         backgroundColor: Theme
             .of(context)
             .primaryColor,
-        actions: MeuApp.ehEstudante() ? null : [
+        actions: MyApp.isStudent() ? null : [
           Builder(
             builder: (context) =>
                 IconButton(
@@ -138,9 +138,9 @@ class _MapaTelaState extends State<MapaTela> {
           ),
         ],
       ),
-      endDrawer: MeuApp.ehEstudante() ? null : _FiltroDrawer(this),
-      body: MeuApp.ehEstudante() ?
-        MapaEstudante(context) :
+      endDrawer: MyApp.isStudent() ? null : _drawerFilter(this),
+      body: MyApp.isStudent() ?
+        MapStudent(context) :
         GoogleMap(
           initialCameraPosition: CameraPosition(
             target: LatLng(-22.8544375, -43.2296038),
@@ -154,9 +154,9 @@ class _MapaTelaState extends State<MapaTela> {
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
-    mapaCarregou = true;
+    mapLoaded = true;
     mapController.onInfoWindowTapped.add(_infoTapped);
-    getInstituicoesColocaMarcadores();
+    getInstitutionsPutMarker();
     setState(() {
       controller.moveCamera(CameraUpdate.newCameraPosition(
         const CameraPosition(
@@ -168,94 +168,94 @@ class _MapaTelaState extends State<MapaTela> {
   }
 
   void _infoTapped(Marker marker){
-    Instituicao instituicao = instituicoes[marcadores.indexOf(marker)];
+    Institution institution = institutions[markers.indexOf(marker)];
     Navigator.push(
         context,
         MaterialPageRoute(builder:(context) =>
           // Apesar de empreendedores serem do tipo Instituição p/ ter lat-lng,
           // a visualização é de pessoa.
-          instituicao.ocupacao != Ocupacao.empreendedor ?
-            PerfilInstituicao(instituicao)
-            : PerfilPessoa(instituicao)),
+          institution.occupation != Occupation.empreendedor ?
+            PerfilInstituicao(institution)
+            : PerfilPessoa(institution)),
     );
   }
 
-  getInstituicoesColocaMarcadores(){
-    if(!mapaCarregou || !temUsuario){ //Aguardando condições pra botar o marcador
+  getInstitutionsPutMarker(){
+    if(!mapLoaded || !hasUser){ //Aguardando condições pra botar o marcador
       return;
     }
 
-    Stream<QuerySnapshot> query = Firestore.instance.collection(Usuario.collectionName)
-        .where("tipo", isEqualTo: TipoUsuario.instituicao.index)
+    Stream<QuerySnapshot> query = Firestore.instance.collection(User.collectionName)
+        .where("tipo", isEqualTo: UserType.institution.index)
         .where("ativo", isEqualTo: 1)
         .snapshots();
     query.forEach((element){
       for(DocumentSnapshot d in element.documents){
-        Instituicao instituicao = Instituicao.fromMap(d.data, reference: d.reference);
+        Institution institution = Institution.fromMap(d.data, reference: d.reference);
 
-        if(instituicao.lat == 0 || instituicao.lng == 0) continue;
+        if(institution.lat == 0 || institution.lng == 0) continue;
 
-        String icone = "";
-        if(instituicao.email == Helper.emailLabdis){
-          icone = "labdis";
-        } else if (instituicao.ocupacao == Ocupacao.incubadora) {
-          icone = "incubadora";
-        } else if (instituicao.ocupacao == Ocupacao.escola) {
-          icone = "escola";
-        } else if (instituicao.ocupacao == Ocupacao.laboratorio) {
-          icone = "laboratorio";
-        } else if (instituicao.ocupacao == Ocupacao.empreendedor) {
-          icone = "empreendedor";
+        String icon = "";
+        if(institution.email == Helper.emailLabdis){
+          icon = "labdis";
+        } else if (institution.occupation == Occupation.incubadora) {
+          icon = "incubadora";
+        } else if (institution.occupation == Occupation.escola) {
+          icon = "escola";
+        } else if (institution.occupation == Occupation.laboratorio) {
+          icon = "laboratorio";
+        } else if (institution.occupation == Occupation.empreendedor) {
+          icon = "empreendedor";
         }
 
-        LatLng center = LatLng(instituicao.lat, instituicao.lng);
+        LatLng center = LatLng(institution.lat, institution.lng);
         mapController.addMarker(
           MarkerOptions(
             position: center,
-            infoWindowText: InfoWindowText(instituicao.nome, "Detalhes"),
-            icon: BitmapDescriptor.fromAsset("images/icones/ic_" + icone + ".png"),
+            infoWindowText: InfoWindowText(institution.name, "Detalhes"),
+            icon: BitmapDescriptor.fromAsset("images/icones/ic_" + icon + ".png"),
         )).then((marker) {
-          marcadores.add(marker);
-          instituicoes.add(instituicao);
+          markers.add(marker);
+          institutions.add(institution);
         });
       }
     });
   }
 
-  void onFiltroMudou(){
-    for(int i = 0; i < instituicoes.length; i++){
-      Instituicao instituicao = instituicoes[i];
+  void onFilterChanged(){
+    for(int i = 0; i < institutions.length; i++){
+      Institution institution = institutions[i];
 
-      if (instituicao.ocupacao == Ocupacao.incubadora) {
-        if(incubadoras){
-          mapController.updateMarker(marcadores[i], MarkerOptions(visible: true));
+      if (institution.occupation == Occupation.incubadora) {
+        if(incubators){
+          mapController.updateMarker(markers[i], MarkerOptions(visible: true));
         } else {
-          mapController.updateMarker(marcadores[i], MarkerOptions(visible: false));
+          mapController.updateMarker(markers[i], MarkerOptions(visible: false));
         }
-      } else if (instituicao.ocupacao == Ocupacao.escola) {
-        if(escolas){
-          mapController.updateMarker(marcadores[i], MarkerOptions(visible: true));
+      } else if (institution.occupation == Occupation.escola) {
+        if(schools){
+          mapController.updateMarker(markers[i], MarkerOptions(visible: true));
         } else {
-          mapController.updateMarker(marcadores[i], MarkerOptions(visible: false));
+          mapController.updateMarker(markers[i], MarkerOptions(visible: false));
         }
-      } else if (instituicao.ocupacao == Ocupacao.laboratorio && instituicao.email != Helper.emailLabdis) {
-        if(laboratorios){
-          mapController.updateMarker(marcadores[i], MarkerOptions(visible: true));
+      } else if (institution.occupation == Occupation.laboratorio && institution.email != Helper.emailLabdis) {
+        if(labs){
+          mapController.updateMarker(markers[i], MarkerOptions(visible: true));
         } else {
-          mapController.updateMarker(marcadores[i], MarkerOptions(visible: false));
+          mapController.updateMarker(markers[i], MarkerOptions(visible: false));
         }
-      } else if (instituicao.ocupacao == Ocupacao.empreendedor) {
-        if(empreendedores){
-          mapController.updateMarker(marcadores[i], MarkerOptions(visible: true));
+      } else if (institution.occupation == Occupation.empreendedor) {
+        if(entrepreneurs){
+          mapController.updateMarker(markers[i], MarkerOptions(visible: true));
         } else {
-          mapController.updateMarker(marcadores[i], MarkerOptions(visible: false));
+          mapController.updateMarker(markers[i], MarkerOptions(visible: false));
         }
       }
     }
   }
 
-  void contaMensagensNaoLidas(){
-    mensagensNaoLidas = 0;
+  void countUnreadMessages(){
+    unreadMessages = 0;
     getData().first.then((snaps) => snaps.forEach((query){
         query.documents.forEach((doc){
           doc.reference.collection(Mensagem.collectionName)
@@ -264,12 +264,12 @@ class _MapaTelaState extends State<MapaTela> {
              if(queryMsg.documents.length < 0) return;
 
              queryMsg.documents.forEach((msg){
-               if(msg.data['criadaPor'] != MeuApp.userId()){
+               if(msg.data['criadaPor'] != MyApp.userId()){
                  // Previne adição repetida
-                 if(naoLidas.contains(doc.reference.documentID)) return;
-                 naoLidas.add(doc.reference.documentID);
+                 if(unread.contains(doc.reference.documentID)) return;
+                 unread.add(doc.reference.documentID);
                  setState(() {
-                   mensagensNaoLidas++;
+                   unreadMessages++;
                  });
                  print(msg.data);
                  return;
@@ -283,24 +283,24 @@ class _MapaTelaState extends State<MapaTela> {
 
   Stream<List<QuerySnapshot>> getData() {
     Stream stream1 = Firestore.instance.collection(Chat.collectionName)
-        .where('user1', isEqualTo: MeuApp.userId()).snapshots();
+        .where('user1', isEqualTo: MyApp.userId()).snapshots();
     Stream stream2 = Firestore.instance.collection(Chat.collectionName)
-        .where('user2', isEqualTo: MeuApp.userId()).snapshots();
+        .where('user2', isEqualTo: MyApp.userId()).snapshots();
     return StreamZip([stream1, stream2]);
   }
 }
 
-class _FiltroDrawer extends StatefulWidget {
+class _drawerFilter extends StatefulWidget {
 
-  final _MapaTelaState parent;
+  final _MapScreenState parent;
 
-  _FiltroDrawer(this.parent);
+  _drawerFilter(this.parent);
 
   @override
-  _FiltroState createState() => _FiltroState();
+  _FilterState createState() => _FilterState();
 }
 
-class _FiltroState extends State<_FiltroDrawer>  {
+class _FilterState extends State<_drawerFilter>  {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -323,7 +323,7 @@ class _FiltroState extends State<_FiltroDrawer>  {
                       Expanded(
                         child: Text( "Filtro",
                           style: TextStyle(
-                            color: Tema.primaryColor,
+                            color: Style.primaryColor,
                             fontSize: 18.0,
                           ),
                         )
@@ -331,7 +331,7 @@ class _FiltroState extends State<_FiltroDrawer>  {
                       IconButton(
                         icon: Icon(
                           Icons.more_vert,
-                          color: Tema.primaryColor,
+                          color: Style.primaryColor,
                         ),
                         onPressed: () => Navigator.pop(context),
                       )
@@ -343,9 +343,9 @@ class _FiltroState extends State<_FiltroDrawer>  {
                   mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
                     Checkbox(
-                      value: widget.parent.laboratorios,
+                      value: widget.parent.labs,
                       onChanged: checkLabs,
-                      activeColor: Tema.primaryColor,
+                      activeColor: Style.primaryColor,
                     ),
                     Expanded(child: GestureDetector(
                       child: Text("Laboratórios",
@@ -354,16 +354,16 @@ class _FiltroState extends State<_FiltroDrawer>  {
                           fontSize: 16.0,
                         ),
                       ),
-                      onTap: alternarLabs,
+                      onTap: toggleLabs,
                     )),
                   ],
                 ),
                 Row(
                   children: <Widget>[
                     Checkbox(
-                      value: widget.parent.escolas,
-                      onChanged: checkEscolas,
-                      activeColor: Tema.primaryColor,
+                      value: widget.parent.schools,
+                      onChanged: checkSchools,
+                      activeColor: Style.primaryColor,
                     ),
                     Expanded(child: GestureDetector(
                       child: Text("Escolas",
@@ -372,16 +372,16 @@ class _FiltroState extends State<_FiltroDrawer>  {
                           fontSize: 16.0,
                         ),
                       ),
-                      onTap: alternarEscolas,
+                      onTap: toggleSchools,
                     )),
                   ],
                 ),
                 Row(
                   children: <Widget>[
                     Checkbox(
-                      value: widget.parent.incubadoras,
-                      onChanged: checkIncubadoras,
-                      activeColor: Tema.primaryColor,
+                      value: widget.parent.incubators,
+                      onChanged: checkIncubators,
+                      activeColor: Style.primaryColor,
                     ),
                     Expanded(child: GestureDetector(
                       child: Text("Incubadoras",
@@ -390,16 +390,16 @@ class _FiltroState extends State<_FiltroDrawer>  {
                           fontSize: 16.0,
                         ),
                       ),
-                      onTap: alternarIncubadoras,
+                      onTap: toggleIncubators,
                     )),
                   ],
                 ),
                 Row(
                   children: <Widget>[
                     Checkbox(
-                      value: widget.parent.empreendedores,
-                      onChanged: checkEmpreendedores,
-                      activeColor: Tema.primaryColor,
+                      value: widget.parent.entrepreneurs,
+                      onChanged: checkEntrepreneurs,
+                      activeColor: Style.primaryColor,
                     ),
                     Expanded(child: GestureDetector(
                       child: Text("Empreendedores",
@@ -408,7 +408,7 @@ class _FiltroState extends State<_FiltroDrawer>  {
                           fontSize: 16.0,
                         ),
                       ),
-                      onTap: alternarEmpreendedores,
+                      onTap: toggleEntrepreneurs,
                     )),
                   ],
                 ),
@@ -420,59 +420,59 @@ class _FiltroState extends State<_FiltroDrawer>  {
     );
   }
 
-  checkEmpreendedores(bool novo){
+  checkEntrepreneurs(bool newEntrepreneurs){
     setState(() {
-      widget.parent.empreendedores = novo;
+      widget.parent.entrepreneurs = newEntrepreneurs;
     });
-    widget.parent.onFiltroMudou();
+    widget.parent.onFilterChanged();
   }
 
-  alternarEmpreendedores(){
+  toggleEntrepreneurs(){
     setState(() {
-      widget.parent.empreendedores = !widget.parent.empreendedores;
+      widget.parent.entrepreneurs = !widget.parent.entrepreneurs;
     });
-    widget.parent.onFiltroMudou();
+    widget.parent.onFilterChanged();
   }
 
-  checkLabs(bool novo){
+  checkLabs(bool newEntrepreneur){
     setState(() {
-      widget.parent.laboratorios = novo;
+      widget.parent.labs = newEntrepreneur;
     });
-    widget.parent.onFiltroMudou();
+    widget.parent.onFilterChanged();
   }
 
-  alternarLabs(){
+  toggleLabs(){
     setState(() {
-      widget.parent.laboratorios = !widget.parent.laboratorios;
+      widget.parent.labs = !widget.parent.labs;
     });
-    widget.parent.onFiltroMudou();
+    widget.parent.onFilterChanged();
   }
 
-  checkEscolas(bool novo){
+  checkSchools(bool newSchool){
     setState(() {
-      widget.parent.escolas = novo;
+      widget.parent.schools = newSchool;
     });
-    widget.parent.onFiltroMudou();
+    widget.parent.onFilterChanged();
   }
 
-  alternarEscolas(){
+  toggleSchools(){
     setState(() {
-      widget.parent.escolas = !widget.parent.escolas;
+      widget.parent.schools = !widget.parent.schools;
     });
-    widget.parent.onFiltroMudou();
+    widget.parent.onFilterChanged();
   }
 
-  checkIncubadoras(bool novo){
+  checkIncubators(bool newIncubator){
     setState(() {
-      widget.parent.incubadoras = novo;
+      widget.parent.incubators = newIncubator;
     });
-    widget.parent.onFiltroMudou();
+    widget.parent.onFilterChanged();
   }
 
-  alternarIncubadoras(){
+  toggleIncubators(){
     setState(() {
-      widget.parent.incubadoras = !widget.parent.incubadoras;
+      widget.parent.incubators = !widget.parent.incubators;
     });
-    widget.parent.onFiltroMudou();
+    widget.parent.onFilterChanged();
   }
 }

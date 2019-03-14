@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:redesign/estilos/fb_icon_icons.dart';
-import 'package:redesign/estilos/tema.dart';
-import 'package:redesign/modulos/usuario/instituicao.dart';
-import 'package:redesign/modulos/usuario/usuario.dart';
-import 'package:redesign/servicos/meu_app.dart';
-import 'package:redesign/servicos/validadores.dart';
-import 'package:redesign/widgets/botao_padrao.dart';
-import 'package:redesign/widgets/tela_base.dart';
+import 'package:redesign/estilos/style.dart';
+import 'package:redesign/modulos/usuario/institution.dart';
+import 'package:redesign/modulos/usuario/user.dart';
+import 'package:redesign/services/my_app.dart';
+import 'package:redesign/services/validators.dart';
+import 'package:redesign/widgets/standard_button.dart';
+import 'package:redesign/widgets/base_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as ImageHelper;
 import 'package:firebase_storage/firebase_storage.dart';
@@ -19,37 +19,37 @@ import 'package:geocoder/geocoder.dart';
 
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 final FirebaseStorage _storage = FirebaseStorage.instance;
-StorageReference reference = _storage.ref().child("perfil/" + MeuApp.userId() + ".jpg");
+StorageReference reference = _storage.ref().child("perfil/" + MyApp.userId() + ".jpg");
 bool blocked = false;
 
-class PerfilForm extends StatefulWidget {
+class ProfileForm extends StatefulWidget {
   @override
-  PerfilFormState createState() => MeuApp.usuario != null ?
-    PerfilFormState(usuario: MeuApp.usuario) : PerfilFormState(instituicao: MeuApp.instituicao);
+  ProfileFormState createState() => MyApp.user != null ?
+    ProfileFormState(user: MyApp.user) : ProfileFormState(institution: MyApp.institution);
 }
 
-class PerfilFormState extends State<PerfilForm> {
-  Instituicao instituicao;
-  Usuario usuario;
+class ProfileFormState extends State<ProfileForm> {
+  Institution institution;
+  User user;
 
-  PerfilFormState({this.usuario, this.instituicao});
+  ProfileFormState({this.user, this.institution});
 
   @override
   Widget build(BuildContext context) {
-    return TelaBase(
+    return BaseScreen(
       title: "Editar Perfil",
       body: Scaffold(
         key: _scaffoldKey,
         resizeToAvoidBottomPadding: false,
-        body: usuario != null ?
-            _UsuarioForm(usuario) : _InstituicaoForm(instituicao),
+        body: user != null ?
+            _UsuarioForm(user) : _InstituicaoForm(institution),
       ),
     );
   }
 }
 
 class _UsuarioForm extends StatefulWidget {
-  final Usuario usuario;
+  final User usuario;
 
   _UsuarioForm(this.usuario);
 
@@ -62,8 +62,8 @@ class _UsuarioForm extends StatefulWidget {
 class _UsuarioFormState extends State<_UsuarioForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  Usuario usuario;
-  Instituicao instituicaoRelacionada;
+  User usuario;
+  Institution instituicaoRelacionada;
 
   _UsuarioFormState(this.usuario){
     reference.getData(38000).then((value) => setState((){
@@ -109,7 +109,7 @@ class _UsuarioFormState extends State<_UsuarioForm> {
       imagemNova = imagem;
       imagemAtual = imagem;
     });
-    MeuApp.imagemMemory = imagem;
+    MyApp.imageMemory = imagem;
   }
 
   void uploadErro(e){
@@ -152,19 +152,19 @@ class _UsuarioFormState extends State<_UsuarioForm> {
           TextFormField(
             decoration: const InputDecoration(
               icon: const Icon(Icons.person,
-                color: Tema.primaryColor,
+                color: Style.primaryColor,
               ),
               labelText: 'Nome',
             ),
             validator: (val) => val.isEmpty ? 'Nome é obrigatório' : null,
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
-            initialValue: usuario.nome,
-            onSaved: (val) => usuario.nome = val,
+            initialValue: usuario.name,
+            onSaved: (val) => usuario.name = val,
           ),
           TextFormField(
             decoration: const InputDecoration(
               icon: const Icon(Icons.description,
-                color: Tema.primaryColor,
+                color: Style.primaryColor,
               ),
               labelText: 'Descrição',
             ),
@@ -172,8 +172,8 @@ class _UsuarioFormState extends State<_UsuarioForm> {
             maxLines: 4,
             validator: (val) => val.isEmpty ? 'Descrição é obrigatório' : null,
             inputFormatters: [LengthLimitingTextInputFormatter(500)],
-            initialValue: usuario.descricao,
-            onSaved: (val) => usuario.descricao = val,
+            initialValue: usuario.description,
+            onSaved: (val) => usuario.description = val,
           ),
           _buildDropdown(),
           Container(
@@ -189,7 +189,7 @@ class _UsuarioFormState extends State<_UsuarioForm> {
                   ),
                   onTap: (){
                     setState(() {
-                      usuario.instituicaoId = "";
+                      usuario.idInstitution = "";
                       instituicaoRelacionada = null;
                     });
                   },
@@ -207,12 +207,12 @@ class _UsuarioFormState extends State<_UsuarioForm> {
           TextFormField(
             decoration: const InputDecoration(
               icon: const Icon(Icons.link,
-                color: Tema.primaryColor,
+                color: Style.primaryColor,
               ),
               labelText: 'Site',
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
-            validator: (val) => val.isEmpty ? null : Validadores.url(val) ? null : 'Site inválido',
+            validator: (val) => val.isEmpty ? null : Validators.url(val) ? null : 'Site inválido',
             initialValue: usuario.site,
             onSaved: (val){
               if(!val.startsWith("http")){
@@ -224,12 +224,12 @@ class _UsuarioFormState extends State<_UsuarioForm> {
           TextFormField(
             decoration: const InputDecoration(
               icon: const Icon(FbIcon.facebook_official,
-                color: Tema.primaryColor,
+                color: Style.primaryColor,
               ),
               labelText: 'Facebook',
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
-            validator: (val) => val.isEmpty ? null : Validadores.facebookUrl(val) ? null : 'Link do facebook inválido',
+            validator: (val) => val.isEmpty ? null : Validators.facebookUrl(val) ? null : 'Link do facebook inválido',
             initialValue: usuario.facebook,
             onSaved: (val){
               if(!val.startsWith("http")){
@@ -240,8 +240,8 @@ class _UsuarioFormState extends State<_UsuarioForm> {
           ),
           Container(
               padding: const EdgeInsets.only(top: 20.0),
-              child: BotaoPadrao("Salvar", _submitForm,
-                  Tema.principal.primaryColor, Tema.cinzaClaro)
+              child: StandardButton("Salvar", _submitForm,
+                  Style.main.primaryColor, Style.lightGrey)
           ),
         ],
       ),
@@ -264,7 +264,7 @@ class _UsuarioFormState extends State<_UsuarioForm> {
     }
   }
   
-  save(Usuario usuario){
+  save(User usuario){
     usuario.reference.updateData(usuario.toJson())
         .then(saved).catchError(saveError);
   }
@@ -283,8 +283,8 @@ class _UsuarioFormState extends State<_UsuarioForm> {
 
   Widget _buildDropdown(){
     return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance.collection(Usuario.collectionName)
-          .where("tipo", isEqualTo: TipoUsuario.instituicao.index)
+      stream: Firestore.instance.collection(User.collectionName)
+          .where("tipo", isEqualTo: UserType.institution.index)
           .where("ativo", isEqualTo: 1)
           .orderBy("nome")
           .snapshots(),
@@ -301,43 +301,43 @@ class _UsuarioFormState extends State<_UsuarioForm> {
   }
 
   Widget _buildItems(BuildContext context, List<DocumentSnapshot> data){
-    return DropdownButtonFormField<Instituicao>(
+    return DropdownButtonFormField<Institution>(
       items: data.map( (DocumentSnapshot doc) {
-        Instituicao instituicao = Instituicao.fromMap(doc.data, reference: doc.reference);
+        Institution instituicao = Institution.fromMap(doc.data, reference: doc.reference);
 
         // Verificar se o tipo do usuário é compatível com a instituição
-        if(instituicao.ocupacao == Ocupacao.incubadora){
-          if(usuario.ocupacao != Ocupacao.empreendedor) return null;
-        } else if (instituicao.ocupacao == Ocupacao.laboratorio){
-          if(usuario.ocupacao != Ocupacao.professor &&
-              usuario.ocupacao != Ocupacao.bolsista &&
-              usuario.ocupacao != Ocupacao.discente) return null;
-        } else if (instituicao.ocupacao == Ocupacao.escola){
-          if(usuario.ocupacao != Ocupacao.professor &&
-            usuario.ocupacao != Ocupacao.aluno) return null;
+        if(instituicao.occupation == Occupation.incubadora){
+          if(usuario.occupation != Occupation.empreendedor) return null;
+        } else if (instituicao.occupation == Occupation.laboratorio){
+          if(usuario.occupation != Occupation.professor &&
+              usuario.occupation != Occupation.bolsista &&
+              usuario.occupation != Occupation.discente) return null;
+        } else if (instituicao.occupation == Occupation.escola){
+          if(usuario.occupation != Occupation.professor &&
+            usuario.occupation != Occupation.aluno) return null;
         }
 
-        if(instituicao.reference.documentID == usuario.instituicaoId){
+        if(instituicao.reference.documentID == usuario.idInstitution){
           instituicaoRelacionada = instituicao;
         }
 
-        return DropdownMenuItem<Instituicao>(
+        return DropdownMenuItem<Institution>(
           value: instituicao,
-          child: Text(instituicao.nome),
+          child: Text(instituicao.name),
           key: ValueKey(instituicao.reference.documentID),
         );
       }).where((d) => d != null).toList(),
-      onChanged: (Instituicao c){
+      onChanged: (Institution c){
         print("Changed state");
         setState(() {
           instituicaoRelacionada = c;
-          usuario.instituicaoId = instituicaoRelacionada.reference.documentID;
+          usuario.idInstitution = instituicaoRelacionada.reference.documentID;
         });
       },
       value: instituicaoRelacionada,
       decoration: const InputDecoration(
         icon: const Icon(Icons.account_balance,
-          color: Tema.primaryColor,
+          color: Style.primaryColor,
         ),
         labelText: 'Instituição',
       ),
@@ -346,7 +346,7 @@ class _UsuarioFormState extends State<_UsuarioForm> {
 }
 
 class _InstituicaoForm extends StatefulWidget {
-  final Instituicao instituicao;
+  final Institution instituicao;
 
   _InstituicaoForm(this.instituicao);
 
@@ -358,7 +358,7 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool enderecoMudou = false;
 
-  Instituicao instituicao;
+  Institution instituicao;
 
   _InstituicaoFormState(this.instituicao);
 
@@ -400,7 +400,7 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
       imagemNova = imagem;
       imagemAtual = imagem;
     });
-    MeuApp.imagemMemory = imagem;
+    MyApp.imageMemory = imagem;
   }
 
   void uploadErro(e){
@@ -443,19 +443,19 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
           TextFormField(
             decoration: const InputDecoration(
               icon: const Icon(Icons.people,
-                color: Tema.primaryColor,
+                color: Style.primaryColor,
               ),
               labelText: 'Nome',
             ),
             validator: (val) => val.isEmpty ? 'Nome é obrigatório' : null,
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
-            initialValue: instituicao.nome,
-            onSaved: (val) => instituicao.nome = val,
+            initialValue: instituicao.name,
+            onSaved: (val) => instituicao.name = val,
           ),
           TextFormField(
             decoration: const InputDecoration(
               icon: const Icon(Icons.description,
-                color: Tema.primaryColor,
+                color: Style.primaryColor,
               ),
               labelText: 'Descrição',
             ),
@@ -463,8 +463,8 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
             maxLines: 4,
             validator: (val) => val.isEmpty ? 'Descrição é obrigatório' : null,
             inputFormatters: [LengthLimitingTextInputFormatter(500)],
-            initialValue: instituicao.descricao,
-            onSaved: (val) => instituicao.descricao = val,
+            initialValue: instituicao.description,
+            onSaved: (val) => instituicao.description = val,
           ),
           TextFormField(
             decoration: const InputDecoration(
@@ -478,12 +478,12 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
           TextFormField(
             decoration: const InputDecoration(
               icon: const Icon(Icons.link,
-                color: Tema.primaryColor,
+                color: Style.primaryColor,
               ),
               labelText: 'Site',
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
-            validator: (val) => val.isEmpty ? null : Validadores.url(val) ? null : 'Site inválido',
+            validator: (val) => val.isEmpty ? null : Validators.url(val) ? null : 'Site inválido',
             initialValue: instituicao.site,
             onSaved: (val){
               if(!val.startsWith("http")){
@@ -495,12 +495,12 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
           TextFormField(
             decoration: const InputDecoration(
               icon: const Icon(FbIcon.facebook_official,
-                color: Tema.primaryColor,
+                color: Style.primaryColor,
               ),
               labelText: 'Facebook',
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
-            validator: (val) => val.isEmpty ? null : Validadores.facebookUrl(val) ? null : 'Link do facebook inválido',
+            validator: (val) => val.isEmpty ? null : Validators.facebookUrl(val) ? null : 'Link do facebook inválido',
             initialValue: instituicao.facebook,
             onSaved: (val){
               if(!val.startsWith("http")){
@@ -512,41 +512,41 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
           TextFormField(
             decoration: const InputDecoration(
               icon: const Icon(Icons.location_on,
-                color: Tema.primaryColor,
+                color: Style.primaryColor,
               ),
               labelText: 'Endereço (Rua, Número)',
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
-            initialValue: instituicao.endereco,
+            initialValue: instituicao.address,
             onSaved: (val){
-              if(val != instituicao.endereco) enderecoMudou = true;
-              instituicao.endereco = val;
+              if(val != instituicao.address) enderecoMudou = true;
+              instituicao.address = val;
             },
           ),
           TextFormField(
             decoration: const InputDecoration(
               icon: const Icon(Icons.location_city,
-                color: Tema.primaryColor,
+                color: Style.primaryColor,
               ),
               labelText: 'Cidade',
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(40)],
-            initialValue: instituicao.cidade,
+            initialValue: instituicao.city,
             onSaved: (val){
-              if(val != instituicao.cidade) enderecoMudou = true;
-              instituicao.cidade = val; },
+              if(val != instituicao.city) enderecoMudou = true;
+              instituicao.city = val; },
           ),
           Container(
               padding: const EdgeInsets.only(top: 20.0),
-              child: BotaoPadrao("Salvar", _submitForm,
-                  Tema.principal.primaryColor, Tema.cinzaClaro)
+              child: StandardButton("Salvar", _submitForm,
+                  Style.main.primaryColor, Style.lightGrey)
           ),
         ],
       ),
     );
   }
 
-  save(Instituicao instituicao){
+  save(Institution instituicao){
     instituicao.reference.updateData(instituicao.toJson())
         .then(saved).catchError(saveError);
   }
@@ -576,9 +576,9 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
       carregando(true);
       form.save(); //Executa cada evento "onSaved" dos campos do formulário
       try {
-        if (enderecoMudou && instituicao.endereco.isNotEmpty &&
-            instituicao.cidade.isNotEmpty) {
-          final query = instituicao.endereco + " - " + instituicao.cidade;
+        if (enderecoMudou && instituicao.address.isNotEmpty &&
+            instituicao.city.isNotEmpty) {
+          final query = instituicao.address + " - " + instituicao.city;
           var addresses = await Geocoder.local.findAddressesFromQuery(query);
           var first = addresses.first;
           instituicao.lat = first.coordinates.latitude;

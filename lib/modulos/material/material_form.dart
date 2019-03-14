@@ -2,11 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:redesign/estilos/tema.dart';
+import 'package:redesign/estilos/style.dart';
 import 'package:redesign/modulos/material/material_didatico.dart';
-import 'package:redesign/servicos/validadores.dart';
-import 'package:redesign/widgets/botao_padrao.dart';
-import 'package:redesign/widgets/tela_base.dart';
+import 'package:redesign/services/validators.dart';
+import 'package:redesign/widgets/standard_button.dart';
+import 'package:redesign/widgets/base_screen.dart';
 
 class MaterialForm extends StatefulWidget {
   @override
@@ -24,7 +24,7 @@ class MaterialFormState extends State<MaterialForm> {
 
   @override
   Widget build(BuildContext context) {
-    return TelaBase(
+    return BaseScreen(
       title: "Novo Material",
       body: Scaffold(
         key: _scaffoldKey,
@@ -57,7 +57,7 @@ class MaterialFormState extends State<MaterialForm> {
                   labelText: 'Link',
                 ),
                 validator: (val) => val.isEmpty ? 'Link é obrigatório' :
-                  Validadores.url(val) ? null : 'Link inválido',
+                  Validators.url(val) ? null : 'Link inválido',
                 inputFormatters: [LengthLimitingTextInputFormatter(70)],
                 onSaved: (val){
                   if(!val.startsWith("http")){
@@ -68,8 +68,8 @@ class MaterialFormState extends State<MaterialForm> {
               ),
               Container(
                   padding: const EdgeInsets.only(top: 20.0),
-                  child: BotaoPadrao("Enviar", _submitForm,
-                      Tema.principal.primaryColor, Tema.cinzaClaro)
+                  child: StandardButton("Enviar", _submitForm,
+                      Style.main.primaryColor, Style.lightGrey)
               ),
             ],
           ),

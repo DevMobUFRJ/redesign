@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 /// Se for TipoUsuario.pessoa, é da classe usuario.
 /// Se for TipoUsuario.instituicao, é da classe Instituicao.
-enum TipoUsuario { pessoa, instituicao }
+enum UserType { person, institution }
 
-class Ocupacao {
+class Occupation {
   static const String bolsista = "Bolsista";
   static const String professor = "Professor";
   static const String discente = "Discente";
@@ -16,51 +16,51 @@ class Ocupacao {
   static const String outra = "Outra";
 }
 
-class Usuario {
+class User {
 
   static final String collectionName = 'usuario';
 
-  String nome;
+  String name;
   String email;
-  String descricao;
+  String description;
   String site;
   String facebook;
-  String instituicaoId;
+  String idInstitution;
   /// Se for TipoUsuario.pessoa, é da classe usuario.
   /// Se for TipoUsuario.instituicao, é da classe Instituicao.
-  TipoUsuario tipo;
-  String ocupacao;
-  int ativo;
+  UserType type;
+  String occupation;
+  int active;
 
   DocumentReference reference;
 
-  Usuario({this.nome, this.email, this.descricao='', this.site='', this.facebook='',
-    this.ocupacao='', this.instituicaoId='', this.tipo: TipoUsuario.pessoa,
-    this.ativo: 0, this.reference});
+  User({this.name, this.email, this.description='', this.site='', this.facebook='',
+    this.occupation='', this.idInstitution='', this.type: UserType.person,
+    this.active: 0, this.reference});
 
-  Usuario.fromMap(Map<String, dynamic> map, {this.reference})
-      : nome = map['nome'] ?? '',
+  User.fromMap(Map<String, dynamic> map, {this.reference})
+      : name = map['nome'] ?? '',
         email = map['email'] ?? '',
-        descricao = map['descricao'] ?? '',
+        description = map['descricao'] ?? '',
         site = map['site'] ?? '',
         facebook = map['facebook'] ?? '',
-        instituicaoId = map['instituicaoId'] ?? '',
-        tipo = TipoUsuario.values[map['tipo']],
-        ocupacao = map['ocupacao'] ?? '',
-        ativo = map['ativo'] ?? 0;
+        idInstitution = map['instituicaoId'] ?? '',
+        type = UserType.values[map['tipo']],
+        occupation = map['ocupacao'] ?? '',
+        active = map['ativo'] ?? 0;
 
   Map<String, dynamic> toJson() =>
       {
-        'nome': nome ?? '',
+        'nome': name ?? '',
         'email': email ?? '',
-        'descricao': descricao ?? '',
+        'descricao': description ?? '',
         'site': site ?? '',
         'facebook': facebook ?? '',
-        'instituicaoId': instituicaoId ?? '',
-        'tipo': tipo.index ?? '',
-        'ocupacao': ocupacao ?? '',
-        'ativo': ativo ?? 0,
+        'instituicaoId': idInstitution ?? '',
+        'tipo': type.index ?? '',
+        'ocupacao': occupation ?? '',
+        'ativo': active ?? 0,
       };
 
-  bool estaAtivo() => this.ativo == 1;
+  bool isActive() => this.active == 1;
 }

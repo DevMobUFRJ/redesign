@@ -2,11 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:redesign/estilos/tema.dart';
+import 'package:redesign/estilos/style.dart';
 import 'package:redesign/modulos/forum/forum_comentario.dart';
-import 'package:redesign/servicos/meu_app.dart';
-import 'package:redesign/widgets/botao_padrao.dart';
-import 'package:redesign/widgets/tela_base.dart';
+import 'package:redesign/services/my_app.dart';
+import 'package:redesign/widgets/standard_button.dart';
+import 'package:redesign/widgets/base_screen.dart';
 
 class ForumComentarioForm extends StatefulWidget {
   final CollectionReference reference;
@@ -30,7 +30,7 @@ class ForumComentarioFormState extends State<ForumComentarioForm> {
 
   @override
   Widget build(BuildContext context) {
-    return TelaBase(
+    return BaseScreen(
       title: "Nova Solução",
       body: Scaffold(
         key: _scaffoldKey,
@@ -78,8 +78,8 @@ class ForumComentarioFormState extends State<ForumComentarioForm> {
             ),
             Container(
               padding: const EdgeInsets.only(top: 20.0),
-              child: BotaoPadrao("Enviar", _submitForm,
-                  Tema.principal.primaryColor, Tema.cinzaClaro)
+              child: StandardButton("Enviar", _submitForm,
+                  Style.main.primaryColor, Style.lightGrey)
             ),
           ],
         ),
@@ -97,7 +97,7 @@ class ForumComentarioFormState extends State<ForumComentarioForm> {
       showMessage('Por favor, complete todos os campos.');
     } else {
       form.save(); //Executa cada evento "onSaved" dos campos do formulário
-      comentario.criadoPor = MeuApp.userId();
+      comentario.criadoPor = MyApp.userId();
       comentario.data = DateTime.now();
       salvar(comentario);
     }

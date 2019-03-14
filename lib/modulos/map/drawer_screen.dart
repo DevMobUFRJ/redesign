@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:redesign/estilos/tema.dart';
+import 'package:redesign/estilos/style.dart';
 import 'package:redesign/modulos/autorizacao/autorizacao.dart';
 import 'package:redesign/modulos/chat/chat_lista.dart';
 import 'package:redesign/modulos/forum/forum_tema_lista.dart';
-import 'package:redesign/modulos/mapa/mapa_estudante.dart';
+import 'package:redesign/modulos/map/map_student.dart';
 import 'package:redesign/modulos/material/material_lista.dart';
 import 'package:redesign/modulos/rede/rede_tela.dart';
 import 'package:redesign/modulos/eventos/eventos_lista.dart';
-import 'package:redesign/modulos/sobre/sobre_tela.dart';
+import 'package:redesign/modulos/about/about_screen.dart';
 import 'package:redesign/modulos/usuario/perfil_form.dart';
-import 'package:redesign/modulos/usuario/usuario.dart';
-import 'package:redesign/servicos/meu_app.dart';
+import 'package:redesign/modulos/usuario/user.dart';
+import 'package:redesign/services/my_app.dart';
 
 class DrawerScreen extends StatefulWidget {
   final int mensagensNaoLidas;
@@ -36,9 +36,9 @@ class DrawerScreenState extends State<DrawerScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   GestureDetector(
-                    onTap: () => MeuApp.irProprioPerfil(context),
+                    onTap: () => MyApp.gotoProfile(context),
                     child: Hero(
-                      tag: MeuApp.userId(),
+                      tag: MyApp.userId(),
                       child: Container(
                         width: 90.0,
                         height: 90.0,
@@ -46,9 +46,9 @@ class DrawerScreenState extends State<DrawerScreen> {
                           shape: BoxShape.circle,
                           image: DecorationImage(
                               fit: BoxFit.cover,
-                              image: MeuApp.imagemMemory == null ?
+                              image: MyApp.imageMemory == null ?
                                 AssetImage("images/perfil_placeholder.png") :
-                                MemoryImage(MeuApp.imagemMemory),
+                                MemoryImage(MyApp.imageMemory),
                           )
                         ),
                       ),
@@ -62,14 +62,14 @@ class DrawerScreenState extends State<DrawerScreen> {
                       children: <Widget>[
                         Padding(
                           padding: const EdgeInsets.only(bottom: 2),
-                          child: Text(MeuApp.nome(),
+                          child: Text(MyApp.name(),
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold, fontSize: 20.0),
                             maxLines: 1,
                           ),
                         ),
-                        Text(MeuApp.ocupacao(),
+                        Text(MyApp.occupation(),
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.normal, fontSize: 16.0),
@@ -88,11 +88,11 @@ class DrawerScreenState extends State<DrawerScreen> {
                                 onPressed: () {
                                   Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) => PerfilForm())
+                                      MaterialPageRoute(builder: (context) => ProfileForm())
                                   );
                                 },
                               ),
-                              MeuApp.ehEstudante() ? Container() :
+                              MyApp.isStudent() ? Container() :
                               MessageIconButton(
                                 mensagensNaoLidas: widget.mensagensNaoLidas,
                                 icon: Icon(Icons.chat_bubble),
@@ -123,31 +123,31 @@ class DrawerScreenState extends State<DrawerScreen> {
               ),
             ),
             decoration: BoxDecoration(
-                color: Tema.darkBackground
+                color: Style.darkBackground
             ),
           ),
           ListaDrawer(
             icon: Icons.explore,
-            iconColor: Tema.primaryColor,
+            iconColor: Style.primaryColor,
             text: 'Mapa',
             onPressed: () {
               Navigator.pop(context);
             }
           ),
-          MeuApp.ocupacao() != Ocupacao.professor ? Container() : ListaDrawer(
+          MyApp.occupation() != Occupation.professor ? Container() : ListaDrawer(
             icon: Icons.explore,
-            iconColor: Tema.primaryColor,
+            iconColor: Style.primaryColor,
             text: 'Mapa do Pegada',
             onPressed: () {
               Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MapaEstudante(context))
+                  MaterialPageRoute(builder: (context) => MapStudent(context))
               );
             }
           ),
           ListaDrawer(
             icon: Icons.people,
-            iconColor: Tema.primaryColor,
+            iconColor: Style.primaryColor,
             text: 'Rede',
             onPressed: () {
               Navigator.push(
@@ -158,7 +158,7 @@ class DrawerScreenState extends State<DrawerScreen> {
           ),
           ListaDrawer(
             icon: Icons.forum,
-            iconColor: Tema.primaryColor,
+            iconColor: Style.primaryColor,
             text: 'Fórum',
             onPressed: () {
               Navigator.push(
@@ -169,7 +169,7 @@ class DrawerScreenState extends State<DrawerScreen> {
           ),
           ListaDrawer(
             icon: Icons.library_books,
-            iconColor: Tema.primaryColor,
+            iconColor: Style.primaryColor,
             text: 'Materiais',
               onPressed: () {
                 Navigator.push(
@@ -180,7 +180,7 @@ class DrawerScreenState extends State<DrawerScreen> {
           ),
           ListaDrawer(
             icon: Icons.event,
-            iconColor: Tema.primaryColor,
+            iconColor: Style.primaryColor,
             text: 'Eventos',
             onPressed: () {
               Navigator.push(
@@ -189,10 +189,10 @@ class DrawerScreenState extends State<DrawerScreen> {
               );
             }
           ),
-          MeuApp.ehLabDis() ?
+          MyApp.isLabDis() ?
           ListaDrawer(
             icon: Icons.assignment_ind,
-            iconColor: Tema.primaryColor,
+            iconColor: Style.primaryColor,
             text: 'Autorizar Usuários',
             onPressed: () {
               Navigator.push(
@@ -214,12 +214,12 @@ class DrawerScreenState extends State<DrawerScreen> {
                           Divider(color: Colors.black54, height: 0,),
                           ListaDrawer(
                             icon: Icons.help,
-                            iconColor: Tema.primaryColor,
+                            iconColor: Style.primaryColor,
                             text: 'Sobre',
                             onPressed: () {
                               Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => SobreTela())
+                                  MaterialPageRoute(builder: (context) => AboutScreen())
                               );
                             },
                           )
@@ -234,7 +234,7 @@ class DrawerScreenState extends State<DrawerScreen> {
   }
 
   logout(BuildContext context) {
-    MeuApp.logout(context);
+    MyApp.logout(context);
   }
 }
 

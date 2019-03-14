@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:redesign/estilos/tema.dart';
+import 'package:redesign/estilos/style.dart';
 import 'package:redesign/modulos/forum/forum_post_lista.dart';
 import 'package:redesign/modulos/forum/forum_tema.dart';
 import 'package:redesign/widgets/item_lista_simples.dart';
-import 'package:redesign/widgets/tela_base.dart';
+import 'package:redesign/widgets/base_screen.dart';
 
 class ForumTemaLista extends StatefulWidget {
 
@@ -20,7 +20,7 @@ class ForumTemaListaState extends State<ForumTemaLista> {
 
   @override
   Widget build(BuildContext context) {
-    return TelaBase(
+    return BaseScreen(
       title: "Fórum",
       body: _buildBody(context),
       actions: <IconButton>[
@@ -64,10 +64,10 @@ class ForumTemaListaState extends State<ForumTemaLista> {
                         child: TextField(
                           onChanged: textoBuscaMudou,
                           controller: _buscaController,
-                          cursorColor: Tema.cinzaClaro,
+                          cursorColor: Style.lightGrey,
                           decoration: InputDecoration(
                             hintText: "Buscar",
-                            prefixIcon: Icon(Icons.search, color: Tema.primaryColor)
+                            prefixIcon: Icon(Icons.search, color: Style.primaryColor)
                           ),
                         ),
                       ),

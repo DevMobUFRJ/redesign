@@ -2,19 +2,19 @@
 /// e o ID dele do firebase. Devemos manter, então, uma List<Favorito> no
 /// usuário para salvar todos os favoritos dele, e em cada activity procurar
 /// nessa lista se o elemento é ou não favorito dele.
-class Favorito {
+class Favorite {
   static const String collectionName = "favorito";
   String id;
-  String classe;
+  String className;
 
-  Favorito({this.id, this.classe});
+  Favorite({this.id, this.className});
 
-  Favorito.fromMap(Map<String, dynamic> map) :
-      id = map['id'], classe = map['classe'];
+  Favorite.fromMap(Map<String, dynamic> map) :
+      id = map['id'], className = map['classe'];
 
   Map<String, dynamic> toJson() =>
       {
         'id': id,
-        'classe': classe
+        'classe': className
       };
 }

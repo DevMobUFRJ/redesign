@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:redesign/estilos/fb_icon_icons.dart';
 import 'package:redesign/modulos/eventos/evento.dart';
 import 'package:redesign/modulos/eventos/evento_form.dart';
-import 'package:redesign/modulos/usuario/favorito.dart';
-import 'package:redesign/servicos/meu_app.dart';
+import 'package:redesign/modulos/usuario/favorite.dart';
+import 'package:redesign/services/my_app.dart';
 import 'package:redesign/widgets/dados_asincronos.dart';
-import 'package:redesign/widgets/tela_base.dart';
-import 'package:redesign/estilos/tema.dart';
+import 'package:redesign/widgets/base_screen.dart';
+import 'package:redesign/estilos/style.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EventoForm extends StatefulWidget {
@@ -24,7 +24,7 @@ class _EventoExibir extends State<EventoForm> {
   bool ehFavorito = false;
 
   _EventoExibir({this.evento}){
-    MeuApp.getReferenciaUsuario().collection(Favorito.collectionName)
+    MyApp.getUserReference().collection(Favorite.collectionName)
         .where("id", isEqualTo: evento.reference.documentID)
         .snapshots().first.then((QuerySnapshot favorito) {
       if (favorito.documents.length != 0) {
@@ -37,9 +37,9 @@ class _EventoExibir extends State<EventoForm> {
 
   @override
   Widget build(BuildContext context) {
-    return TelaBase(
+    return BaseScreen(
         title: evento.nome,
-        actions: evento.criadoPor == MeuApp.userId() ? [
+        actions: evento.criadoPor == MyApp.userId() ? [
           IconButton(
             icon: Icon(
               Icons.edit,
@@ -75,13 +75,13 @@ class _EventoExibir extends State<EventoForm> {
   void alternaFavorito() {
     if(ocupado) return;
     ocupado = true;
-    MeuApp.getReferenciaUsuario().collection(Favorito.collectionName)
+    MyApp.getUserReference().collection(Favorite.collectionName)
         .where("id", isEqualTo: evento.reference.documentID)
         .snapshots().first.then((QuerySnapshot vazio){
           if(vazio.documents.length == 0) {
-            MeuApp.getReferenciaUsuario().collection(Favorito.collectionName)
-                .add((new Favorito(id: evento.reference.documentID,
-                classe: evento.runtimeType.toString()).toJson()))
+            MyApp.getUserReference().collection(Favorite.collectionName)
+                .add((new Favorite(id: evento.reference.documentID,
+                className: evento.runtimeType.toString()).toJson()))
                 .then((v){
                   setState(() {
                     ehFavorito = true;
@@ -116,14 +116,14 @@ class _EventoExibir extends State<EventoForm> {
                     Text(
                       evento.data.day.toString(),
                       style: TextStyle(
-                        color: Tema.buttonBlue,
+                        color: Style.buttonBlue,
                         fontSize: 40,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                     Text(
                       initialsMonth(evento.data.month),
-                      style: TextStyle(color: Tema.buttonBlue, fontSize: 30),
+                      style: TextStyle(color: Style.buttonBlue, fontSize: 30),
                     ),
                   ],
                 ),
@@ -131,7 +131,7 @@ class _EventoExibir extends State<EventoForm> {
               Container(
                 height: 90.0,
                 width: 1.0,
-                color: Tema.buttonBlue,
+                color: Style.buttonBlue,
                 margin: const EdgeInsets.only(left: 10.0, right: 10.0),
               ),
               Expanded(
@@ -175,7 +175,7 @@ class _EventoExibir extends State<EventoForm> {
                               child: Container(
                                 alignment: Alignment.bottomRight,
                                 padding: EdgeInsets.only(right: 10),
-                                child: Icon(FbIcon.facebook_official, color: Tema.primaryColor, size: 28,),
+                                child: Icon(FbIcon.facebook_official, color: Style.primaryColor, size: 28,),
                               ),
                               onTap: () => _launchURL(evento.facebookUrl),
                             ),
@@ -183,8 +183,8 @@ class _EventoExibir extends State<EventoForm> {
                               child: Container(
                                 alignment: Alignment.bottomRight,
                                 child: ehFavorito ?
-                                    Icon(Icons.star, color: Tema.primaryColor, size: 28 ,)
-                                    : Icon(Icons.star_border, color: Tema.primaryColor, size: 28,),
+                                    Icon(Icons.star, color: Style.primaryColor, size: 28 ,)
+                                    : Icon(Icons.star_border, color: Style.primaryColor, size: 28,),
                               ),
                               onTap: () => alternaFavorito(),
                             ),

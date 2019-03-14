@@ -1,16 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:redesign/estilos/tema.dart';
-import 'package:redesign/modulos/usuario/favorito.dart';
-import 'package:redesign/modulos/usuario/instituicao.dart';
+import 'package:redesign/estilos/style.dart';
+import 'package:redesign/modulos/usuario/favorite.dart';
+import 'package:redesign/modulos/usuario/institution.dart';
 import 'package:redesign/modulos/usuario/perfil_instituicao.dart';
 import 'package:redesign/modulos/usuario/perfil_pessoa.dart';
-import 'package:redesign/modulos/usuario/usuario.dart';
-import 'package:redesign/servicos/helper.dart';
-import 'package:redesign/servicos/meu_app.dart';
+import 'package:redesign/modulos/usuario/user.dart';
+import 'package:redesign/services/helper.dart';
+import 'package:redesign/services/my_app.dart';
 import 'package:redesign/widgets/item_lista_simples.dart';
-import 'package:redesign/widgets/tela_base.dart';
+import 'package:redesign/widgets/base_screen.dart';
 
 class RedeLista extends StatefulWidget {
   final String ocupacao;
@@ -22,19 +22,19 @@ class RedeLista extends StatefulWidget {
 }
 
 class RedeListaState extends State<RedeLista> {
-  bool buscando = false;
-  TextEditingController _buscaController = TextEditingController();
-  String busca = "";
+  bool searching = false;
+  TextEditingController _searchController = TextEditingController();
+  String search = "";
 
-  final String ocupacao;
+  final String occupation;
 
-  RedeListaState(this.ocupacao);
+  RedeListaState(this.occupation);
 
   @override
   Widget build(BuildContext context) {
-    return TelaBase(
-        title: ocupacao,
-        body: ocupacao == "Favoritos" ?
+    return BaseScreen(
+        title: occupation,
+        body: occupation == "Favoritos" ?
           _buildFavoritos(context)
           : _buildBody(context),
         actions: <IconButton>[
@@ -43,7 +43,7 @@ class RedeListaState extends State<RedeLista> {
               Icons.search,
               color: Colors.white
             ),
-            onPressed: () => alternarBusca(),
+            onPressed: () => toggleSearch(),
           ),
         ],
     );
@@ -51,8 +51,8 @@ class RedeListaState extends State<RedeLista> {
 
   Widget _buildBody(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance.collection(Usuario.collectionName)
-          .where("ocupacao", isEqualTo: this.ocupacao)
+      stream: Firestore.instance.collection(User.collectionName)
+          .where("ocupacao", isEqualTo: this.occupation)
           .where("ativo", isEqualTo: 1)
           .orderBy("nome")
           .snapshots(),
@@ -80,7 +80,7 @@ class RedeListaState extends State<RedeLista> {
           Expanded(
             child:  ListView(
               children: [
-                buscando ?
+                searching ?
                 Container(
                     margin: EdgeInsets.only(bottom: 5),
                     decoration: ShapeDecoration(shape: StadiumBorder() ),
@@ -89,11 +89,11 @@ class RedeListaState extends State<RedeLista> {
                           Expanded(
                             child: TextField(
                               onChanged: textoBuscaMudou,
-                              controller: _buscaController,
-                              cursorColor: Tema.cinzaClaro,
+                              controller: _searchController,
+                              cursorColor: Style.lightGrey,
                               decoration: InputDecoration(
                                   hintText: "Buscar",
-                                  prefixIcon: Icon(Icons.search, color: Tema.primaryColor)
+                                  prefixIcon: Icon(Icons.search, color: Style.primaryColor)
                               ),
                             ),
                           ),
@@ -110,33 +110,33 @@ class RedeListaState extends State<RedeLista> {
   }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
-    Usuario usuario;
-    Instituicao instituicao;
+    User usuario;
+    Institution instituicao;
 
-    if(data.data['tipo'] == TipoUsuario.pessoa.index) {
-      usuario = Usuario.fromMap(data.data, reference: data.reference);
-      if(!usuario.nome.toLowerCase().contains(busca)
-          && !usuario.descricao.toLowerCase().contains(busca))
+    if(data.data['tipo'] == UserType.person.index) {
+      usuario = User.fromMap(data.data, reference: data.reference);
+      if(!usuario.name.toLowerCase().contains(search)
+          && !usuario.description.toLowerCase().contains(search))
         return Container();
     } else {
-      instituicao = Instituicao.fromMap(data.data, reference: data.reference);
-      if(!instituicao.nome.toLowerCase().contains(busca)
-          && !instituicao.descricao.toLowerCase().contains(busca))
+      instituicao = Institution.fromMap(data.data, reference: data.reference);
+      if(!instituicao.name.toLowerCase().contains(search)
+          && !instituicao.description.toLowerCase().contains(search))
         return Container();
     }
 
     return ItemListaSimples(
-      usuario != null ? usuario.nome : instituicao.nome,
+      usuario != null ? usuario.name : instituicao.name,
       usuario != null ? () => callbackUsuario(context, usuario) :
                         () => callbackInstituicao(context, instituicao),
-      corTexto: Tema.textoEscuro,
+      corTexto: Style.darkText,
       key: ValueKey(data.documentID),
     );
   }
 
   Widget _buildFavoritos(BuildContext context){
     return StreamBuilder<QuerySnapshot>(
-      stream: MeuApp.getReferenciaUsuario().collection(Favorito.collectionName)
+      stream: MyApp.getUserReference().collection(Favorite.collectionName)
           .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return LinearProgressIndicator();
@@ -162,7 +162,7 @@ class RedeListaState extends State<RedeLista> {
           Expanded(
             child:  ListView(
               children: [
-                buscando ?
+                searching ?
                 Container(
                     margin: EdgeInsets.only(bottom: 5),
                     decoration: ShapeDecoration(shape: StadiumBorder() ),
@@ -171,11 +171,11 @@ class RedeListaState extends State<RedeLista> {
                           Expanded(
                             child: TextField(
                               onChanged: textoBuscaMudou,
-                              controller: _buscaController,
-                              cursorColor: Tema.cinzaClaro,
+                              controller: _searchController,
+                              cursorColor: Style.lightGrey,
                               decoration: InputDecoration(
                                   hintText: "Buscar",
-                                  prefixIcon: Icon(Icons.search, color: Tema.primaryColor)
+                                  prefixIcon: Icon(Icons.search, color: Style.primaryColor)
                               ),
                             ),
                           ),
@@ -195,19 +195,19 @@ class RedeListaState extends State<RedeLista> {
     );
   }
 
-  alternarBusca(){
+  toggleSearch(){
     setState((){
-      buscando = !buscando;
+      searching = !searching;
     });
-    if(!buscando) {
-      _buscaController.text = "";
+    if(!searching) {
+      _searchController.text = "";
       textoBuscaMudou("");
     }
   }
 
   textoBuscaMudou(String texto){
     setState(() {
-      busca = texto.toLowerCase();
+      search = texto.toLowerCase();
     });
   }
 }
@@ -222,19 +222,19 @@ class _FavoritoItem extends StatefulWidget {
 }
 
 class _FavoritoItemState extends State<_FavoritoItem> {
-  Usuario usuario;
-  Instituicao instituicao;
+  User usuario;
+  Institution instituicao;
 
   @override
   void initState() {
     super.initState();
-    Firestore.instance.collection(Usuario.collectionName)
+    Firestore.instance.collection(User.collectionName)
         .document(widget.userId).get().then((DocumentSnapshot snapshot){
           setState(() {
-            if(snapshot.data['tipo'] == TipoUsuario.instituicao.index){
-              instituicao = Instituicao.fromMap(snapshot.data, reference: snapshot.reference);
+            if(snapshot.data['tipo'] == UserType.institution.index){
+              instituicao = Institution.fromMap(snapshot.data, reference: snapshot.reference);
             } else {
-              usuario = Usuario.fromMap(snapshot.data, reference: snapshot.reference);
+              usuario = User.fromMap(snapshot.data, reference: snapshot.reference);
             }
           });
     });
@@ -250,28 +250,28 @@ class _FavoritoItemState extends State<_FavoritoItem> {
     if(instituicao != null){
       if(instituicao.email == Helper.emailLabdis){
         icone = Image.asset("images/icones/ic_labdis.png", height: 35.0,);
-      } else if(instituicao.ocupacao == Ocupacao.laboratorio){
+      } else if(instituicao.occupation == Occupation.laboratorio){
         icone = Image.asset("images/icones/ic_laboratorio.png", height: 35.0,);
-      } else if(instituicao.ocupacao == Ocupacao.escola){
+      } else if(instituicao.occupation == Occupation.escola){
         icone = Image.asset("images/icones/ic_escola.png", height: 35.0,);
-      } else if(instituicao.ocupacao == Ocupacao.incubadora){
+      } else if(instituicao.occupation == Occupation.incubadora){
         icone = Image.asset("images/icones/ic_incubadora.png", height: 35.0,);
-      } else if(instituicao.ocupacao == Ocupacao.empreendedor){
+      } else if(instituicao.occupation == Occupation.empreendedor){
         icone = Image.asset("images/icones/ic_empreendedor.png", height: 35.0,);
       }
     }
 
     return ItemListaSimples(
-      usuario != null ? usuario.nome : instituicao.nome,
+      usuario != null ? usuario.name : instituicao.name,
       usuario != null ? () => callbackUsuario(context, usuario) :
           () => callbackInstituicao(context, instituicao),
-      corTexto: Tema.textoEscuro,
+      corTexto: Style.darkText,
       iconeExtra: icone,
     );
   }
 }
 
-void callbackUsuario(BuildContext context, Usuario usuario){
+void callbackUsuario(BuildContext context, User usuario){
   Navigator.push(
     context,
     MaterialPageRoute(
@@ -280,7 +280,7 @@ void callbackUsuario(BuildContext context, Usuario usuario){
   );
 }
 
-void callbackInstituicao(BuildContext context, Instituicao instituicao){
+void callbackInstituicao(BuildContext context, Institution instituicao){
   Navigator.push(
     context,
     MaterialPageRoute(

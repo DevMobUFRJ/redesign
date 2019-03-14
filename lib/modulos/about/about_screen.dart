@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:redesign/estilos/tema.dart';
-import 'package:redesign/widgets/tela_base.dart';
+import 'package:redesign/estilos/style.dart';
+import 'package:redesign/widgets/base_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class SobreTela extends StatelessWidget {
+class AboutScreen extends StatelessWidget {
+
   _launchURL(String url) async{
     if (await canLaunch(url)) {
       await launch(url);
@@ -12,7 +13,7 @@ class SobreTela extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TelaBase(
+    return BaseScreen(
       title: "Sobre",
       body: Column(
         mainAxisSize: MainAxisSize.max,
@@ -49,11 +50,11 @@ class SobreTela extends StatelessWidget {
                     fontSize: 15,
                   ),
                 ),
-                Divider(color: Tema.primaryColor, height: 28,),
+                Divider(color: Style.primaryColor, height: 28,),
                 Text("REDEsign",
                   style: TextStyle(
                     fontSize: 20,
-                    color: Tema.primaryColor,
+                    color: Style.primaryColor,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -73,11 +74,11 @@ class SobreTela extends StatelessWidget {
                     textAlign: TextAlign.justify,
                   ),
                 ),
-                Divider(color: Tema.primaryColor, height: 28,),
+                Divider(color: Style.primaryColor, height: 28,),
                 Text("Aplicativo",
                   style: TextStyle(
                     fontSize: 20,
-                    color: Tema.primaryColor,
+                    color: Style.primaryColor,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -90,7 +91,7 @@ class SobreTela extends StatelessWidget {
                     textAlign: TextAlign.justify,
                   ),
                 ),
-                Divider(color: Tema.primaryColor, height: 28,),
+                Divider(color: Style.primaryColor, height: 28,),
               ]
             ),
           ),

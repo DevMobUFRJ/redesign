@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:redesign/estilos/tema.dart';
+import 'package:redesign/estilos/style.dart';
 import 'package:redesign/modulos/material/material_didatico.dart';
 import 'package:redesign/modulos/material/material_form.dart';
-import 'package:redesign/servicos/meu_app.dart';
+import 'package:redesign/services/my_app.dart';
 import 'package:redesign/widgets/item_lista_simples.dart';
-import 'package:redesign/widgets/tela_base.dart';
+import 'package:redesign/widgets/base_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MaterialLista extends StatefulWidget {
@@ -19,14 +19,14 @@ class MaterialListaState extends State<MaterialLista> {
 
   @override
   Widget build(BuildContext context) {
-    return TelaBase(
+    return BaseScreen(
       title: "Materiais",
       body: _buildBody(context),
-      fab: MeuApp.ehLabDis() ?
+      fab: MyApp.isLabDis() ?
         FloatingActionButton(
           onPressed: () => novoMaterial(),
           child: Icon(Icons.add),
-          backgroundColor: Tema.principal.primaryColor,
+          backgroundColor: Style.main.primaryColor,
         )
           : null,
     );
@@ -76,10 +76,10 @@ class MaterialListaState extends State<MaterialLista> {
       subtitulo: material.descricao,
       iconeExtra: Icon(
         Icons.link,
-        color: Tema.principal.primaryColor,
+        color: Style.main.primaryColor,
       ),
       key: ValueKey(data.documentID),
-      onLongPress: MeuApp.ehLabDis() ? () => _apagarMaterial(material) : null,
+      onLongPress: MyApp.isLabDis() ? () => _apagarMaterial(material) : null,
     );
   }
 

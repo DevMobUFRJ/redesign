@@ -1,13 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:redesign/estilos/tema.dart';
-import 'package:redesign/servicos/validadores.dart';
-import 'package:redesign/widgets/botao_padrao.dart';
+import 'package:redesign/estilos/style.dart';
+import 'package:redesign/services/validators.dart';
+import 'package:redesign/widgets/standard_button.dart';
 
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-class EsqueciSenha extends StatelessWidget {
+class ForgotPassword extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class EsqueciSenha extends StatelessWidget {
         resizeToAvoidBottomPadding: false,
         body: Center(
             child: Container(
-                color: Tema.darkBackground,
+                color: Style.darkBackground,
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
@@ -28,7 +28,7 @@ class EsqueciSenha extends StatelessWidget {
                         width: 200,
                       ),
                     ),
-                    _EsqueciPage(),
+                    _ForgotPage(),
                   ],
                 )
             )
@@ -37,12 +37,12 @@ class EsqueciSenha extends StatelessWidget {
   }
 }
 
-class _EsqueciPage extends StatefulWidget {
+class _ForgotPage extends StatefulWidget {
   @override
-  _EsqueciState createState() => _EsqueciState();
+  _ForgotState createState() => _ForgotState();
 }
 
-class _EsqueciState extends State<_EsqueciPage> {
+class _ForgotState extends State<_ForgotPage> {
   TextEditingController emailController = TextEditingController();
 
   @override
@@ -55,7 +55,7 @@ class _EsqueciState extends State<_EsqueciPage> {
                 padding: EdgeInsets.only(bottom: 10),
                 child: TextFormField(
                   style: TextStyle(
-                      decorationColor: Tema.cinzaClaro,
+                      decorationColor: Style.lightGrey,
                       color: Colors.white
                   ),
                   decoration: InputDecoration(
@@ -69,13 +69,13 @@ class _EsqueciState extends State<_EsqueciPage> {
                   ),
                   controller: emailController,
                   autovalidate: true,
-                  validator: (val) => Validadores.email(val) ? null : 'Email inválido',
+                  validator: (val) => Validators.email(val) ? null : 'Email inválido',
                 )
             ),
             Padding(
               padding: EdgeInsets.only(top: 8),
-              child: BotaoPadrao("Recuperar Senha", enviarEmail,
-                  Tema.principal.primaryColor, Tema.cinzaClaro
+              child: StandardButton("Recuperar Senha", sendEmail,
+                  Style.main.primaryColor, Style.lightGrey
               ),
             ),
           ],
@@ -83,16 +83,16 @@ class _EsqueciState extends State<_EsqueciPage> {
     );
   }
 
-  enviarEmail(){
+  sendEmail(){
     // TODO A função catchError tem um bug que será resolvido na versão 0.7.0
     // do pacote firebase_auth. Até lá, não da pra saber quando deu erro, talvez
     // só se usar um timeout, podemos considerar depois. (George, 03/01/2019)
     FirebaseAuth.instance.sendPasswordResetEmail(email: emailController.text)
-        .then(emailEnviado)
-        .catchError(erroEnvio);
+        .then(emailSent)
+        .catchError(sendError);
   }
 
-  emailEnviado(dynamic){
+  emailSent(dynamic){
     _scaffoldKey.currentState.showSnackBar(
         SnackBar(
           content: Text("Email de recuperação enviado."),
@@ -102,7 +102,7 @@ class _EsqueciState extends State<_EsqueciPage> {
     );
   }
 
-  erroEnvio(){
+  sendError(){
     _scaffoldKey.currentState.showSnackBar(
       SnackBar(
         content: Text("Erro no envio do email"),

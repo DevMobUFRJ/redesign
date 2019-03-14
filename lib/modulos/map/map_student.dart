@@ -5,24 +5,24 @@ import 'package:flutter/widgets.dart';
 import 'package:image_tap_coordinates/image_tap_coordinates.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-List<dynamic> _areasDoMapa;
+List<dynamic> _mapAreas;
 
-class MapaEstudante extends StatefulWidget {
+class MapStudent extends StatefulWidget {
 
-  MapaEstudante(BuildContext context){
-    carregarAreasDoMapa(context);
+  MapStudent(BuildContext context){
+    loadMapAreas(context);
   }
 
   @override
-  _MapaEstudanteState createState() => _MapaEstudanteState();
+  _MapStudentState createState() => _MapStudentState();
 
-  void carregarAreasDoMapa(BuildContext context) async{
-    String coordenadas = await DefaultAssetBundle.of(context).loadString("assets/MapStudentCoordinates.json");
-    _areasDoMapa = jsonDecode(coordenadas);
+  void loadMapAreas(BuildContext context) async{
+    String coordinates = await DefaultAssetBundle.of(context).loadString("assets/MapStudentCoordinates.json");
+    _mapAreas = jsonDecode(coordinates);
   }
 }
 
-class _MapaEstudanteState extends State<MapaEstudante> {
+class _MapStudentState extends State<MapStudent> {
 
   ImageTapController _controller;
 
@@ -37,38 +37,38 @@ class _MapaEstudanteState extends State<MapaEstudante> {
         initScale: 0.133,
         minScale: 0.056,
         maxScale: 0.8,
-        tapCallback: (Offset coordenadas){
-          _tocouNoMapa(coordenadas);
+        tapCallback: (Offset coordinates){
+          _touchedMap(coordinates);
         },
       ),
     );
   }
 
-  void _tocouNoMapa(Offset coordenadas){
-    for(dynamic elemento in _areasDoMapa){
-      if(coordenadas.dx >= elemento['topLeft']['x']
-          && coordenadas.dx <= elemento['bottomRight']['x']
-          && coordenadas.dy >= elemento['topLeft']['y']
-          && coordenadas.dy <= elemento['bottomRight']['y'] ){
-        _posicaoClicadaDialog(elemento);
+  void _touchedMap(Offset coordinates){
+    for(dynamic element in _mapAreas){
+      if(coordinates.dx >= element['topLeft']['x']
+          && coordinates.dx <= element['bottomRight']['x']
+          && coordinates.dy >= element['topLeft']['y']
+          && coordinates.dy <= element['bottomRight']['y'] ){
+        _dialogClickedPosition(element);
         return;
       }
     }
   }
 
-  Future<void> _posicaoClicadaDialog(dynamic elemento) async {
+  Future<void> _dialogClickedPosition(dynamic element) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(elemento["tema"]?.toString() ?? ""),
+          title: Text(element["tema"]?.toString() ?? ""),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text('Por: ' + (elemento['escola']?.toString() ?? "") + '\n'
-                    'Ano: ' + (elemento['ano']?.toString() ?? "") + '\n'
-                    'Turma: ' + (elemento['turma']?.toString() ?? "")),
+                Text('Por: ' + (element['escola']?.toString() ?? "") + '\n'
+                    'Ano: ' + (element['ano']?.toString() ?? "") + '\n'
+                    'Turma: ' + (element['turma']?.toString() ?? "")),
               ],
             ),
           ),
@@ -82,7 +82,7 @@ class _MapaEstudanteState extends State<MapaEstudante> {
             FlatButton(
               child: Text('Ver Recurso'),
               onPressed: () {
-                _launchURL(elemento['uriString']);
+                _launchURL(element['uriString']);
               },
             ),
           ],

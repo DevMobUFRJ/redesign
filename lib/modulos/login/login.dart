@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:redesign/estilos/tema.dart';
+import 'package:redesign/estilos/Style.dart';
 import 'package:redesign/modulos/cadastro/registroOpcoes.dart';
-import 'package:redesign/modulos/login/esqueci_senha.dart';
-import 'package:redesign/modulos/usuario/instituicao.dart';
-import 'package:redesign/modulos/usuario/usuario.dart';
-import 'package:redesign/servicos/meu_app.dart';
-import 'package:redesign/widgets/botao_padrao.dart';
+import 'package:redesign/modulos/login/forgot_password.dart';
+import 'package:redesign/modulos/usuario/user.dart';
+import 'package:redesign/modulos/usuario/institution.dart';
+import 'package:redesign/services/my_app.dart';
+import 'package:redesign/widgets/standard_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 FirebaseUser mCurrentUser;
@@ -19,28 +19,25 @@ class Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
-      resizeToAvoidBottomPadding: false,
-      body: Center(
-        child: Container(
-          color: Tema.darkBackground,
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(top: 50, bottom: 50),
-                child: Image.asset(
-                  'images/rede_logo.png',
-                  fit: BoxFit.fitWidth,
-                  width: 200,
-                ),
-              ),
-              _LoginPage(),
-            ],
-          )
-        )
-      )
-    );
+        key: _scaffoldKey,
+        resizeToAvoidBottomPadding: false,
+        body: Center(
+            child: Container(
+                color: Style.darkBackground,
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: 50, bottom: 50),
+                      child: Image.asset(
+                        'images/rede_logo.png',
+                        fit: BoxFit.fitWidth,
+                        width: 200,
+                      ),
+                    ),
+                    _LoginPage(),
+                  ],
+                ))));
   }
 }
 
@@ -50,39 +47,46 @@ class _LoginPage extends StatefulWidget {
 }
 
 class _LoginState extends State<_LoginPage> {
+  bool showingLogin = false;
 
-  bool mostrandoLogin = false;
+  Future<bool> _onWillPop() {
+    return _onBack();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return mostrandoLogin ?
-    _LoginForm() : Container(
-        padding: EdgeInsets.all(15.0),
-        child: Column(
-          children: [
-            Padding(
-                padding: EdgeInsets.only(bottom: 10),
-                child: BotaoPadrao(
-                    "Entrar", mostrarLogin, Tema.principal.primaryColor,
-                    Tema.cinzaClaro)
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 10),
-              child: BotaoPadrao("Cadastrar-se", cadastro, Tema.buttonDarkGrey,
-                  Tema.cinzaClaro),
-            ),
-          ],
-        )
-    );
+    return showingLogin
+        ? WillPopScope(child: _LoginForm(), onWillPop: _onWillPop)
+        : Container(
+            padding: EdgeInsets.all(15.0),
+            child: Column(
+              children: [
+                Padding(
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: StandardButton("Entrar", showLogin,
+                        Style.main.primaryColor, Style.lightGrey)),
+                Padding(
+                  padding: EdgeInsets.only(top: 10),
+                  child: StandardButton("Cadastrar-se", openSignUpScreen,
+                      Style.buttonDarkGrey, Style.lightGrey),
+                ),
+              ],
+            ));
   }
 
-  mostrarLogin() {
+  _onBack() {
     setState(() {
-      mostrandoLogin = true;
+      showingLogin = false;
     });
   }
 
-  cadastro() {
+  showLogin() {
+    setState(() {
+      showingLogin = true;
+    });
+  }
+
+  openSignUpScreen() {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => RegistroOpcoes()),
@@ -96,144 +100,140 @@ class _LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<_LoginForm> {
-
-  bool bloqueado = false;
+  bool blocked = false;
   TextEditingController emailController = TextEditingController();
-  TextEditingController senhaController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(15.0),
-      child: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.only(bottom: 10),
-            child: TextField(
+        padding: EdgeInsets.all(15.0),
+        child: Column(
+          children: [
+            Padding(
+                padding: EdgeInsets.only(bottom: 10),
+                child: TextField(
+                  style: TextStyle(
+                      decorationColor: Style.lightGrey, color: Colors.white),
+                  cursorColor: Style.buttonBlue,
+                  decoration: InputDecoration(
+                    labelText: 'E-mail',
+                    labelStyle: TextStyle(color: Colors.white54),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white54),
+                    ),
+                  ),
+                  controller: emailController,
+                )),
+            TextField(
               style: TextStyle(
-                decorationColor: Tema.cinzaClaro,
-                color: Colors.white
-              ),
-              cursorColor: Tema.buttonBlue,
+                  decorationColor: Style.lightGrey, color: Colors.white),
+              cursorColor: Style.buttonBlue,
               decoration: InputDecoration(
-                labelText: 'E-mail',
+                labelText: 'Senha',
                 labelStyle: TextStyle(color: Colors.white54),
                 enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                      color: Colors.white54
-                  ),
+                  borderSide: BorderSide(color: Colors.white54),
                 ),
               ),
-              controller: emailController,
-            )
-          ),
-          TextField(
-            style: TextStyle(
-                decorationColor: Tema.cinzaClaro,
-                color: Colors.white
+              obscureText: true,
+              controller: passwordController,
             ),
-            cursorColor: Tema.buttonBlue,
-            decoration: InputDecoration(
-              labelText: 'Senha',
-              labelStyle: TextStyle(color: Colors.white54),
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(
-                    color: Colors.white54
-                ),
-              ),
+            GestureDetector(
+              child: Container(
+                  padding: EdgeInsets.only(top: 8, bottom: 4),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      Text("Esqueci a senha",
+                          style: TextStyle(
+                              color: Style.primaryColorLighter,
+                              fontWeight: FontWeight.w300,
+                              fontSize: 12.0),
+                          textAlign: TextAlign.end),
+                    ],
+                  )),
+              onTap: forgotPassword,
             ),
-            obscureText: true,
-            controller: senhaController,
-          ),
-          GestureDetector(
-            child: Container(
-              padding: EdgeInsets.only(top: 8, bottom: 4),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  Text("Esqueci a senha",
-                      style: TextStyle(color: Tema.primaryColorLighter, fontWeight: FontWeight.w300, fontSize: 12.0),
-                      textAlign: TextAlign.end),
-                ],
-              )
+            Padding(
+              padding: EdgeInsets.only(top: 8),
+              child: StandardButton(
+                  "Entrar", login, Style.main.primaryColor, Style.lightGrey),
             ),
-            onTap: esqueciSenha,
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 8),
-            child: BotaoPadrao("Entrar", entrar,
-                Tema.principal.primaryColor, Tema.cinzaClaro
-            ),
-          ),
-        ],
-      )
-    );
+          ],
+        ));
   }
 
   /// Tenta logar o usuário pelo email e senha do formulário
-  entrar() async{
-    if(bloqueado) return;
+  login() async {
+    if (blocked) return;
 
-    if(emailController.text == null || emailController.text == "" || senhaController.text == null || senhaController.text == ""){
+    if (emailController.text == null ||
+        emailController.text == "" ||
+        passwordController.text == null ||
+        passwordController.text == "") {
       emailController.text = "george@hotmail.com";
-      senhaController.text = "123456";
+      passwordController.text = "123456";
     }
 
-    bloqueado = true;
+    blocked = true;
 
-    _logando(true);
-    await _auth.signInWithEmailAndPassword(
-        email: emailController.text, password: senhaController.text)
-        .then(authSucesso)
-        .catchError(erroEncontrarUsuario);
+    _logging(true);
+    await _auth
+        .signInWithEmailAndPassword(
+            email: emailController.text, password: passwordController.text)
+        .then(authSuccess)
+        .catchError(findUserError);
   }
 
-  void authSucesso(FirebaseUser user){
+  void authSuccess(FirebaseUser user) {
     print("autenticado");
-    MeuApp.firebaseUser = user;
-    Firestore.instance.collection(Usuario.collectionName).document(user.uid).get()
-    .then(encontrouUsuario).catchError(erroEncontrarUsuario);
+    MyApp.firebaseUser = user;
+    Firestore.instance
+        .collection(User.collectionName)
+        .document(user.uid)
+        .get()
+        .then(findUser)
+        .catchError(findUserError);
   }
 
-  void encontrouUsuario(DocumentSnapshot snapshot){
-    if(snapshot.data['tipo'] == TipoUsuario.instituicao.index){
-      MeuApp.setUsuario(Instituicao.fromMap(snapshot.data, reference: snapshot.reference));
+  void findUser(DocumentSnapshot snapshot) {
+    if (snapshot.data['tipo'] == UserType.institution.index) {
+      MyApp.setUser(
+          Institution.fromMap(snapshot.data, reference: snapshot.reference));
     } else {
-      MeuApp.setUsuario(Usuario.fromMap(snapshot.data, reference: snapshot.reference));
+      MyApp.setUser(User.fromMap(snapshot.data, reference: snapshot.reference));
     }
 
-    if(!MeuApp.ativo()){
-      _logando(false);
-      erroUsuarioInativo();
+    if (!MyApp.active()) {
+      _logging(false);
+      inactiveUserError();
       return;
     }
-    _logando(false);
-    Navigator.pushReplacementNamed(
-        context,
-        '/'
-    );
-    bloqueado = false;
+    _logging(false);
+    Navigator.pushReplacementNamed(context, '/');
+    blocked = false;
   }
 
-  void erroUsuarioInativo(){
-    _errorContaInativa();
-    bloqueado = false;
-  }
-  
-  void erroEncontrarUsuario(e){
-    _logando(false);
-    _mostraErro();
-    bloqueado = false;
+  void inactiveUserError() {
+    _inactiveAccountError();
+    blocked = false;
   }
 
-  void esqueciSenha(){
+  void findUserError(e) {
+    _logging(false);
+    _showError();
+    blocked = false;
+  }
+
+  void forgotPassword() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => EsqueciSenha()),
+      MaterialPageRoute(builder: (context) => ForgotPassword()),
     );
   }
 
-  Future<void> _errorContaInativa() async {
+  Future<void> _inactiveAccountError() async {
     return showDialog<void>(
       context: context,
       barrierDismissible: true,
@@ -263,35 +263,33 @@ class _LoginFormState extends State<_LoginForm> {
   }
 }
 
-void _mostraErro(){
-  _mostraErroMsg("Ocorreu um erro.");
+void _showError() {
+  _showMessageError("Ocorreu um erro.");
 }
 
-void _mostraErroMsg(String mensagem){
-  _scaffoldKey.currentState.showSnackBar(
-      SnackBar(
-        backgroundColor: Colors.red,
-        content: Row(
-          children: <Widget>[
-            Text(mensagem),
-          ],
-        ),
-        duration: Duration(seconds: 4),
-      ));
+void _showMessageError(String message) {
+  _scaffoldKey.currentState.showSnackBar(SnackBar(
+    backgroundColor: Colors.red,
+    content: Row(
+      children: <Widget>[
+        Text(message),
+      ],
+    ),
+    duration: Duration(seconds: 4),
+  ));
 }
 
-void _logando(bool isCarregando){
-  if(isCarregando){
-    _scaffoldKey.currentState.showSnackBar(
-        SnackBar(
-          backgroundColor: Tema.primaryColor,
-          content: Row(
-            children: <Widget>[
-              CircularProgressIndicator(),
-              Text(" Aguarde..."),
-            ],
-          ),
-        ));
+void _logging(bool isLoading) {
+  if (isLoading) {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      backgroundColor: Style.primaryColor,
+      content: Row(
+        children: <Widget>[
+          CircularProgressIndicator(),
+          Text(" Aguarde..."),
+        ],
+      ),
+    ));
   } else {
     _scaffoldKey.currentState.hideCurrentSnackBar();
   }

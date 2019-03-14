@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:redesign/estilos/fb_icon_icons.dart';
-import 'package:redesign/estilos/tema.dart';
+import 'package:redesign/estilos/style.dart';
 import 'package:redesign/modulos/eventos/evento.dart';
-import 'package:redesign/servicos/meu_app.dart';
-import 'package:redesign/servicos/validadores.dart';
-import 'package:redesign/widgets/botao_padrao.dart';
-import 'package:redesign/widgets/tela_base.dart';
+import 'package:redesign/services/my_app.dart';
+import 'package:redesign/services/validators.dart';
+import 'package:redesign/widgets/standard_button.dart';
+import 'package:redesign/widgets/base_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -18,7 +18,7 @@ class EventoCriar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TelaBase(
+    return BaseScreen(
         title: evento == null || evento.reference == null ? "Novo Evento" : "Editar Evento",
         body: EventoCriarPage(evento: this.evento)
     );
@@ -152,15 +152,15 @@ class _EventoCriarState extends State<EventoCriarPage>{
                   labelText: 'Link do Evento no facebook',
                 ),
                 initialValue: evento.facebookUrl,
-                validator: (val) => Validadores.facebookUrl(val) ? null : 'Link inválido',
+                validator: (val) => Validators.facebookUrl(val) ? null : 'Link inválido',
                 keyboardType: TextInputType.emailAddress,
                 inputFormatters: [new LengthLimitingTextInputFormatter(80)],
                 onSaved: (val) => evento.facebookUrl = val,
               ),
               Container(
                   padding: const EdgeInsets.only(top: 20.0),
-                  child: BotaoPadrao("Salvar", _submitForm,
-                      Tema.principal.primaryColor, Tema.cinzaClaro)
+                  child: StandardButton("Salvar", _submitForm,
+                      Style.main.primaryColor, Style.lightGrey)
               )
             ],
           )
@@ -238,7 +238,7 @@ class _EventoCriarState extends State<EventoCriarPage>{
       showMessage('Por favor, complete todos os campos.');
     } else {
       form.save(); //Executa cada evento "onSaved" dos campos do formulário
-      evento.criadoPor = MeuApp.userId();
+      evento.criadoPor = MyApp.userId();
 
       if(evento.reference == null) {
         Firestore.instance

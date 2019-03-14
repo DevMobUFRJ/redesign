@@ -1,15 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:redesign/estilos/tema.dart';
+import 'package:redesign/estilos/style.dart';
 import 'package:redesign/modulos/chat/chat.dart';
 import 'package:redesign/modulos/chat/mensagem.dart';
-import 'package:redesign/modulos/usuario/instituicao.dart';
-import 'package:redesign/modulos/usuario/usuario.dart';
-import 'package:redesign/servicos/helper.dart';
-import 'package:redesign/servicos/meu_app.dart';
+import 'package:redesign/modulos/usuario/institution.dart';
+import 'package:redesign/modulos/usuario/user.dart';
+import 'package:redesign/services/helper.dart';
+import 'package:redesign/services/my_app.dart';
 import 'package:redesign/widgets/dados_asincronos.dart';
-import 'package:redesign/widgets/tela_base.dart';
+import 'package:redesign/widgets/base_screen.dart';
 
 /// O elemento chat OU usuário podem ser null.
 /// Se usuário for null, o chat não deve ser null, e o usuário será
@@ -21,7 +21,7 @@ import 'package:redesign/widgets/tela_base.dart';
 /// e passar um usuário com chat null se vier do perfil do usuário,
 /// pois nesse segundo cenário não se sabe se já existe um chat.
 class ChatTela extends StatefulWidget {
-  final Usuario outroUsuario;
+  final User outroUsuario;
   final Chat chat;
 
   ChatTela(this.chat, {this.outroUsuario});
@@ -31,7 +31,7 @@ class ChatTela extends StatefulWidget {
 }
 
 class _ChatTelaState extends State<ChatTela> {
-  Usuario usuario;
+  User usuario;
   TextEditingController _controller = TextEditingController();
   CollectionReference _mensagensReference;
   Chat _chat;
@@ -39,11 +39,11 @@ class _ChatTelaState extends State<ChatTela> {
 
   _ChatTelaState(this._chat, this.usuario){
     if(!temChat() && usuario != null) {
-      _chat = Chat(MeuApp.userId(), usuario.reference.documentID);
+      _chat = Chat(MyApp.userId(), usuario.reference.documentID);
       encontraChat();
     } else {
       _mensagensReference = _chat.reference.collection(Mensagem.collectionName);
-      Firestore.instance.collection(Usuario.collectionName)
+      Firestore.instance.collection(User.collectionName)
           .document(_chat.idOutroUsuario()).get().then(setUsuario);
     }
   }
@@ -51,14 +51,14 @@ class _ChatTelaState extends State<ChatTela> {
   @override
   Widget build(BuildContext context) {
     if(!temChat()){
-      return TelaBase(
-        title: usuario.nome,
+      return BaseScreen(
+        title: usuario.name,
         body: LinearProgressIndicator(),
       );
     }
 
-    return TelaBase(
-      title: usuario != null ? usuario.nome : "",
+    return BaseScreen(
+      title: usuario != null ? usuario.name : "",
       bodyPadding: EdgeInsets.only(top: 4),
       body: Column(
         children: <Widget>[
@@ -69,7 +69,7 @@ class _ChatTelaState extends State<ChatTela> {
             ),
           ),
           Container(
-            color: Tema.primaryColor,
+            color: Style.primaryColor,
             padding: EdgeInsets.all(10),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -93,11 +93,11 @@ class _ChatTelaState extends State<ChatTela> {
                   ),
                 ),
                 Container(
-                  decoration: ShapeDecoration(shape: CircleBorder(), color: Tema.cinzaClaro),
+                  decoration: ShapeDecoration(shape: CircleBorder(), color: Style.lightGrey),
                   width: 32,
                   height: 32,
                   child: GestureDetector(
-                    child: Icon(Icons.arrow_forward, color: Tema.primaryColor),
+                    child: Icon(Icons.arrow_forward, color: Style.primaryColor),
                     onTap: enviarMensagem,
                   ),
                 )
@@ -144,7 +144,7 @@ class _ChatTelaState extends State<ChatTela> {
         ehChatNovo = false;
       });
     }
-    Mensagem novaMensagem = Mensagem(descricao: _controller.text, criadaPor: MeuApp.userId(), data: DateTime.now());
+    Mensagem novaMensagem = Mensagem(descricao: _controller.text, criadaPor: MyApp.userId(), data: DateTime.now());
     _mensagensReference.add(novaMensagem.toJson());
     _chat.reference.updateData({'ultima_mensagem': novaMensagem.data.toIso8601String()});
     _controller.text = "";
@@ -152,10 +152,10 @@ class _ChatTelaState extends State<ChatTela> {
 
   setUsuario(DocumentSnapshot doc){
     setState(() {
-      if(doc.data['tipo'] == TipoUsuario.instituicao) {
-        usuario = Instituicao.fromMap(doc.data, reference: doc.reference);
+      if(doc.data['tipo'] == UserType.institution) {
+        usuario = Institution.fromMap(doc.data, reference: doc.reference);
       } else {
-        usuario = Usuario.fromMap(doc.data, reference: doc.reference);
+        usuario = User.fromMap(doc.data, reference: doc.reference);
       }
     });
   }
@@ -226,7 +226,7 @@ class __ListaMensagensState extends State<_ListaMensagens> {
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
     Mensagem mensagem = Mensagem.fromMap(data.data, reference: data.reference);
-    bool propria = mensagem.criadaPor == MeuApp.userId();
+    bool propria = mensagem.criadaPor == MyApp.userId();
 
     if(propria) {
       return Container(
@@ -243,7 +243,7 @@ class __ListaMensagensState extends State<_ListaMensagens> {
                     padding: EdgeInsets.symmetric(vertical: 6, horizontal: 14),
                     decoration: ShapeDecoration(
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(15))),
-                      color: Tema.primaryColor,
+                      color: Style.primaryColor,
                     ),
                     child: Text(
                       mensagem.descricao,
@@ -283,7 +283,7 @@ class __ListaMensagensState extends State<_ListaMensagens> {
                     padding: EdgeInsets.symmetric(vertical: 6, horizontal: 14),
                     decoration: ShapeDecoration(
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(15))),
-                      color: Tema.darkBackground,
+                      color: Style.darkBackground,
                     ),
                     child: Text(
                       mensagem.descricao,

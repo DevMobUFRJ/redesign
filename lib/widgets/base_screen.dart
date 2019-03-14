@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class TelaBase extends StatelessWidget {
+class BaseScreen extends StatelessWidget {
 
   BuildContext context;
 
@@ -10,7 +10,7 @@ class TelaBase extends StatelessWidget {
   final List<IconButton> extraActions = [];
   final EdgeInsets bodyPadding;
 
-  TelaBase({@required this.title, this.body, this.fab, this.bodyPadding=const EdgeInsets.fromLTRB(16, 8, 16, 0), actions}){
+  BaseScreen({@required this.title, this.body, this.fab, this.bodyPadding=const EdgeInsets.fromLTRB(16, 8, 16, 0), actions}){
     if(actions != null){
       this.extraActions.addAll(actions);
     }

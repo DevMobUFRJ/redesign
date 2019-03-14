@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:redesign/estilos/tema.dart';
+import 'package:redesign/estilos/style.dart';
 
 class ItemListaSimples extends StatelessWidget {
 
@@ -11,7 +11,7 @@ class ItemListaSimples extends StatelessWidget {
   final Color corTexto;
   final VoidCallback onLongPress;
 
-  ItemListaSimples(this.titulo, this.callback, {Key key, this.iconeExtra, this.corTexto = Tema.primaryColor, this.subtitulo, this.onLongPress}) : super(key: key);
+  ItemListaSimples(this.titulo, this.callback, {Key key, this.iconeExtra, this.corTexto = Style.primaryColor, this.subtitulo, this.onLongPress}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
