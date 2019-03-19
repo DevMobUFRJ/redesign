@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:redesign/estilos/style.dart';
+import 'package:redesign/styles/style.dart';
 import 'package:redesign/modulos/forum/forum_post.dart';
 import 'package:redesign/modulos/forum/forum_post_exibir.dart';
 import 'package:redesign/modulos/forum/forum_post_form.dart';

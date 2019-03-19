@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:redesign/estilos/style.dart';
+import 'package:redesign/styles/style.dart';
 import 'package:redesign/modulos/material/material_didatico.dart';
 import 'package:redesign/modulos/material/material_form.dart';
 import 'package:redesign/services/my_app.dart';

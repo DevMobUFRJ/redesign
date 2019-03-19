@@ -1,19 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:redesign/estilos/style.dart';
-import 'package:redesign/modulos/usuario/user.dart';
+import 'package:redesign/styles/style.dart';
+import 'package:redesign/modulos/user/user.dart';
 import 'package:redesign/widgets/base_screen.dart';
 
-class AutorizacaoTela extends StatefulWidget {
+class AuthScreen extends StatefulWidget {
   @override
-  _AutorizacaoTelaState createState() => _AutorizacaoTelaState();
+  _AuthScreenState createState() => _AuthScreenState();
 }
 
-class _AutorizacaoTelaState extends State<AutorizacaoTela> {
-  bool buscando = false;
-  TextEditingController _buscaController = TextEditingController();
-  String busca = "";
+class _AuthScreenState extends State<AuthScreen> {
+  bool searching = false;
+  TextEditingController _searchController = TextEditingController();
+  String search = "";
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class _AutorizacaoTelaState extends State<AutorizacaoTela> {
               Icons.search,
               color: Colors.white
           ),
-          onPressed: () => alternarBusca(),
+          onPressed: () => toggleSearch(),
         ),
       ],
     );
@@ -59,7 +59,7 @@ class _AutorizacaoTelaState extends State<AutorizacaoTela> {
   Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
     return Column(
         children: [
-          buscando ?
+          searching ?
           Container(
               margin: EdgeInsets.only(bottom: 5),
               decoration: ShapeDecoration(shape: StadiumBorder() ),
@@ -67,8 +67,8 @@ class _AutorizacaoTelaState extends State<AutorizacaoTela> {
                   children: [
                     Expanded(
                       child: TextField(
-                        onChanged: textoBuscaMudou,
-                        controller: _buscaController,
+                        onChanged: didChangeSearchText,
+                        controller: _searchController,
                         cursorColor: Style.lightGrey,
                         decoration: InputDecoration(
                             hintText: "Buscar",
@@ -90,47 +90,47 @@ class _AutorizacaoTelaState extends State<AutorizacaoTela> {
   }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
-    User usuario = User.fromMap(data.data, reference: data.reference);
+    User user = User.fromMap(data.data, reference: data.reference);
 
-    if(!usuario.name.toLowerCase().contains(busca)
-        && !usuario.email.toLowerCase().contains(busca))
+    if(!user.name.toLowerCase().contains(search)
+        && !user.email.toLowerCase().contains(search))
       return Container();
 
     return ListTile(
       isThreeLine: true,
-      title: Text(usuario.name),
-      subtitle: Text((usuario.type == UserType.person ? "Pessoa" : "Instituição" ) + ' | ' + usuario.email),
-      onTap: () => _autorizacaoDialog(usuario),
+      title: Text(user.name),
+      subtitle: Text((user.type == UserType.person ? "Pessoa" : "Instituição" ) + ' | ' + user.email),
+      onTap: () => _authDialog(user),
     );
   }
 
-  alternarBusca(){
+  toggleSearch(){
     setState((){
-      buscando = !buscando;
+      searching = !searching;
     });
-    if(!buscando) {
-      _buscaController.text = "";
-      textoBuscaMudou("");
+    if(!searching) {
+      _searchController.text = "";
+      didChangeSearchText("");
     }
   }
 
-  textoBuscaMudou(String texto){
+  didChangeSearchText(String text){
     setState(() {
-      busca = texto.toLowerCase();
+      search = text.toLowerCase();
     });
   }
 
-  Future<void> _autorizacaoDialog(User usuario) async {
+  Future<void> _authDialog(User user) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(usuario.name),
+          title: Text(user.name),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text("Email: " + usuario.email),
+                Text("Email: " + user.email),
                 Text('Escolha uma opção.'),
               ],
             ),
@@ -145,13 +145,13 @@ class _AutorizacaoTelaState extends State<AutorizacaoTela> {
             FlatButton(
               child: Text('Bloquear'),
               onPressed: () {
-                usuario.reference.updateData({'ativo': -1}).then((d) => Navigator.pop(context));
+                user.reference.updateData({'ativo': -1}).then((d) => Navigator.pop(context));
               },
             ),
             FlatButton(
               child: Text('Autorizar'),
               onPressed: () {
-                usuario.reference.updateData({'ativo': 1}).then((d) => Navigator.pop(context));
+                user.reference.updateData({'ativo': 1}).then((d) => Navigator.pop(context));
               },
             ),
           ],

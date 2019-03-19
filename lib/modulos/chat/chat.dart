@@ -6,7 +6,7 @@ class Chat {
 
   String user1;
   String user2;
-  DateTime ultimaMensagem;
+  DateTime lastMessage;
 
   DocumentReference reference;
 
@@ -26,9 +26,9 @@ class Chat {
   Chat.fromMap(Map<String, dynamic> data, {this.reference}) :
       user1 = data['user1'],
       user2 = data['user2'],
-      ultimaMensagem = DateTime.tryParse(data['ultima_mensagem'] ?? DateTime.now().toIso8601String());
+      lastMessage = DateTime.tryParse(data['ultima_mensagem'] ?? DateTime.now().toIso8601String());
 
-  String getIdReferencia(){
+  String getIdReference(){
     if(user1.hashCode <= user2.hashCode){
       return user1 + "-" + user2;
     } else {
@@ -36,7 +36,7 @@ class Chat {
     }
   }
 
-  String idOutroUsuario(){
+  String otherUserId(){
     if(user1 == MyApp.userId()){
       return user2;
     } else {
@@ -48,7 +48,7 @@ class Chat {
       {
         'user1': user1,
         'user2': user2,
-        'ultima_mensagem': ultimaMensagem.toIso8601String(),
+        'ultima_mensagem': lastMessage.toIso8601String(),
       };
 
 }

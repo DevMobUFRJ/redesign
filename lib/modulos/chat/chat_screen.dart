@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:redesign/estilos/style.dart';
+import 'package:redesign/styles/style.dart';
 import 'package:redesign/modulos/chat/chat.dart';
-import 'package:redesign/modulos/chat/mensagem.dart';
-import 'package:redesign/modulos/usuario/institution.dart';
-import 'package:redesign/modulos/usuario/user.dart';
+import 'package:redesign/modulos/chat/message.dart';
+import 'package:redesign/modulos/user/institution.dart';
+import 'package:redesign/modulos/user/user.dart';
 import 'package:redesign/services/helper.dart';
 import 'package:redesign/services/my_app.dart';
 import 'package:redesign/widgets/dados_asincronos.dart';
@@ -20,31 +20,31 @@ import 'package:redesign/widgets/base_screen.dart';
 /// USO: É ideal passar um chat caso venha da lista de mensagens,
 /// e passar um usuário com chat null se vier do perfil do usuário,
 /// pois nesse segundo cenário não se sabe se já existe um chat.
-class ChatTela extends StatefulWidget {
-  final User outroUsuario;
+class ChatScreen extends StatefulWidget {
+  final User otherUser;
   final Chat chat;
 
-  ChatTela(this.chat, {this.outroUsuario});
+  ChatScreen(this.chat, {this.otherUser});
 
   @override
-  _ChatTelaState createState() => _ChatTelaState(chat, outroUsuario);
+  _ChatScreenState createState() => _ChatScreenState(chat, otherUser);
 }
 
-class _ChatTelaState extends State<ChatTela> {
-  User usuario;
+class _ChatScreenState extends State<ChatScreen> {
+  User user;
   TextEditingController _controller = TextEditingController();
-  CollectionReference _mensagensReference;
+  CollectionReference _messagesReference;
   Chat _chat;
-  bool ehChatNovo = false;
+  bool isNewChat = false;
 
-  _ChatTelaState(this._chat, this.usuario){
-    if(!temChat() && usuario != null) {
-      _chat = Chat(MyApp.userId(), usuario.reference.documentID);
-      encontraChat();
+  _ChatScreenState(this._chat, this.user){
+    if(!temChat() && user != null) {
+      _chat = Chat(MyApp.userId(), user.reference.documentID);
+      getChat();
     } else {
-      _mensagensReference = _chat.reference.collection(Mensagem.collectionName);
+      _messagesReference = _chat.reference.collection(Message.collectionName);
       Firestore.instance.collection(User.collectionName)
-          .document(_chat.idOutroUsuario()).get().then(setUsuario);
+          .document(_chat.otherUserId()).get().then(setUser);
     }
   }
 
@@ -52,20 +52,20 @@ class _ChatTelaState extends State<ChatTela> {
   Widget build(BuildContext context) {
     if(!temChat()){
       return BaseScreen(
-        title: usuario.name,
+        title: user.name,
         body: LinearProgressIndicator(),
       );
     }
 
     return BaseScreen(
-      title: usuario != null ? usuario.name : "",
+      title: user != null ? user.name : "",
       bodyPadding: EdgeInsets.only(top: 4),
       body: Column(
         children: <Widget>[
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(left: 12.0, right: 12, bottom: 1, top: 0),
-              child: _ListaMensagens(this),
+              child: _MessagesList(this),
             ),
           ),
           Container(
@@ -98,7 +98,7 @@ class _ChatTelaState extends State<ChatTela> {
                   height: 32,
                   child: GestureDetector(
                     child: Icon(Icons.arrow_forward, color: Style.primaryColor),
-                    onTap: enviarMensagem,
+                    onTap: sendMessage,
                   ),
                 )
               ],
@@ -113,78 +113,78 @@ class _ChatTelaState extends State<ChatTela> {
     return _chat != null && _chat.reference != null;
   }
 
-  encontraChat(){
+  getChat(){
     Firestore.instance.collection(Chat.collectionName)
-        .document(_chat.getIdReferencia()).get()
-        .then(encontrouChat)
+        .document(_chat.getIdReference()).get()
+        .then(foundChat)
         .catchError((e){});
   }
 
-  encontrouChat(DocumentSnapshot doc){
+  foundChat(DocumentSnapshot doc){
     if(doc.exists){
       setState(() {
         _chat.reference = doc.reference;
-        _mensagensReference = doc.reference.collection(Mensagem.collectionName);
+        _messagesReference = doc.reference.collection(Message.collectionName);
       });
     } else {
       setState(() {
         _chat.reference = doc.reference;
-        ehChatNovo = true;
+        isNewChat = true;
       });
     }
   }
 
-  enviarMensagem(){
+  sendMessage(){
     if(_controller.text == null || _controller.text.trim().isEmpty) return;
 
-    if(ehChatNovo){
+    if(isNewChat){
       setState(() {
         _chat.reference.setData(_chat.toJson());
-        _mensagensReference = _chat.reference.collection(Mensagem.collectionName);
-        ehChatNovo = false;
+        _messagesReference = _chat.reference.collection(Message.collectionName);
+        isNewChat = false;
       });
     }
-    Mensagem novaMensagem = Mensagem(descricao: _controller.text, criadaPor: MyApp.userId(), data: DateTime.now());
-    _mensagensReference.add(novaMensagem.toJson());
-    _chat.reference.updateData({'ultima_mensagem': novaMensagem.data.toIso8601String()});
+    Message newMessage = Message(description: _controller.text, createdBy: MyApp.userId(), date: DateTime.now());
+    _messagesReference.add(newMessage.toJson());
+    _chat.reference.updateData({'ultima_mensagem': newMessage.date.toIso8601String()});
     _controller.text = "";
   }
 
-  setUsuario(DocumentSnapshot doc){
+  setUser(DocumentSnapshot doc){
     setState(() {
       if(doc.data['tipo'] == UserType.institution) {
-        usuario = Institution.fromMap(doc.data, reference: doc.reference);
+        user = Institution.fromMap(doc.data, reference: doc.reference);
       } else {
-        usuario = User.fromMap(doc.data, reference: doc.reference);
+        user = User.fromMap(doc.data, reference: doc.reference);
       }
     });
   }
 }
 
 
-class _ListaMensagens extends StatefulWidget {
-  final _ChatTelaState parent;
+class _MessagesList extends StatefulWidget {
+  final _ChatScreenState parent;
 
-  _ListaMensagens(this.parent);
+  _MessagesList(this.parent);
 
   @override
-  __ListaMensagensState createState() => __ListaMensagensState(parent);
+  _MessagesListState createState() => _MessagesListState(parent);
 }
 
-class __ListaMensagensState extends State<_ListaMensagens> {
-  final _ChatTelaState parent;
-  String ultimaData = "";
+class _MessagesListState extends State<_MessagesList> {
+  final _ChatScreenState parent;
+  String lastDate = "";
 
-  __ListaMensagensState(this.parent);
+  _MessagesListState(this.parent);
 
   @override
   Widget build(BuildContext context) {
-    if(this.parent._mensagensReference == null || this.parent.ehChatNovo){
+    if(this.parent._messagesReference == null || this.parent.isNewChat){
       return Container();
     }
 
     return StreamBuilder<QuerySnapshot>(
-      stream: this.parent._mensagensReference
+      stream: this.parent._messagesReference
           .orderBy("data", descending: true)
           .limit(100)
           .snapshots(),
@@ -200,17 +200,17 @@ class __ListaMensagensState extends State<_ListaMensagens> {
     return ListView(
       reverse: true,
       children: snapshot.map((data){
-        bool dataMudou = false;
-        if(Helper.convertToDMYString(DateTime.tryParse(data.data['data'])) != ultimaData){
-          ultimaData = Helper.convertToDMYString(DateTime.tryParse(data.data['data']));
-          dataMudou = true;
+        bool dateChanged = false;
+        if(Helper.convertToDMYString(DateTime.tryParse(data.data['data'])) != lastDate){
+          lastDate = Helper.convertToDMYString(DateTime.tryParse(data.data['data']));
+          dateChanged = true;
         }
         return Column(
           children: <Widget>[
-            dataMudou ?
+            dateChanged ?
             Padding(
               padding: EdgeInsets.only(top: 8),
-              child: Text(ultimaData,
+              child: Text(lastDate,
                 style: TextStyle(
                   color: Colors.black38,
                   fontSize: 12.0,
@@ -225,10 +225,10 @@ class __ListaMensagensState extends State<_ListaMensagens> {
   }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
-    Mensagem mensagem = Mensagem.fromMap(data.data, reference: data.reference);
-    bool propria = mensagem.criadaPor == MyApp.userId();
+    Message message = Message.fromMap(data.data, reference: data.reference);
+    bool isUserMessage = message.createdBy == MyApp.userId();
 
-    if(propria) {
+    if(isUserMessage) {
       return Container(
         key: ValueKey(data.documentID),
         padding: EdgeInsets.only(left: 60, bottom: 6, top: 0),
@@ -246,7 +246,7 @@ class __ListaMensagensState extends State<_ListaMensagens> {
                       color: Style.primaryColor,
                     ),
                     child: Text(
-                      mensagem.descricao,
+                      message.description,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,
@@ -262,7 +262,7 @@ class __ListaMensagensState extends State<_ListaMensagens> {
       );
     } else {
       // Ao carregar a mensagem, marca que já foi lida.
-      mensagem.reference.updateData({'lida': true});
+      message.reference.updateData({'lida': true});
 
       return Container(
         key: ValueKey(data.documentID),
@@ -273,7 +273,7 @@ class __ListaMensagensState extends State<_ListaMensagens> {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.only(right: 10.0),
-              child: CircleAvatarAsync(mensagem.criadaPor, radius: 18, clicavel: true,),
+              child: CircleAvatarAsync(message.createdBy, radius: 18, clicavel: true,),
             ),
             Expanded(
               child: Column(
@@ -286,7 +286,7 @@ class __ListaMensagensState extends State<_ListaMensagens> {
                       color: Style.darkBackground,
                     ),
                     child: Text(
-                      mensagem.descricao,
+                      message.description,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,

@@ -4,10 +4,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:redesign/estilos/fb_icon_icons.dart';
-import 'package:redesign/estilos/style.dart';
-import 'package:redesign/modulos/usuario/institution.dart';
-import 'package:redesign/modulos/usuario/user.dart';
+import 'package:redesign/styles/fb_icon_icons.dart';
+import 'package:redesign/styles/style.dart';
+import 'package:redesign/modulos/user/institution.dart';
+import 'package:redesign/modulos/user/user.dart';
 import 'package:redesign/services/my_app.dart';
 import 'package:redesign/services/validators.dart';
 import 'package:redesign/widgets/standard_button.dart';
@@ -42,44 +42,44 @@ class ProfileFormState extends State<ProfileForm> {
         key: _scaffoldKey,
         resizeToAvoidBottomPadding: false,
         body: user != null ?
-            _UsuarioForm(user) : _InstituicaoForm(institution),
+            _UserForm(user) : _InstitutionForm(institution),
       ),
     );
   }
 }
 
-class _UsuarioForm extends StatefulWidget {
-  final User usuario;
+class _UserForm extends StatefulWidget {
+  final User user;
 
-  _UsuarioForm(this.usuario);
+  _UserForm(this.user);
 
   @override
-  _UsuarioFormState createState() => _UsuarioFormState(usuario);
+  _UserFormState createState() => _UserFormState(user);
 }
 
 /// Formulário apenas para usuários normais (pessoas)
 /// O formulário para instituição está mais em baixo
-class _UsuarioFormState extends State<_UsuarioForm> {
+class _UserFormState extends State<_UserForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  User usuario;
-  Institution instituicaoRelacionada;
+  User user;
+  Institution relatedInstitution;
 
-  _UsuarioFormState(this.usuario){
+  _UserFormState(this.user){
     reference.getData(38000).then((value) => setState((){
-      imagemAtual = value;
+      currentImage = value;
     }));
   }
 
-  List<int> imagemAtual;
-  List<int> imagemNova;
+  List<int> currentImage;
+  List<int> newImage;
 
   Future getImage() async {
-    carregando(true, mensagem: "Enviando foto...");
+    loading(true, message: "Enviando foto...");
     File imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
 
     if(imageFile == null){
-      carregando(false);
+      loading(false);
       return;
     }
 
@@ -88,35 +88,35 @@ class _UsuarioFormState extends State<_UsuarioForm> {
     image = ImageHelper.copyResize(image, 100, 100);
 
     setState(() {
-      imagemNova = ImageHelper.encodeJpg(image, quality: 85);
+      newImage = ImageHelper.encodeJpg(image, quality: 85);
     });
 
-    if(imagemNova.length > 38000){
+    if(newImage.length > 38000){
       showMessage("Erro: Imagem muito grande");
-      imagemNova = null;
+      newImage = null;
       return;
     }
 
     //Upload the file to firebase
-    StorageUploadTask uploadTask = reference.putData(imagemNova);
-    uploadTask.onComplete.then((s) => uploadFinalizado(imagemNova)).catchError((e) => uploadErro(e));
+    StorageUploadTask uploadTask = reference.putData(newImage);
+    uploadTask.onComplete.then((s) => uploadDone(newImage)).catchError((e) => uploadError(e));
   }
 
-  void uploadFinalizado(imagem){
-    carregando(false);
+  void uploadDone(image){
+    loading(false);
     showMessage("Foto atualizada", Colors.green);
     setState((){
-      imagemNova = imagem;
-      imagemAtual = imagem;
+      newImage = image;
+      currentImage = image;
     });
-    MyApp.imageMemory = imagem;
+    MyApp.imageMemory = image;
   }
 
-  void uploadErro(e){
-    carregando(false);
+  void uploadError(e){
+    loading(false);
     showMessage("Erro ao atualizar foto");
     setState((){
-      imagemNova = null;
+      newImage = null;
     });
   }
 
@@ -139,10 +139,10 @@ class _UsuarioFormState extends State<_UsuarioForm> {
                     shape: BoxShape.circle,
                     image: DecorationImage(
                       fit: BoxFit.cover,
-                      image: imagemNova == null ? imagemAtual == null ?
+                      image: newImage == null ? currentImage == null ?
                           AssetImage("images/perfil_placeholder.png") :
-                          MemoryImage(imagemAtual):
-                          MemoryImage(imagemNova),
+                          MemoryImage(currentImage):
+                          MemoryImage(newImage),
                     )
                   ),
                 ),
@@ -158,8 +158,8 @@ class _UsuarioFormState extends State<_UsuarioForm> {
             ),
             validator: (val) => val.isEmpty ? 'Nome é obrigatório' : null,
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
-            initialValue: usuario.name,
-            onSaved: (val) => usuario.name = val,
+            initialValue: user.name,
+            onSaved: (val) => user.name = val,
           ),
           TextFormField(
             decoration: const InputDecoration(
@@ -172,13 +172,13 @@ class _UsuarioFormState extends State<_UsuarioForm> {
             maxLines: 4,
             validator: (val) => val.isEmpty ? 'Descrição é obrigatório' : null,
             inputFormatters: [LengthLimitingTextInputFormatter(500)],
-            initialValue: usuario.description,
-            onSaved: (val) => usuario.description = val,
+            initialValue: user.description,
+            onSaved: (val) => user.description = val,
           ),
           _buildDropdown(),
           Container(
             padding: EdgeInsets.only(top: 4),
-            child: instituicaoRelacionada == null ? Container() :
+            child: relatedInstitution == null ? Container() :
                 GestureDetector(
                   child: Text("Remover seleção",
                     textAlign: TextAlign.end,
@@ -189,8 +189,8 @@ class _UsuarioFormState extends State<_UsuarioForm> {
                   ),
                   onTap: (){
                     setState(() {
-                      usuario.idInstitution = "";
-                      instituicaoRelacionada = null;
+                      user.idInstitution = "";
+                      relatedInstitution = null;
                     });
                   },
                 ),
@@ -201,7 +201,7 @@ class _UsuarioFormState extends State<_UsuarioForm> {
               labelText: 'Email (não editável)',
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(500)],
-            initialValue: usuario.email,
+            initialValue: user.email,
             enabled: false,
           ),
           TextFormField(
@@ -213,12 +213,12 @@ class _UsuarioFormState extends State<_UsuarioForm> {
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
             validator: (val) => val.isEmpty ? null : Validators.url(val) ? null : 'Site inválido',
-            initialValue: usuario.site,
+            initialValue: user.site,
             onSaved: (val){
               if(!val.startsWith("http")){
                 val = "http://" + val;
               }
-              usuario.site = val;
+              user.site = val;
             },
           ),
           TextFormField(
@@ -230,12 +230,12 @@ class _UsuarioFormState extends State<_UsuarioForm> {
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
             validator: (val) => val.isEmpty ? null : Validators.facebookUrl(val) ? null : 'Link do facebook inválido',
-            initialValue: usuario.facebook,
+            initialValue: user.facebook,
             onSaved: (val){
               if(!val.startsWith("http")){
                 val = "http://" + val;
               }
-              usuario.facebook = val;
+              user.facebook = val;
             },
           ),
           Container(
@@ -258,25 +258,25 @@ class _UsuarioFormState extends State<_UsuarioForm> {
       showMessage('Por favor, complete todos os campos.');
       blocked = false;
     } else {
-      carregando(true);
+      loading(true);
       form.save(); //Executa cada evento "onSaved" dos campos do formulário
-      save(usuario);
+      save(user);
     }
   }
   
-  save(User usuario){
-    usuario.reference.updateData(usuario.toJson())
+  save(User user){
+    user.reference.updateData(user.toJson())
         .then(saved).catchError(saveError);
   }
 
   saved(dynamic){
-    carregando(false);
+    loading(false);
     blocked = false;
     Navigator.pop(context);
   }
 
   saveError(){
-    carregando(false);
+    loading(false);
     blocked = false;
     showMessage("Erro ao atualizar informações");
   }
@@ -303,38 +303,38 @@ class _UsuarioFormState extends State<_UsuarioForm> {
   Widget _buildItems(BuildContext context, List<DocumentSnapshot> data){
     return DropdownButtonFormField<Institution>(
       items: data.map( (DocumentSnapshot doc) {
-        Institution instituicao = Institution.fromMap(doc.data, reference: doc.reference);
+        Institution institution = Institution.fromMap(doc.data, reference: doc.reference);
 
         // Verificar se o tipo do usuário é compatível com a instituição
-        if(instituicao.occupation == Occupation.incubadora){
-          if(usuario.occupation != Occupation.empreendedor) return null;
-        } else if (instituicao.occupation == Occupation.laboratorio){
-          if(usuario.occupation != Occupation.professor &&
-              usuario.occupation != Occupation.bolsista &&
-              usuario.occupation != Occupation.discente) return null;
-        } else if (instituicao.occupation == Occupation.escola){
-          if(usuario.occupation != Occupation.professor &&
-            usuario.occupation != Occupation.aluno) return null;
+        if(institution.occupation == Occupation.incubadora){
+          if(user.occupation != Occupation.empreendedor) return null;
+        } else if (institution.occupation == Occupation.laboratorio){
+          if(user.occupation != Occupation.professor &&
+              user.occupation != Occupation.bolsista &&
+              user.occupation != Occupation.discente) return null;
+        } else if (institution.occupation == Occupation.escola){
+          if(user.occupation != Occupation.professor &&
+            user.occupation != Occupation.aluno) return null;
         }
 
-        if(instituicao.reference.documentID == usuario.idInstitution){
-          instituicaoRelacionada = instituicao;
+        if(institution.reference.documentID == user.idInstitution){
+          relatedInstitution = institution;
         }
 
         return DropdownMenuItem<Institution>(
-          value: instituicao,
-          child: Text(instituicao.name),
-          key: ValueKey(instituicao.reference.documentID),
+          value: institution,
+          child: Text(institution.name),
+          key: ValueKey(institution.reference.documentID),
         );
       }).where((d) => d != null).toList(),
       onChanged: (Institution c){
         print("Changed state");
         setState(() {
-          instituicaoRelacionada = c;
-          usuario.idInstitution = instituicaoRelacionada.reference.documentID;
+          relatedInstitution = c;
+          user.idInstitution = relatedInstitution.reference.documentID;
         });
       },
-      value: instituicaoRelacionada,
+      value: relatedInstitution,
       decoration: const InputDecoration(
         icon: const Icon(Icons.account_balance,
           color: Style.primaryColor,
@@ -345,32 +345,32 @@ class _UsuarioFormState extends State<_UsuarioForm> {
   }
 }
 
-class _InstituicaoForm extends StatefulWidget {
-  final Institution instituicao;
+class _InstitutionForm extends StatefulWidget {
+  final Institution institution;
 
-  _InstituicaoForm(this.instituicao);
+  _InstitutionForm(this.institution);
 
   @override
-  _InstituicaoFormState createState() => _InstituicaoFormState(instituicao);
+  _InstitutionFormState createState() => _InstitutionFormState(institution);
 }
 
-class _InstituicaoFormState extends State<_InstituicaoForm> {
+class _InstitutionFormState extends State<_InstitutionForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  bool enderecoMudou = false;
+  bool addressChanged = false;
 
-  Institution instituicao;
+  Institution institution;
 
-  _InstituicaoFormState(this.instituicao);
+  _InstitutionFormState(this.institution);
 
-  List<int> imagemAtual;
-  List<int> imagemNova;
+  List<int> currentImage;
+  List<int> newImage;
 
   Future getImage() async {
-    carregando(true, mensagem: "Enviando foto...");
+    loading(true, message: "Enviando foto...");
     File imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
 
     if(imageFile == null){
-      carregando(false);
+      loading(false);
       return;
     }
 
@@ -379,35 +379,35 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
     image = ImageHelper.copyResize(image, 100, 100);
 
     setState(() {
-      imagemNova = ImageHelper.encodeJpg(image, quality: 85);
+      newImage = ImageHelper.encodeJpg(image, quality: 85);
     });
 
-    if(imagemNova.length > 38000){
+    if(newImage.length > 38000){
       showMessage("Erro: Imagem muito grande");
-      imagemNova = null;
+      newImage = null;
       return;
     }
 
     //Upload the file to firebase
-    StorageUploadTask uploadTask = reference.putData(imagemNova);
-    uploadTask.onComplete.then((s) => uploadFinalizado(imagemNova)).catchError((e) => uploadErro(e));
+    StorageUploadTask uploadTask = reference.putData(newImage);
+    uploadTask.onComplete.then((s) => uploadDone(newImage)).catchError((e) => uploadError(e));
   }
 
-  void uploadFinalizado(imagem){
-    carregando(false);
+  void uploadDone(image){
+    loading(false);
     showMessage("Foto atualizada", Colors.green);
     setState((){
-      imagemNova = imagem;
-      imagemAtual = imagem;
+      newImage = image;
+      currentImage = image;
     });
-    MyApp.imageMemory = imagem;
+    MyApp.imageMemory = image;
   }
 
-  void uploadErro(e){
-    carregando(false);
+  void uploadError(e){
+    loading(false);
     showMessage("Erro ao atualizar foto");
     setState((){
-      imagemNova = null;
+      newImage = null;
     });
   }
 
@@ -430,10 +430,10 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
                       shape: BoxShape.circle,
                       image: DecorationImage(
                         fit: BoxFit.cover,
-                        image: imagemNova == null ? imagemAtual == null ?
+                        image: newImage == null ? currentImage == null ?
                         AssetImage("images/perfil_placeholder.png") :
-                        MemoryImage(imagemAtual):
-                        MemoryImage(imagemNova),
+                        MemoryImage(currentImage):
+                        MemoryImage(newImage),
                       )
                   ),
                 ),
@@ -449,8 +449,8 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
             ),
             validator: (val) => val.isEmpty ? 'Nome é obrigatório' : null,
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
-            initialValue: instituicao.name,
-            onSaved: (val) => instituicao.name = val,
+            initialValue: institution.name,
+            onSaved: (val) => institution.name = val,
           ),
           TextFormField(
             decoration: const InputDecoration(
@@ -463,8 +463,8 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
             maxLines: 4,
             validator: (val) => val.isEmpty ? 'Descrição é obrigatório' : null,
             inputFormatters: [LengthLimitingTextInputFormatter(500)],
-            initialValue: instituicao.description,
-            onSaved: (val) => instituicao.description = val,
+            initialValue: institution.description,
+            onSaved: (val) => institution.description = val,
           ),
           TextFormField(
             decoration: const InputDecoration(
@@ -472,7 +472,7 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
               labelText: 'Email (não editável)',
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(500)],
-            initialValue: instituicao.email,
+            initialValue: institution.email,
             enabled: false,
           ),
           TextFormField(
@@ -484,12 +484,12 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
             validator: (val) => val.isEmpty ? null : Validators.url(val) ? null : 'Site inválido',
-            initialValue: instituicao.site,
+            initialValue: institution.site,
             onSaved: (val){
               if(!val.startsWith("http")){
                 val = "http://" + val;
               }
-              instituicao.site = val;
+              institution.site = val;
             },
           ),
           TextFormField(
@@ -501,12 +501,12 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
             validator: (val) => val.isEmpty ? null : Validators.facebookUrl(val) ? null : 'Link do facebook inválido',
-            initialValue: instituicao.facebook,
+            initialValue: institution.facebook,
             onSaved: (val){
               if(!val.startsWith("http")){
                 val = "http://" + val;
               }
-              instituicao.facebook = val;
+              institution.facebook = val;
             },
           ),
           TextFormField(
@@ -517,10 +517,10 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
               labelText: 'Endereço (Rua, Número)',
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
-            initialValue: instituicao.address,
+            initialValue: institution.address,
             onSaved: (val){
-              if(val != instituicao.address) enderecoMudou = true;
-              instituicao.address = val;
+              if(val != institution.address) addressChanged = true;
+              institution.address = val;
             },
           ),
           TextFormField(
@@ -531,10 +531,10 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
               labelText: 'Cidade',
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(40)],
-            initialValue: instituicao.city,
+            initialValue: institution.city,
             onSaved: (val){
-              if(val != instituicao.city) enderecoMudou = true;
-              instituicao.city = val; },
+              if(val != institution.city) addressChanged = true;
+              institution.city = val; },
           ),
           Container(
               padding: const EdgeInsets.only(top: 20.0),
@@ -546,19 +546,19 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
     );
   }
 
-  save(Institution instituicao){
-    instituicao.reference.updateData(instituicao.toJson())
+  save(Institution institution){
+    institution.reference.updateData(institution.toJson())
         .then(saved).catchError(saveError);
   }
 
   saved(dynamic){
-    carregando(false);
+    loading(false);
     blocked = false;
     Navigator.pop(context);
   }
 
   saveError(){
-    carregando(false);
+    loading(false);
     blocked = false;
     showMessage("Erro ao atualizar informações");
   }
@@ -573,20 +573,20 @@ class _InstituicaoFormState extends State<_InstituicaoForm> {
       showMessage('Por favor, complete todos os campos.');
       blocked = false;
     } else {
-      carregando(true);
+      loading(true);
       form.save(); //Executa cada evento "onSaved" dos campos do formulário
       try {
-        if (enderecoMudou && instituicao.address.isNotEmpty &&
-            instituicao.city.isNotEmpty) {
-          final query = instituicao.address + " - " + instituicao.city;
+        if (addressChanged && institution.address.isNotEmpty &&
+            institution.city.isNotEmpty) {
+          final query = institution.address + " - " + institution.city;
           var addresses = await Geocoder.local.findAddressesFromQuery(query);
           var first = addresses.first;
-          instituicao.lat = first.coordinates.latitude;
-          instituicao.lng = first.coordinates.longitude;
+          institution.lat = first.coordinates.latitude;
+          institution.lng = first.coordinates.longitude;
         }
-        save(instituicao);
+        save(institution);
       } catch(e) {
-        carregando(false);
+        loading(false);
         showMessage("Erro ao atualizar informações");
       }
     }
@@ -598,16 +598,16 @@ void showMessage(String message, [MaterialColor color = Colors.red]) {
       .showSnackBar(SnackBar(backgroundColor: color, content: Text(message)));
 }
 
-void carregando(bool estaCarregando, {String mensagem = "Aguarde"}) {
-  blocked = !estaCarregando;
-  if(estaCarregando) {
+void loading(bool isLoading, {String message = "Aguarde"}) {
+  blocked = !isLoading;
+  if(isLoading) {
     _scaffoldKey.currentState.showSnackBar(
         SnackBar(
           backgroundColor: Colors.amber,
           content: Row(
             children: <Widget>[
               CircularProgressIndicator(),
-              Text(" " + mensagem)
+              Text(" " + message)
             ],
           ),
         ));

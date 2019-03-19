@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:redesign/estilos/style.dart';
+import 'package:redesign/styles/style.dart';
 import 'package:redesign/modulos/rede/rede_lista.dart';
-import 'package:redesign/modulos/usuario/user.dart';
+import 'package:redesign/modulos/user/user.dart';
 import 'package:redesign/services/my_app.dart';
 import 'package:redesign/widgets/item_lista_simples.dart';
 import 'package:redesign/widgets/base_screen.dart';

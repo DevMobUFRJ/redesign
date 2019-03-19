@@ -3,15 +3,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:redesign/estilos/style.dart';
+import 'package:redesign/styles/style.dart';
 import 'package:redesign/modulos/chat/chat.dart';
-import 'package:redesign/modulos/chat/mensagem.dart';
+import 'package:redesign/modulos/chat/message.dart';
 import 'package:redesign/modulos/map/drawer_screen.dart';
 import 'package:redesign/modulos/map/map_student.dart';
-import 'package:redesign/modulos/usuario/institution.dart';
-import 'package:redesign/modulos/usuario/perfil_instituicao.dart';
-import 'package:redesign/modulos/usuario/perfil_pessoa.dart';
-import 'package:redesign/modulos/usuario/user.dart';
+import 'package:redesign/modulos/user/institution.dart';
+import 'package:redesign/modulos/user/profile_institution.dart';
+import 'package:redesign/modulos/user/profile_person.dart';
+import 'package:redesign/modulos/user/user.dart';
 import 'package:redesign/services/helper.dart';
 import 'package:redesign/services/my_app.dart';
 
@@ -116,7 +116,7 @@ class _MapScreenState extends State<MapScreen> {
     }
 
     return Scaffold(
-      drawer: DrawerScreen(mensagensNaoLidas: unreadMessages,),
+      drawer: DrawerScreen(unreadMessages: unreadMessages,),
       appBar: AppBar(
         title: Text("REDEsign"),
         backgroundColor: Theme
@@ -175,8 +175,8 @@ class _MapScreenState extends State<MapScreen> {
           // Apesar de empreendedores serem do tipo Instituição p/ ter lat-lng,
           // a visualização é de pessoa.
           institution.occupation != Occupation.empreendedor ?
-            PerfilInstituicao(institution)
-            : PerfilPessoa(institution)),
+            ProfileInstitution(institution)
+            : ProfilePerson(institution)),
     );
   }
 
@@ -258,7 +258,7 @@ class _MapScreenState extends State<MapScreen> {
     unreadMessages = 0;
     getData().first.then((snaps) => snaps.forEach((query){
         query.documents.forEach((doc){
-          doc.reference.collection(Mensagem.collectionName)
+          doc.reference.collection(Message.collectionName)
               .where("lida", isEqualTo: false).snapshots()
               .forEach((queryMsg){
              if(queryMsg.documents.length < 0) return;

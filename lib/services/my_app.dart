@@ -2,10 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:redesign/modulos/usuario/institution.dart';
-import 'package:redesign/modulos/usuario/perfil_instituicao.dart';
-import 'package:redesign/modulos/usuario/perfil_pessoa.dart';
-import 'package:redesign/modulos/usuario/user.dart';
+import 'package:redesign/modulos/user/institution.dart';
+import 'package:redesign/modulos/user/profile_institution.dart';
+import 'package:redesign/modulos/user/profile_person.dart';
+import 'package:redesign/modulos/user/user.dart';
 import 'package:redesign/services/helper.dart';
 
 class MyApp {
@@ -31,14 +31,14 @@ class MyApp {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => PerfilPessoa(user),
+          builder: (context) => ProfilePerson(user),
         ),
       );
     } else {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => PerfilInstituicao(institution),
+          builder: (context) => ProfileInstitution(institution),
         ),
       );
     }

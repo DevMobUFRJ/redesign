@@ -3,24 +3,24 @@ import 'package:async/async.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:redesign/estilos/style.dart';
+import 'package:redesign/styles/style.dart';
 import 'package:redesign/modulos/chat/chat.dart';
-import 'package:redesign/modulos/chat/chat_tela.dart';
-import 'package:redesign/modulos/chat/mensagem.dart';
-import 'package:redesign/modulos/usuario/user.dart';
+import 'package:redesign/modulos/chat/chat_screen.dart';
+import 'package:redesign/modulos/chat/message.dart';
+import 'package:redesign/modulos/user/user.dart';
 import 'package:redesign/services/my_app.dart';
 import 'package:redesign/widgets/dados_asincronos.dart';
 import 'package:redesign/widgets/base_screen.dart';
 
-class ChatLista extends StatefulWidget {
+class ChatList extends StatefulWidget {
   @override
-  ChatListaState createState() => ChatListaState();
+  ChatListState createState() => ChatListState();
 }
 
-class ChatListaState extends State<ChatLista> {
-  bool buscando = false;
-  TextEditingController _buscaController = TextEditingController();
-  String busca = "";
+class ChatListState extends State<ChatList> {
+  bool searching = false;
+  TextEditingController _searchController = TextEditingController();
+  String search = "";
 
   Stream<List<QuerySnapshot>> getData() {
     Stream stream1 = Firestore.instance
@@ -42,7 +42,7 @@ class ChatListaState extends State<ChatLista> {
         actions: <IconButton>[
           IconButton(
             icon: Icon(Icons.search, color: Colors.white),
-            onPressed: () => alternarBusca(),
+            onPressed: () => toggleSearch(),
           ),
         ]);
   }
@@ -88,15 +88,15 @@ class ChatListaState extends State<ChatLista> {
       Expanded(
         child: ListView(
           children: [
-            buscando
+            searching
                 ? Container(
                     margin: EdgeInsets.only(bottom: 5),
                     decoration: ShapeDecoration(shape: StadiumBorder()),
                     child: Row(children: [
                       Expanded(
                         child: TextField(
-                          onChanged: textoBuscaMudou,
-                          controller: _buscaController,
+                          onChanged: didChangeTextSearch,
+                          controller: _searchController,
                           cursorColor: Style.lightGrey,
                           decoration: InputDecoration(
                               hintText: "Buscar",
@@ -116,23 +116,23 @@ class ChatListaState extends State<ChatLista> {
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
     Chat chat = Chat.fromMap(data.data, reference: data.reference);
 
-    return _TileContent(chat, this, busca);
+    return _TileContent(chat, this, search);
   }
 
-  alternarBusca() {
+  toggleSearch() {
     setState(() {
-      buscando = !buscando;
+      searching = !searching;
     });
-    if (!buscando) {
-      _buscaController.text = "";
-      textoBuscaMudou("");
+    if (!searching) {
+      _searchController.text = "";
+      didChangeTextSearch("");
     }
   }
 
-  textoBuscaMudou(String texto) {
-    if(busca != texto.toLowerCase()) {
+  didChangeTextSearch(String text) {
+    if(search != text.toLowerCase()) {
       setState(() {
-        busca = texto.toLowerCase();
+        search = text.toLowerCase();
       });
     }
   }
@@ -140,10 +140,10 @@ class ChatListaState extends State<ChatLista> {
 
 class _TileContent extends StatefulWidget {
   final Chat chat;
-  final ChatListaState parent;
-  final String busca;
+  final ChatListState parent;
+  final String search;
 
-  _TileContent(this.chat, this.parent, this.busca)
+  _TileContent(this.chat, this.parent, this.search)
       : super(key: Key(chat.reference.documentID));
 
   @override
@@ -151,9 +151,9 @@ class _TileContent extends StatefulWidget {
 }
 
 class _TileContentState extends State<_TileContent> {
-  User usuario;
-  String ultimaMsg = "";
-  String ultimaMsgHora = "";
+  User user;
+  String lastMessage = "";
+  String lastMessageHour = "";
   Color color = Colors.black45;
   FontWeight weight = FontWeight.w400;
 
@@ -165,7 +165,7 @@ class _TileContentState extends State<_TileContent> {
   void initState() {
     super.initState();
     widget.chat.reference
-        .collection(Mensagem.collectionName)
+        .collection(Message.collectionName)
         .orderBy('data', descending: true)
         .limit(1)
         .snapshots()
@@ -173,13 +173,13 @@ class _TileContentState extends State<_TileContent> {
         // mensagens. Se receber algo ou enviar algo, muda na interface.
         .listen((snapshot) {
       if (snapshot.documents.length > 0) {
-        Mensagem msg = Mensagem.fromMap(snapshot.documents[0].data,
+        Message msg = Message.fromMap(snapshot.documents[0].data,
             reference: snapshot.documents[0].reference);
         setState(() {
-          ultimaMsg = msg.descricao;
-          ultimaMsgHora = msg.horario();
+          lastMessage = msg.description;
+          lastMessageHour = msg.timestamp();
 
-          if (msg.criadaPor != MyApp.userId() && !msg.lida) {
+          if (msg.createdBy != MyApp.userId() && !msg.read) {
             color = Style.primaryColor;
             weight = FontWeight.w800;
           } else {
@@ -191,12 +191,12 @@ class _TileContentState extends State<_TileContent> {
     });
     Firestore.instance
         .collection(User.collectionName)
-        .document(widget.chat.idOutroUsuario())
+        .document(widget.chat.otherUserId())
         .get()
         .then((u) {
       if(this.mounted)
         setState(() {
-          usuario = User.fromMap(u.data, reference: u.reference);
+          user = User.fromMap(u.data, reference: u.reference);
         });
     }).catchError((e){});
   }
@@ -205,11 +205,11 @@ class _TileContentState extends State<_TileContent> {
   Widget build(BuildContext context) {
     // Esconde o item da lista até ter o nome. Causa certo delay pra mostrar,
     // mas não fica ruim igual quando o nome aparece depois do resto.
-    if(usuario == null)
+    if(user == null)
       return Container(key: ValueKey(widget.chat.reference.documentID + "fulltile"));
 
-    if (usuario != null && widget.busca.isNotEmpty) {
-      if (!usuario.name.toLowerCase().contains(widget.busca))
+    if (user != null && widget.search.isNotEmpty) {
+      if (!user.name.toLowerCase().contains(widget.search))
         return Container(key: ValueKey(widget.chat.reference.documentID + "fulltile"));
     }
 
@@ -219,7 +219,7 @@ class _TileContentState extends State<_TileContent> {
         ListTile(
           key: ValueKey(widget.chat.reference.documentID + "tile"),
           contentPadding: EdgeInsets.all(0),
-          leading: CircleAvatarAsync(widget.chat.idOutroUsuario(), radius: 23.0),
+          leading: CircleAvatarAsync(widget.chat.otherUserId(), radius: 23.0),
           title: Container(
             child: Row(
               mainAxisSize: MainAxisSize.max,
@@ -234,7 +234,7 @@ class _TileContentState extends State<_TileContent> {
                         children: <Widget>[
                           Expanded(
                             child: Text(
-                              usuario.name,
+                              user.name,
                               style: TextStyle(
                                 color: color,
                                 fontWeight: weight,
@@ -244,7 +244,7 @@ class _TileContentState extends State<_TileContent> {
                           Padding(
                             padding: const EdgeInsets.only(left: 4, right: 10),
                             child: Text(
-                              ultimaMsgHora,
+                              lastMessageHour,
                               style: TextStyle(
                                 fontSize: 12,
                                 color: color,
@@ -255,7 +255,7 @@ class _TileContentState extends State<_TileContent> {
                         ],
                       ),
                       Text(
-                        ultimaMsg,
+                        lastMessage,
                         style: TextStyle(
                           color: color,
                           fontSize: 14,
@@ -276,7 +276,7 @@ class _TileContentState extends State<_TileContent> {
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ChatTela(widget.chat, outroUsuario: usuario,),
+              builder: (context) => ChatScreen(widget.chat, otherUser: user,),
             ),
           ),
         ),

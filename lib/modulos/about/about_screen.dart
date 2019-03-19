@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:redesign/estilos/style.dart';
+import 'package:redesign/styles/style.dart';
 import 'package:redesign/widgets/base_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 

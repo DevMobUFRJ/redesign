@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:redesign/estilos/fb_icon_icons.dart';
-import 'package:redesign/estilos/style.dart';
-import 'package:redesign/modulos/eventos/evento.dart';
+import 'package:redesign/styles/fb_icon_icons.dart';
+import 'package:redesign/styles/style.dart';
+import 'package:redesign/modulos/events/event.dart';
 import 'package:redesign/services/my_app.dart';
 import 'package:redesign/services/validators.dart';
 import 'package:redesign/widgets/standard_button.dart';
@@ -10,50 +10,50 @@ import 'package:redesign/widgets/base_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class EventoCriar extends StatelessWidget {
+class CreateEvent extends StatelessWidget {
 
-  final Evento evento;
+  final Event event;
 
-  EventoCriar({this.evento});
+  CreateEvent({this.event});
 
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-        title: evento == null || evento.reference == null ? "Novo Evento" : "Editar Evento",
-        body: EventoCriarPage(evento: this.evento)
+        title: event == null || event.reference == null ? "Novo Evento" : "Editar Evento",
+        body: CreateEventPage(event: this.event)
     );
   }
 }
 
-class EventoCriarPage extends StatefulWidget{
+class CreateEventPage extends StatefulWidget{
 
-  final Evento evento;
+  final Event event;
 
-  EventoCriarPage({this.evento});
+  CreateEventPage({this.event});
 
   @override
-  _EventoCriarState createState() => _EventoCriarState(this.evento);
+  _CreateEventState createState() => _CreateEventState(this.event);
 }
 
-class _EventoCriarState extends State<EventoCriarPage>{
+class _CreateEventState extends State<CreateEventPage>{
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final TextEditingController _horaController = TextEditingController();
+  final TextEditingController _hourController = TextEditingController();
 
-  Evento evento;
+  Event event;
   bool blocked = false;
 
-  _EventoCriarState(this.evento){
-    if(evento == null){
-      evento = Evento();
+  _CreateEventState(this.event){
+    if(event == null){
+      event = Event();
     }
     // Precisa ser inicializado fora pois o TextField não aceita um
     // controller e um initialValue simultãneamente.
-    if(evento.data != null){
-      String hora = convertToHMString(evento.data);
-      if(hora != null)
-        _horaController.text = hora;
+    if(event.date != null){
+      String hour = convertToHMString(event.date);
+      if(hour != null)
+        _hourController.text = hour;
     }
   }
 
@@ -73,34 +73,34 @@ class _EventoCriarState extends State<EventoCriarPage>{
                   icon: const Icon(Icons.person),
                   labelText: 'Nome do Evento',
                 ),
-                initialValue: evento.nome,
+                initialValue: event.name,
                 validator: (val) => val.isEmpty ? 'Nome é obrigatório' : null,
                 inputFormatters: [new LengthLimitingTextInputFormatter(50)],
-                onSaved: (val) => evento.nome = val,
+                onSaved: (val) => event.name = val,
               ),
               TextFormField(
                 decoration: const InputDecoration(
                   icon: const Icon(Icons.calendar_today),
                   labelText: 'Data (dd/mm/aaaa)',
                 ),
-                initialValue: convertToDMYString(evento.data),
+                initialValue: convertToDMYString(event.date),
                 keyboardType: TextInputType.datetime,
                 inputFormatters: [new LengthLimitingTextInputFormatter(10)],
                 validator: (val) =>
-                  ehDataValida(val) ? null : 'Data inválida',
-                onSaved: (val) => evento.data = convertToDateTime(val),
+                  isDateValid(val) ? null : 'Data inválida',
+                onSaved: (val) => event.date = convertToDateTime(val),
               ),
               TextFormField(
                 decoration: const InputDecoration(
                   icon: const Icon(Icons.calendar_today),
                   labelText: 'Hora (ex. 16:30)',
                 ),
-                controller: _horaController,
+                controller: _hourController,
                 //initialValue: ,
                 keyboardType: TextInputType.datetime,
                 inputFormatters: [new LengthLimitingTextInputFormatter(5)],
                 validator: (val) =>
-                  ehHoraValida(val) ? null : 'Hora inválida',
+                  isHourValid(val) ? null : 'Hora inválida',
                 //Não precisa de onSaved pois é salvo c/ a data pelo controller
               ),
               TextFormField(
@@ -108,54 +108,54 @@ class _EventoCriarState extends State<EventoCriarPage>{
                   icon: const Icon(Icons.home),
                   labelText: 'Nome do Local',
                 ),
-                initialValue: evento.local,
+                initialValue: event.local,
                 validator: (val) => val.isEmpty ? 'Local é obrigatório' : null,
                 inputFormatters: [new LengthLimitingTextInputFormatter(50)],
-                onSaved: (val) => evento.local = val,
+                onSaved: (val) => event.local = val,
               ),
               TextFormField(
                 decoration: const InputDecoration(
                   icon: const Icon(Icons.location_on),
                   labelText: 'Endereço',
                 ),
-                initialValue: evento.endereco,
+                initialValue: event.address,
                 validator: (val) => val.isEmpty ? 'Endereço é obrigatório' : null,
                 inputFormatters: [new LengthLimitingTextInputFormatter(100)],
-                onSaved: (val) => evento.endereco = val,
+                onSaved: (val) => event.address = val,
               ),
               TextFormField(
                 decoration: const InputDecoration(
                   icon: const Icon(Icons.location_city),
                   labelText: 'Cidade',
                 ),
-                initialValue: evento.cidade,
+                initialValue: event.city,
                 validator: (val) => val.isEmpty ? 'Cidade é obrigatório' : null,
                 inputFormatters: [new LengthLimitingTextInputFormatter(20)],
-                onSaved: (val) => evento.cidade = val,
+                onSaved: (val) => event.city = val,
               ),
               TextFormField(
                 decoration: const InputDecoration(
                   icon: const Icon(Icons.description),
                   labelText: 'Descrição',
                 ),
-                initialValue: evento.descricao,
+                initialValue: event.description,
                 keyboardType: TextInputType.multiline,
                 maxLines: 4,
                 validator: (val) => val.isEmpty ? 'Descrição é obrigatório' :
                 val.length > 20 ? null : 'Descreva melhor seu evento',
                 inputFormatters: [new LengthLimitingTextInputFormatter(500)],
-                onSaved: (val) => evento.descricao = val,
+                onSaved: (val) => event.description = val,
               ),
               TextFormField(
                 decoration: const InputDecoration(
                   icon: const Icon(FbIcon.facebook_official),
                   labelText: 'Link do Evento no facebook',
                 ),
-                initialValue: evento.facebookUrl,
+                initialValue: event.facebookUrl,
                 validator: (val) => Validators.facebookUrl(val) ? null : 'Link inválido',
                 keyboardType: TextInputType.emailAddress,
                 inputFormatters: [new LengthLimitingTextInputFormatter(80)],
-                onSaved: (val) => evento.facebookUrl = val,
+                onSaved: (val) => event.facebookUrl = val,
               ),
               Container(
                   padding: const EdgeInsets.only(top: 20.0),
@@ -168,14 +168,14 @@ class _EventoCriarState extends State<EventoCriarPage>{
     );
   }
 
-  bool ehDataValida(String data) {
-    if (data.isEmpty)
+  bool isDateValid(String date) {
+    if (date.isEmpty)
       return false;
-    var d = convertToDate(data);
+    var d = convertToDate(date);
     return d != null && d.isAfter(new DateTime.now());
   }
 
-  bool ehHoraValida(String hora) {
+  bool isHourValid(String hora) {
     if (hora.isEmpty)
       return false;
     var d = convertToHour(hora);
@@ -203,7 +203,7 @@ class _EventoCriarState extends State<EventoCriarPage>{
   }
 
   DateTime convertToDateTime(String inputData){
-    return DateFormat("d/M/y H:m").parse(inputData + " " + _horaController.text);
+    return DateFormat("d/M/y H:m").parse(inputData + " " + _hourController.text);
   }
 
   String convertToDMYString(DateTime d){
@@ -238,16 +238,16 @@ class _EventoCriarState extends State<EventoCriarPage>{
       showMessage('Por favor, complete todos os campos.');
     } else {
       form.save(); //Executa cada evento "onSaved" dos campos do formulário
-      evento.criadoPor = MyApp.userId();
+      event.createdBy = MyApp.userId();
 
-      if(evento.reference == null) {
+      if(event.reference == null) {
         Firestore.instance
-            .collection(Evento.collectionName)
-            .add(evento.toJson())
+            .collection(Event.collectionName)
+            .add(event.toJson())
             .then(onValue)
             .catchError(showMessage);
       } else {
-        evento.reference.setData(evento.toJson()).then(onUpdate).catchError(showMessage);
+        event.reference.setData(event.toJson()).then(onUpdate).catchError(showMessage);
       }
     }
   }

@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:redesign/estilos/style.dart';
-import 'package:redesign/modulos/autorizacao/autorizacao.dart';
-import 'package:redesign/modulos/chat/chat_lista.dart';
+import 'package:redesign/styles/style.dart';
+import 'package:redesign/modulos/auth/auth.dart';
+import 'package:redesign/modulos/chat/chat_list.dart';
 import 'package:redesign/modulos/forum/forum_tema_lista.dart';
 import 'package:redesign/modulos/map/map_student.dart';
 import 'package:redesign/modulos/material/material_lista.dart';
 import 'package:redesign/modulos/rede/rede_tela.dart';
-import 'package:redesign/modulos/eventos/eventos_lista.dart';
+import 'package:redesign/modulos/events/events_list.dart';
 import 'package:redesign/modulos/about/about_screen.dart';
-import 'package:redesign/modulos/usuario/perfil_form.dart';
-import 'package:redesign/modulos/usuario/user.dart';
+import 'package:redesign/modulos/user/profile_form.dart';
+import 'package:redesign/modulos/user/user.dart';
 import 'package:redesign/services/my_app.dart';
 
 class DrawerScreen extends StatefulWidget {
-  final int mensagensNaoLidas;
+  final int unreadMessages;
 
-  DrawerScreen({this.mensagensNaoLidas=0});
+  DrawerScreen({this.unreadMessages=0});
 
   @override
   DrawerScreenState createState() => DrawerScreenState();
@@ -94,7 +94,7 @@ class DrawerScreenState extends State<DrawerScreen> {
                               ),
                               MyApp.isStudent() ? Container() :
                               MessageIconButton(
-                                mensagensNaoLidas: widget.mensagensNaoLidas,
+                                unreadMessages: widget.unreadMessages,
                                 icon: Icon(Icons.chat_bubble),
                                 iconColor: Colors.white,
                                 circleColor: Color(0xff00838f),
@@ -102,7 +102,7 @@ class DrawerScreenState extends State<DrawerScreen> {
                                 onPressed:  () {
                                   Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) => ChatLista())
+                                      MaterialPageRoute(builder: (context) => ChatList())
                                   );
                                 }
                               ),
@@ -126,7 +126,7 @@ class DrawerScreenState extends State<DrawerScreen> {
                 color: Style.darkBackground
             ),
           ),
-          ListaDrawer(
+          DrawerList(
             icon: Icons.explore,
             iconColor: Style.primaryColor,
             text: 'Mapa',
@@ -134,7 +134,7 @@ class DrawerScreenState extends State<DrawerScreen> {
               Navigator.pop(context);
             }
           ),
-          MyApp.occupation() != Occupation.professor ? Container() : ListaDrawer(
+          MyApp.occupation() != Occupation.professor ? Container() : DrawerList(
             icon: Icons.explore,
             iconColor: Style.primaryColor,
             text: 'Mapa do Pegada',
@@ -145,7 +145,7 @@ class DrawerScreenState extends State<DrawerScreen> {
               );
             }
           ),
-          ListaDrawer(
+          DrawerList(
             icon: Icons.people,
             iconColor: Style.primaryColor,
             text: 'Rede',
@@ -156,7 +156,7 @@ class DrawerScreenState extends State<DrawerScreen> {
               );
             }
           ),
-          ListaDrawer(
+          DrawerList(
             icon: Icons.forum,
             iconColor: Style.primaryColor,
             text: 'Fórum',
@@ -167,7 +167,7 @@ class DrawerScreenState extends State<DrawerScreen> {
               );
             }
           ),
-          ListaDrawer(
+          DrawerList(
             icon: Icons.library_books,
             iconColor: Style.primaryColor,
             text: 'Materiais',
@@ -178,26 +178,26 @@ class DrawerScreenState extends State<DrawerScreen> {
                 );
               }
           ),
-          ListaDrawer(
+          DrawerList(
             icon: Icons.event,
             iconColor: Style.primaryColor,
             text: 'Eventos',
             onPressed: () {
               Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => EventosTela())
+                  MaterialPageRoute(builder: (context) => EventsScreen())
               );
             }
           ),
           MyApp.isLabDis() ?
-          ListaDrawer(
+          DrawerList(
             icon: Icons.assignment_ind,
             iconColor: Style.primaryColor,
             text: 'Autorizar Usuários',
             onPressed: () {
               Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AutorizacaoTela())
+                  MaterialPageRoute(builder: (context) => AuthScreen())
               );
             }
           ) : Container(),
@@ -212,7 +212,7 @@ class DrawerScreenState extends State<DrawerScreen> {
                       child: Column(
                         children: <Widget>[
                           Divider(color: Colors.black54, height: 0,),
-                          ListaDrawer(
+                          DrawerList(
                             icon: Icons.help,
                             iconColor: Style.primaryColor,
                             text: 'Sobre',
@@ -272,13 +272,13 @@ class RoundIconButton extends StatelessWidget {
   }
 }
 
-class ListaDrawer extends StatelessWidget{
+class DrawerList extends StatelessWidget{
   final IconData icon;
   final Color iconColor;
   final String text;
   final VoidCallback onPressed;
 
-  ListaDrawer({
+  DrawerList({
     this.icon,
     this.iconColor,
     this.text,
@@ -300,7 +300,7 @@ class ListaDrawer extends StatelessWidget{
 }
 
 class MessageIconButton extends StatelessWidget {
-  final int mensagensNaoLidas;
+  final int unreadMessages;
   final Icon icon;
   final Color iconColor;
   final Color circleColor;
@@ -313,7 +313,7 @@ class MessageIconButton extends StatelessWidget {
     this.circleColor,
     this.size,
     this.onPressed,
-    @required this.mensagensNaoLidas,
+    @required this.unreadMessages,
   });
 
   @override
@@ -338,10 +338,10 @@ class MessageIconButton extends StatelessWidget {
             ),
           ),
         ),
-        mensagensNaoLidas == 0 ? Container() : CircleAvatar(
+        unreadMessages == 0 ? Container() : CircleAvatar(
           radius: 10,
           backgroundColor: Colors.red,
-          child: Text(mensagensNaoLidas.toString(),
+          child: Text(unreadMessages.toString(),
             style: TextStyle(color: Colors.white),
           ),
         ),

@@ -1,4 +1,4 @@
-import 'package:redesign/modulos/usuario/user.dart';
+import 'package:redesign/modulos/user/user.dart';
 
 class Helper {
 

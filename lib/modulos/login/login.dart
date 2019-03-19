@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:redesign/estilos/Style.dart';
-import 'package:redesign/modulos/cadastro/registroOpcoes.dart';
+import 'package:redesign/styles/Style.dart';
+import 'package:redesign/modulos/registration/registration_options.dart';
 import 'package:redesign/modulos/login/forgot_password.dart';
-import 'package:redesign/modulos/usuario/user.dart';
-import 'package:redesign/modulos/usuario/institution.dart';
+import 'package:redesign/modulos/user/user.dart';
+import 'package:redesign/modulos/user/institution.dart';
 import 'package:redesign/services/my_app.dart';
 import 'package:redesign/widgets/standard_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,25 +19,28 @@ class Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        key: _scaffoldKey,
-        resizeToAvoidBottomPadding: false,
-        body: Center(
-            child: Container(
-                color: Style.darkBackground,
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(top: 50, bottom: 50),
-                      child: Image.asset(
-                        'images/rede_logo.png',
-                        fit: BoxFit.fitWidth,
-                        width: 200,
-                      ),
-                    ),
-                    _LoginPage(),
-                  ],
-                ))));
+      key: _scaffoldKey,
+      resizeToAvoidBottomPadding: false,
+      body: Center(
+        child: Container(
+          color: Style.darkBackground,
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(top: 50, bottom: 50),
+                child: Image.asset(
+                  'images/rede_logo.png',
+                  fit: BoxFit.fitWidth,
+                  width: 200,
+                ),
+              ),
+              _LoginPage(),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -89,7 +92,7 @@ class _LoginState extends State<_LoginPage> {
   openSignUpScreen() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => RegistroOpcoes()),
+      MaterialPageRoute(builder: (context) => RegistrationOptions()),
     );
   }
 }

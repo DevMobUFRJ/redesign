@@ -2,10 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:redesign/modulos/usuario/institution.dart';
-import 'package:redesign/modulos/usuario/perfil_instituicao.dart';
-import 'package:redesign/modulos/usuario/perfil_pessoa.dart';
-import 'package:redesign/modulos/usuario/user.dart';
+import 'package:redesign/modulos/user/institution.dart';
+import 'package:redesign/modulos/user/profile_institution.dart';
+import 'package:redesign/modulos/user/profile_person.dart';
+import 'package:redesign/modulos/user/user.dart';
 import 'package:redesign/services/my_app.dart';
 
 /// Idealmente, aqui ficam todos os widgets padronizados para lidar com dados
@@ -131,12 +131,12 @@ class _CircleAvatarAsyncState extends State<CircleAvatarAsync> {
           if(usuario.type == UserType.institution){
             Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => PerfilInstituicao(usuario))
+                MaterialPageRoute(builder: (context) => ProfileInstitution(usuario))
             );
           } else {
             Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => PerfilPessoa(usuario))
+                MaterialPageRoute(builder: (context) => ProfilePerson(usuario))
             );
           }
         }

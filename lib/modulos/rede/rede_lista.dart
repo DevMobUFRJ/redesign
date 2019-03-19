@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:redesign/estilos/style.dart';
-import 'package:redesign/modulos/usuario/favorite.dart';
-import 'package:redesign/modulos/usuario/institution.dart';
-import 'package:redesign/modulos/usuario/perfil_instituicao.dart';
-import 'package:redesign/modulos/usuario/perfil_pessoa.dart';
-import 'package:redesign/modulos/usuario/user.dart';
+import 'package:redesign/styles/style.dart';
+import 'package:redesign/modulos/user/favorite.dart';
+import 'package:redesign/modulos/user/institution.dart';
+import 'package:redesign/modulos/user/profile_institution.dart';
+import 'package:redesign/modulos/user/profile_person.dart';
+import 'package:redesign/modulos/user/user.dart';
 import 'package:redesign/services/helper.dart';
 import 'package:redesign/services/my_app.dart';
 import 'package:redesign/widgets/item_lista_simples.dart';
@@ -275,7 +275,7 @@ void callbackUsuario(BuildContext context, User usuario){
   Navigator.push(
     context,
     MaterialPageRoute(
-      builder: (context) => PerfilPessoa(usuario),
+      builder: (context) => ProfilePerson(usuario),
     ),
   );
 }
@@ -284,7 +284,7 @@ void callbackInstituicao(BuildContext context, Institution instituicao){
   Navigator.push(
     context,
     MaterialPageRoute(
-      builder: (context) => PerfilInstituicao(instituicao),
+      builder: (context) => ProfileInstitution(instituicao),
     ),
   );
 }
