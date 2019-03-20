@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:redesign/styles/style.dart';
 import 'package:redesign/modulos/auth/auth.dart';
 import 'package:redesign/modulos/chat/chat_list.dart';
-import 'package:redesign/modulos/forum/forum_tema_lista.dart';
+import 'package:redesign/modulos/forum/forum_topic_list.dart';
 import 'package:redesign/modulos/map/map_student.dart';
-import 'package:redesign/modulos/material/material_lista.dart';
-import 'package:redesign/modulos/rede/rede_tela.dart';
+import 'package:redesign/modulos/material/resource_list.dart';
+import 'package:redesign/modulos/rede/rede_screen.dart';
 import 'package:redesign/modulos/events/events_list.dart';
 import 'package:redesign/modulos/about/about_screen.dart';
 import 'package:redesign/modulos/user/profile_form.dart';
@@ -152,7 +152,7 @@ class DrawerScreenState extends State<DrawerScreen> {
             onPressed: () {
               Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => RedeTela())
+                  MaterialPageRoute(builder: (context) => RedeScreen())
               );
             }
           ),
@@ -163,7 +163,7 @@ class DrawerScreenState extends State<DrawerScreen> {
             onPressed: () {
               Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ForumTemaLista())
+                  MaterialPageRoute(builder: (context) => ForumTopicList())
               );
             }
           ),
@@ -174,7 +174,7 @@ class DrawerScreenState extends State<DrawerScreen> {
               onPressed: () {
                 Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => MaterialLista())
+                    MaterialPageRoute(builder: (context) => ResourceList())
                 );
               }
           ),

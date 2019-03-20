@@ -9,7 +9,7 @@ import 'package:redesign/modulos/chat/chat_screen.dart';
 import 'package:redesign/modulos/chat/message.dart';
 import 'package:redesign/modulos/user/user.dart';
 import 'package:redesign/services/my_app.dart';
-import 'package:redesign/widgets/dados_asincronos.dart';
+import 'package:redesign/widgets/async_data.dart';
 import 'package:redesign/widgets/base_screen.dart';
 
 class ChatList extends StatefulWidget {
@@ -95,7 +95,7 @@ class ChatListState extends State<ChatList> {
                     child: Row(children: [
                       Expanded(
                         child: TextField(
-                          onChanged: didChangeTextSearch,
+                          onChanged: searchTextChanged,
                           controller: _searchController,
                           cursorColor: Style.lightGrey,
                           decoration: InputDecoration(
@@ -125,11 +125,11 @@ class ChatListState extends State<ChatList> {
     });
     if (!searching) {
       _searchController.text = "";
-      didChangeTextSearch("");
+      searchTextChanged("");
     }
   }
 
-  didChangeTextSearch(String text) {
+  searchTextChanged(String text) {
     if(search != text.toLowerCase()) {
       setState(() {
         search = text.toLowerCase();

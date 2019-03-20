@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class TelaBaseForum extends StatelessWidget {
+class ForumBaseScreen extends StatelessWidget {
 
   BuildContext context;
 
@@ -9,7 +9,7 @@ class TelaBaseForum extends StatelessWidget {
   final FloatingActionButton fab;
   final List<IconButton> extraActions = [];
 
-  TelaBaseForum({@required this.title, this.body, this.fab, actions}){
+  ForumBaseScreen({@required this.title, this.body, this.fab, actions}){
     if(actions != null){
       this.extraActions.addAll(actions);
     }

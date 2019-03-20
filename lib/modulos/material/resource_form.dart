@@ -3,24 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:redesign/styles/style.dart';
-import 'package:redesign/modulos/material/material_didatico.dart';
+import 'package:redesign/modulos/material/didactic_resource.dart';
 import 'package:redesign/services/validators.dart';
 import 'package:redesign/widgets/standard_button.dart';
 import 'package:redesign/widgets/base_screen.dart';
 
-class MaterialForm extends StatefulWidget {
+class ResourceForm extends StatefulWidget {
   @override
-  MaterialFormState createState() => MaterialFormState();
+  ResourceFormState createState() => ResourceFormState();
 }
 
-class MaterialFormState extends State<MaterialForm> {
+class ResourceFormState extends State<ResourceForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   bool blocked = false;
 
-  MaterialDidatico material = MaterialDidatico();
+  DidacticResource resource = DidacticResource();
 
-  MaterialFormState();
+  ResourceFormState();
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +41,7 @@ class MaterialFormState extends State<MaterialForm> {
                 ),
                 validator: (val) => val.trim().isEmpty ? 'Título é obrigatório' : null,
                 inputFormatters: [LengthLimitingTextInputFormatter(40)],
-                onSaved: (val) => material.titulo = val.trim(),
+                onSaved: (val) => resource.title = val.trim(),
               ),
               TextFormField(
                 decoration: const InputDecoration(
@@ -49,7 +49,7 @@ class MaterialFormState extends State<MaterialForm> {
                   labelText: 'Descrição',
                 ),
                 inputFormatters: [LengthLimitingTextInputFormatter(200)],
-                onSaved: (val) => material.descricao = val.trim(),
+                onSaved: (val) => resource.description = val.trim(),
               ),
               TextFormField(
                 decoration: const InputDecoration(
@@ -63,7 +63,7 @@ class MaterialFormState extends State<MaterialForm> {
                   if(!val.startsWith("http")){
                     val = "http://" + val;
                   }
-                  material.url = val;
+                  resource.url = val;
                 },
               ),
               Container(
@@ -88,8 +88,8 @@ class MaterialFormState extends State<MaterialForm> {
       showMessage('Por favor, complete todos os campos.');
     } else {
       form.save(); //Executa cada evento "onSaved" dos campos do formulário
-      material.data = DateTime.now();
-      salvar(material);
+      resource.date = DateTime.now();
+      save(resource);
     }
   }
 
@@ -99,11 +99,11 @@ class MaterialFormState extends State<MaterialForm> {
         .showSnackBar(SnackBar(backgroundColor: color, content: Text(message)));
   }
 
-  salvar(MaterialDidatico material){
-    Firestore.instance.collection(MaterialDidatico.collectionName).add(material.toJson()).then(salvou); //TODO pegar o erro
+  save(DidacticResource resource){
+    Firestore.instance.collection(DidacticResource.collectionName).add(resource.toJson()).then(savedSuccessfully); //TODO pegar o erro
   }
 
-  salvou(DocumentReference doc){
+  savedSuccessfully(DocumentReference doc){
     Navigator.pop(context);
   }
 }

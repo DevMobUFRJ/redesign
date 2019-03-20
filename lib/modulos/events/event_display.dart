@@ -5,7 +5,7 @@ import 'package:redesign/modulos/events/event.dart';
 import 'package:redesign/modulos/events/event_form.dart';
 import 'package:redesign/modulos/user/favorite.dart';
 import 'package:redesign/services/my_app.dart';
-import 'package:redesign/widgets/dados_asincronos.dart';
+import 'package:redesign/widgets/async_data.dart';
 import 'package:redesign/widgets/base_screen.dart';
 import 'package:redesign/styles/style.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -164,13 +164,13 @@ class _DisplayEvent extends State<EventForm> {
                           ),
                           maxLines: 2,
                         ),
-                        NomeTextAsync(
+                        NameTextAsync(
                           event.createdBy,
                           TextStyle(
                             color: Colors.black45,
                             fontSize: 15,
                           ),
-                          prefixo: "",
+                          prefix: "",
                         ),
                       ],
                     ),

@@ -5,7 +5,7 @@ import 'package:redesign/styles/style.dart';
 import 'package:redesign/modulos/chat/chat_screen.dart';
 import 'package:redesign/modulos/user/user.dart';
 import 'package:redesign/services/my_app.dart';
-import 'package:redesign/widgets/dados_asincronos.dart';
+import 'package:redesign/widgets/async_data.dart';
 import 'package:redesign/widgets/base_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 

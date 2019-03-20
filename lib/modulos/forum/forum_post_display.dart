@@ -2,32 +2,32 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:redesign/styles/style.dart';
-import 'package:redesign/modulos/forum/forum_comentario.dart';
-import 'package:redesign/modulos/forum/forum_comentario_form.dart';
+import 'package:redesign/modulos/forum/forum_comment.dart';
+import 'package:redesign/modulos/forum/forum_comment_form.dart';
 import 'package:redesign/modulos/forum/forum_post.dart';
 import 'package:redesign/services/helper.dart';
 import 'package:redesign/widgets/standard_button.dart';
-import 'package:redesign/widgets/dados_asincronos.dart';
-import 'package:redesign/widgets/tela_base_forum_post.dart';
+import 'package:redesign/widgets/async_data.dart';
+import 'package:redesign/widgets/forum_base_screen_post.dart';
 
-class ForumPostExibir extends StatefulWidget {
+class ForumPostDisplay extends StatefulWidget {
   final ForumPost post;
 
-  ForumPostExibir(this.post);
+  ForumPostDisplay(this.post);
 
   @override
-  ForumPostExibirState createState() => ForumPostExibirState(post);
+  ForumPostDisplayState createState() => ForumPostDisplayState(post);
 }
 
-class ForumPostExibirState extends State<ForumPostExibir> {
+class ForumPostDisplayState extends State<ForumPostDisplay> {
   final ForumPost post;
 
-  ForumPostExibirState(this.post);
+  ForumPostDisplayState(this.post);
 
   @override
   Widget build(BuildContext context) {
-    return TelaBaseForum(
-      title: post.titulo,
+    return ForumBaseScreen(
+      title: post.title,
       body: Column(
         children: <Widget>[
           Container(
@@ -37,7 +37,11 @@ class ForumPostExibirState extends State<ForumPostExibir> {
               children: <Widget>[
                 Row(
                   children: <Widget>[
-                    CircleAvatarAsync(post.criadoPor, radius: 26, clicavel: true,),
+                    CircleAvatarAsync(
+                      post.createdBy,
+                      radius: 26,
+                      clickable: true,
+                    ),
                     Expanded(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -51,7 +55,7 @@ class ForumPostExibirState extends State<ForumPostExibir> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
                                   Text(
-                                    post.titulo,
+                                    post.title,
                                     style: TextStyle(
                                       color: Style.primaryColorLighter,
                                       fontSize: 18,
@@ -61,8 +65,8 @@ class ForumPostExibirState extends State<ForumPostExibir> {
                                     softWrap: false,
                                     overflow: TextOverflow.clip,
                                   ),
-                                  NomeTextAsync(
-                                    post.criadoPor,
+                                  NameTextAsync(
+                                    post.createdBy,
                                     TextStyle(color: Colors.white),
                                   )
                                 ],
@@ -77,30 +81,29 @@ class ForumPostExibirState extends State<ForumPostExibir> {
               ],
             ),
           ),
-          _ListaComentarios(
-              post.reference.collection(ForumComentario.collectionName), post),
+          _CommentsList(
+              post.reference.collection(ForumComment.collectionName), post),
         ],
       ),
     );
   }
 }
 
-class _ListaComentarios extends StatefulWidget {
+class _CommentsList extends StatefulWidget {
   final CollectionReference reference;
   final ForumPost post;
 
-  _ListaComentarios(this.reference, this.post);
+  _CommentsList(this.reference, this.post);
 
   @override
-  _ListaComentariosState createState() =>
-      _ListaComentariosState(reference, post);
+  _CommentsListState createState() => _CommentsListState(reference, post);
 }
 
-class _ListaComentariosState extends State<_ListaComentarios> {
+class _CommentsListState extends State<_CommentsList> {
   CollectionReference reference;
   final ForumPost post;
 
-  _ListaComentariosState(this.reference, this.post);
+  _CommentsListState(this.reference, this.post);
 
   @override
   Widget build(BuildContext context) {
@@ -128,21 +131,22 @@ class _ListaComentariosState extends State<_ListaComentarios> {
               padding: EdgeInsets.only(left: 16, right: 16, bottom: 8),
               color: Style.darkBackground,
               child: Text(
-                post.descricao,
+                post.description,
                 style: TextStyle(color: Colors.white),
               ),
             )
           ]
-            ..addAll(
-              snapshot.map((data) => _buildListItem(context, data)).toList()
-            )
-            // Padding extra no final da lista
-            ..add(Container(padding: EdgeInsets.only(bottom: 60.0),))
-          ),
+                ..addAll(snapshot
+                    .map((data) => _buildListItem(context, data))
+                    .toList())
+                // Padding extra no final da lista
+                ..add(Container(
+                  padding: EdgeInsets.only(bottom: 60.0),
+                ))),
           Padding(
             padding: const EdgeInsets.only(left: 16, right: 16),
-            child: StandardButton("Contribuir", contribuir, Style.main.primaryColor,
-                Colors.white),
+            child: StandardButton("Contribuir", addComment,
+                Style.main.primaryColor, Colors.white),
           ),
         ],
       ),
@@ -150,8 +154,8 @@ class _ListaComentariosState extends State<_ListaComentarios> {
   }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
-    ForumComentario comentario =
-        ForumComentario.fromMap(data.data, reference: data.reference);
+    ForumComment comment =
+        ForumComment.fromMap(data.data, reference: data.reference);
     return Column(
       key: Key(data.documentID),
       children: <Widget>[
@@ -162,7 +166,11 @@ class _ListaComentariosState extends State<_ListaComentarios> {
                   key: ValueKey(data.documentID),
                   child: Row(
                     children: <Widget>[
-                      CircleAvatarAsync(comentario.criadoPor, radius: 23, clicavel: true,),
+                      CircleAvatarAsync(
+                        comment.createdBy,
+                        radius: 23,
+                        clickable: true,
+                      ),
                       Expanded(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -174,15 +182,17 @@ class _ListaComentariosState extends State<_ListaComentarios> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     Text(
-                                      comentario.titulo,
+                                      comment.title,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
-                                          color: Style.buttonBlue, fontSize: 18),
+                                          color: Style.buttonBlue,
+                                          fontSize: 18),
                                     ),
-                                    NomeTextAsync(
-                                      post.criadoPor,
-                                      TextStyle(color: Colors.black54, fontSize: 14),
-                                      prefixo: "",
+                                    NameTextAsync(
+                                      post.createdBy,
+                                      TextStyle(
+                                          color: Colors.black54, fontSize: 14),
+                                      prefix: "",
                                     )
                                   ],
                                 ),
@@ -199,17 +209,19 @@ class _ListaComentariosState extends State<_ListaComentarios> {
             Container(
               alignment: Alignment.topLeft,
               padding: EdgeInsets.only(left: 15, bottom: 5),
-              child: Text("Em " + Helper.convertToDMYString(comentario.data),
-                 style: TextStyle(
-                   fontSize: 11,
-                   color: Colors.black45,
-                 ),
+              child: Text(
+                "Em " + Helper.convertToDMYString(comment.date),
+                style: TextStyle(
+                  fontSize: 11,
+                  color: Colors.black45,
+                ),
               ),
             ),
             Container(
               alignment: Alignment.topLeft,
               padding: EdgeInsets.only(left: 15, right: 15),
-              child: Text(comentario.descricao,
+              child: Text(
+                comment.description,
                 textAlign: TextAlign.justify,
               ),
             )
@@ -229,12 +241,13 @@ class _ListaComentariosState extends State<_ListaComentarios> {
     );
   }
 
-  contribuir() {
+  addComment() {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => ForumComentarioForm(
-              post.reference.collection(ForumComentario.collectionName))),
+        builder: (context) => ForumCommentForm(
+            post.reference.collection(ForumComment.collectionName)),
+      ),
     );
   }
 }

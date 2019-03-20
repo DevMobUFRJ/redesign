@@ -4,22 +4,22 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:redesign/styles/style.dart';
 import 'package:redesign/modulos/forum/forum_post.dart';
-import 'package:redesign/modulos/forum/forum_tema.dart';
+import 'package:redesign/modulos/forum/forum_topic.dart';
 import 'package:redesign/services/my_app.dart';
 import 'package:redesign/widgets/standard_button.dart';
 import 'package:redesign/widgets/base_screen.dart';
 
 class ForumPostForm extends StatefulWidget {
-  final ForumTema tema;
+  final ForumTopic topic;
 
-  ForumPostForm(this.tema);
+  ForumPostForm(this.topic);
 
   @override
-  ForumPostFormState createState() => ForumPostFormState(tema);
+  ForumPostFormState createState() => ForumPostFormState(topic);
 }
 
 class ForumPostFormState extends State<ForumPostForm> {
-  ForumTema tema;
+  ForumTopic topic;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -27,7 +27,7 @@ class ForumPostFormState extends State<ForumPostForm> {
 
   ForumPost post = ForumPost();
 
-  ForumPostFormState(this.tema);
+  ForumPostFormState(this.topic);
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +54,7 @@ class ForumPostFormState extends State<ForumPostForm> {
                           ),
                           validator: (val) => val.isEmpty ? 'Título é obrigatório' : null,
                           inputFormatters: [LengthLimitingTextInputFormatter(50)],
-                          onSaved: (val) => post.titulo = val,
+                          onSaved: (val) => post.title = val,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(bottom: 70.0),
@@ -68,7 +68,7 @@ class ForumPostFormState extends State<ForumPostForm> {
                             validator: (val) => val.isEmpty ? 'Descrição é obrigatório' :
                             val.length > 15 ? null : 'Descreva melhor seu problema',
                             inputFormatters: [LengthLimitingTextInputFormatter(500)],
-                            onSaved: (val) => post.descricao = val,
+                            onSaved: (val) => post.description = val,
                           ),
                         ),
                       ],
@@ -98,9 +98,9 @@ class ForumPostFormState extends State<ForumPostForm> {
       showMessage('Por favor, complete todos os campos.');
     } else {
       form.save(); //Executa cada evento "onSaved" dos campos do formulário
-      post.criadoPor = MyApp.userId();
-      post.temaId = tema.reference.documentID;
-      post.data = DateTime.now();
+      post.createdBy = MyApp.userId();
+      post.topicId = topic.reference.documentID;
+      post.date = DateTime.now();
       savePost(post);
     }
   }

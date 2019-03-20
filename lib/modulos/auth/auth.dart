@@ -67,7 +67,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   children: [
                     Expanded(
                       child: TextField(
-                        onChanged: didChangeSearchText,
+                        onChanged: searchTextChanged,
                         controller: _searchController,
                         cursorColor: Style.lightGrey,
                         decoration: InputDecoration(
@@ -110,11 +110,11 @@ class _AuthScreenState extends State<AuthScreen> {
     });
     if(!searching) {
       _searchController.text = "";
-      didChangeSearchText("");
+      searchTextChanged("");
     }
   }
 
-  didChangeSearchText(String text){
+  searchTextChanged(String text){
     setState(() {
       search = text.toLowerCase();
     });

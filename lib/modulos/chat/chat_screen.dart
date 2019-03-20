@@ -8,7 +8,7 @@ import 'package:redesign/modulos/user/institution.dart';
 import 'package:redesign/modulos/user/user.dart';
 import 'package:redesign/services/helper.dart';
 import 'package:redesign/services/my_app.dart';
-import 'package:redesign/widgets/dados_asincronos.dart';
+import 'package:redesign/widgets/async_data.dart';
 import 'package:redesign/widgets/base_screen.dart';
 
 /// O elemento chat OU usuário podem ser null.
@@ -273,7 +273,7 @@ class _MessagesListState extends State<_MessagesList> {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.only(right: 10.0),
-              child: CircleAvatarAsync(message.createdBy, radius: 18, clicavel: true,),
+              child: CircleAvatarAsync(message.createdBy, radius: 18, clickable: true,),
             ),
             Expanded(
               child: Column(

@@ -2,20 +2,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:redesign/styles/style.dart';
-import 'package:redesign/modulos/material/material_didatico.dart';
-import 'package:redesign/modulos/material/material_form.dart';
+import 'package:redesign/modulos/material/didactic_resource.dart';
+import 'package:redesign/modulos/material/resource_form.dart';
 import 'package:redesign/services/my_app.dart';
-import 'package:redesign/widgets/item_lista_simples.dart';
+import 'package:redesign/widgets/simple_list_item.dart';
 import 'package:redesign/widgets/base_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class MaterialLista extends StatefulWidget {
+class ResourceList extends StatefulWidget {
 
   @override
-  MaterialListaState createState() => MaterialListaState();
+  ResourceListState createState() => ResourceListState();
 }
 
-class MaterialListaState extends State<MaterialLista> {
+class ResourceListState extends State<ResourceList> {
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class MaterialListaState extends State<MaterialLista> {
       body: _buildBody(context),
       fab: MyApp.isLabDis() ?
         FloatingActionButton(
-          onPressed: () => novoMaterial(),
+          onPressed: () => newResource(),
           child: Icon(Icons.add),
           backgroundColor: Style.main.primaryColor,
         )
@@ -34,7 +34,7 @@ class MaterialListaState extends State<MaterialLista> {
 
   Widget _buildBody(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance.collection(MaterialDidatico.collectionName)
+      stream: Firestore.instance.collection(DidacticResource.collectionName)
           .orderBy("data")
           .snapshots(),
       builder: (context, snapshot) {
@@ -68,25 +68,25 @@ class MaterialListaState extends State<MaterialLista> {
   }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
-    MaterialDidatico material = MaterialDidatico.fromMap(data.data, reference: data.reference);
+    DidacticResource material = DidacticResource.fromMap(data.data, reference: data.reference);
 
-    return ItemListaSimples(
-      material.titulo,
+    return SimpleListItem(
+      material.title,
       (){ _launchURL(material.url); },
-      subtitulo: material.descricao,
-      iconeExtra: Icon(
+      subtitle: material.description,
+      iconExtra: Icon(
         Icons.link,
         color: Style.main.primaryColor,
       ),
       key: ValueKey(data.documentID),
-      onLongPress: MyApp.isLabDis() ? () => _apagarMaterial(material) : null,
+      onLongPress: MyApp.isLabDis() ? () => _deleteResource(material) : null,
     );
   }
 
-  novoMaterial(){
+  newResource(){
     Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => MaterialForm())
+        MaterialPageRoute(builder: (context) => ResourceForm())
     );
   }
 
@@ -97,7 +97,7 @@ class MaterialListaState extends State<MaterialLista> {
   }
 
 
-  Future<void> _apagarMaterial(MaterialDidatico material) async {
+  Future<void> _deleteResource(DidacticResource resource) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: true,
@@ -107,7 +107,7 @@ class MaterialListaState extends State<MaterialLista> {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text('Deseja apagar o material "' + material.titulo + '"?'),
+                Text('Deseja apagar o material "' + resource.title + '"?'),
               ],
             ),
           ),
@@ -123,7 +123,7 @@ class MaterialListaState extends State<MaterialLista> {
               textColor: Colors.deepOrange,
               child: Text('Apagar'),
               onPressed: () {
-                material.reference.delete();
+                resource.reference.delete();
                 Navigator.of(context).pop();
               },
             ),

@@ -11,132 +11,133 @@ import 'package:redesign/services/my_app.dart';
 /// Idealmente, aqui ficam todos os widgets padronizados para lidar com dados
 /// que precisam ser buscados de forma asíncrona do firebase.
 
-/// [NomeTextAsync] Recebe o ID do usuário como parâmetro pra obter o nome.
+/// [NameTextAsync] Recebe o ID do usuário como parâmetro pra obter o nome.
 /// Gera um Stateful Text com o nome do usuário.
-class NomeTextAsync extends StatefulWidget {
-  final String idUsuario;
+class NameTextAsync extends StatefulWidget {
+  final String userId;
   final TextStyle style;
-  final String prefixo;
+  final String prefix;
 
-  const NomeTextAsync(this.idUsuario, this.style, {this.prefixo = "por"});
+  const NameTextAsync(this.userId, this.style, {this.prefix = "por"});
 
   @override
-  _NomeTextState createState() => _NomeTextState(idUsuario, prefixo);
+  _NameTextState createState() => _NameTextState(userId, prefix);
 }
 
-class _NomeTextState extends State<NomeTextAsync> {
-  final String usuario;
+class _NameTextState extends State<NameTextAsync> {
+  final String user;
 //  TextStyle style;
-  final String prefixo;
+  final String prefix;
   String nome = "";
 
-  _NomeTextState(this.usuario, this.prefixo){
-    if(usuario != null && usuario.isNotEmpty){
+  _NameTextState(this.user, this.prefix){
+    if(user != null && user.isNotEmpty){
       // Dentro do construtor pois se fosse no build seria repetido toda hora.
       DocumentReference ref = Firestore.instance.collection(
-          User.collectionName).document(usuario);
+          User.collectionName).document(user);
       try {
-        ref.get().then(atualizarNome).catchError((e){});
+        ref.get().then(updateName).catchError((e){});
       } catch (e) {}
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    String texto = "";
+    String text = "";
     if(nome != ""){
-      if(prefixo.isNotEmpty){
-        texto = prefixo + " ";
+      if(prefix.isNotEmpty){
+        text = prefix + " ";
       }
-      texto += nome;
+      text += nome;
     }
 
-    return Text(texto, style: widget.style, overflow: TextOverflow.clip, maxLines: 1,);
+    return Text(text, style: widget.style, overflow: TextOverflow.clip, maxLines: 1,);
   }
 
-  atualizarNome(DocumentSnapshot user){
+  updateName(DocumentSnapshot user){
     try{
-      String nomeNovo = user.data['nome'];
-      if(nomeNovo != null)
+      String newName = user.data['nome'];
+      if(newName != null)
         setState(() {
-          nome = nomeNovo;
+          nome = newName;
         });
     } catch(e){}
   }
 }
 
 class CircleAvatarAsync extends StatefulWidget {
-  final String idUsuario;
+  final String userId;
   final double radius;
-  final bool clicavel;
+  final bool clickable;
 
-  CircleAvatarAsync(this.idUsuario, {this.radius=20.0, this.clicavel=false});
+  CircleAvatarAsync(this.userId, {this.radius=20.0, this.clickable=false});
 
   @override
   _CircleAvatarAsyncState createState() => _CircleAvatarAsyncState();
 }
 
 class _CircleAvatarAsyncState extends State<CircleAvatarAsync> {
-  List<int> imagem;
-  User usuario;
+  List<int> image;
+  User user;
 
   _CircleAvatarAsyncState();
 
   @override
   void initState(){
     super.initState();
-    if(imagem == null && widget.idUsuario != null){
-      if(widget.idUsuario == MyApp.userId()){
-        imagem = MyApp.imageMemory;
+    if(image == null && widget.userId != null){
+      if(widget.userId == MyApp.userId()){
+        image = MyApp.imageMemory;
       } else {
         FirebaseStorage.instance.ref()
-            .child("perfil/" + widget.idUsuario + ".jpg")
-            .getData(36000).then(chegouFotoPerfil)
+            .child("perfil/" + widget.userId + ".jpg")
+            .getData(36000).then(gotProfilePhoto)
             .catchError((e){});
-        if(widget.clicavel != null) {
+        if(widget.clickable != null) {
           Firestore.instance.collection(User.collectionName).document(
-              widget.idUsuario).get().then(chegouUsuario)
+              widget.userId).get().then(gotUser)
               .catchError((e){});
         }
       }
     }
   }
 
-  chegouFotoPerfil(List<int> img){
+  //TODO: procurar nome melhor para a função
+  gotProfilePhoto(List<int> img){
     setState(() {
-      imagem = img;
+      image = img;
     });
   }
 
-  chegouUsuario(DocumentSnapshot doc){
+  gotUser(DocumentSnapshot doc){
     if(doc.data['tipo'] == UserType.institution.index){
-      usuario = Institution.fromMap(doc.data, reference: doc.reference);
+      user = Institution.fromMap(doc.data, reference: doc.reference);
     } else {
-      usuario = User.fromMap(doc.data, reference: doc.reference);
+      user = User.fromMap(doc.data, reference: doc.reference);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      key: ValueKey(widget.idUsuario + "circleavatarasync"),
+      key: ValueKey(widget.userId + "circleavatarasync"),
       child: CircleAvatar(
-        backgroundImage: imagem == null ?
+        backgroundImage: image == null ?
             AssetImage("images/perfil_placeholder.png")
-            : MemoryImage(imagem),
+            : MemoryImage(image),
         radius: widget.radius,
       ),
       onTap: (){
-        if(usuario != null && this.widget.clicavel){
-          if(usuario.type == UserType.institution){
+        if(user != null && this.widget.clickable){
+          if(user.type == UserType.institution){
             Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ProfileInstitution(usuario))
+                MaterialPageRoute(builder: (context) => ProfileInstitution(user))
             );
           } else {
             Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ProfilePerson(usuario))
+                MaterialPageRoute(builder: (context) => ProfilePerson(user))
             );
           }
         }

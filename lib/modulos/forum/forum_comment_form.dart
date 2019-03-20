@@ -3,30 +3,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:redesign/styles/style.dart';
-import 'package:redesign/modulos/forum/forum_comentario.dart';
+import 'package:redesign/modulos/forum/forum_comment.dart';
 import 'package:redesign/services/my_app.dart';
 import 'package:redesign/widgets/standard_button.dart';
 import 'package:redesign/widgets/base_screen.dart';
 
-class ForumComentarioForm extends StatefulWidget {
+class ForumCommentForm extends StatefulWidget {
   final CollectionReference reference;
 
-  ForumComentarioForm(this.reference);
+  ForumCommentForm(this.reference);
 
   @override
-  ForumComentarioFormState createState() => ForumComentarioFormState(reference);
+  ForumCommentFormState createState() => ForumCommentFormState(reference);
 }
 
-class ForumComentarioFormState extends State<ForumComentarioForm> {
+class ForumCommentFormState extends State<ForumCommentForm> {
   CollectionReference reference;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   bool blocked = false;
 
-  ForumComentario comentario = ForumComentario();
+  ForumComment comment = ForumComment();
 
-  ForumComentarioFormState(this.reference);
+  ForumCommentFormState(this.reference);
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +53,7 @@ class ForumComentarioFormState extends State<ForumComentarioForm> {
                           ),
                           validator: (val) => val.isEmpty ? 'Título é obrigatório' : null,
                           inputFormatters: [LengthLimitingTextInputFormatter(50)],
-                          onSaved: (val) => comentario.titulo = val,
+                          onSaved: (val) => comment.title = val,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(bottom: 70.0),
@@ -67,7 +67,7 @@ class ForumComentarioFormState extends State<ForumComentarioForm> {
                             validator: (val) => val.isEmpty ? 'Descrição é obrigatório' :
                               val.length > 15 ? null : 'Descreva melhor sua solução',
                             inputFormatters: [LengthLimitingTextInputFormatter(500)],
-                            onSaved: (val) => comentario.descricao = val,
+                            onSaved: (val) => comment.description = val,
                           ),
                         ),
                       ],
@@ -97,9 +97,9 @@ class ForumComentarioFormState extends State<ForumComentarioForm> {
       showMessage('Por favor, complete todos os campos.');
     } else {
       form.save(); //Executa cada evento "onSaved" dos campos do formulário
-      comentario.criadoPor = MyApp.userId();
-      comentario.data = DateTime.now();
-      salvar(comentario);
+      comment.createdBy = MyApp.userId();
+      comment.date = DateTime.now();
+      save(comment);
     }
   }
 
@@ -109,11 +109,11 @@ class ForumComentarioFormState extends State<ForumComentarioForm> {
         .showSnackBar(SnackBar(backgroundColor: color, content: Text(message)));
   }
 
-  salvar(ForumComentario comentario){
-    reference.add(comentario.toJson()).then(salvou); //TODO pegar o erro
+  save(ForumComment comment){
+    reference.add(comment.toJson()).then(savedSuccessfully); //TODO pegar o erro
   }
 
-  salvou(DocumentReference doc){
+  savedSuccessfully(DocumentReference doc){
     Navigator.pop(context);
   }
 }

@@ -2,16 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:redesign/styles/style.dart';
 
-class ItemListaSimples extends StatelessWidget {
-
-  final String titulo;
-  final String subtitulo;
+class SimpleListItem extends StatelessWidget {
+  final String title;
+  final String subtitle;
   final VoidCallback callback;
-  final Widget iconeExtra;
-  final Color corTexto;
+  final Widget iconExtra;
+  final Color textColor;
   final VoidCallback onLongPress;
 
-  ItemListaSimples(this.titulo, this.callback, {Key key, this.iconeExtra, this.corTexto = Style.primaryColor, this.subtitulo, this.onLongPress}) : super(key: key);
+  SimpleListItem(this.title, this.callback,
+      {Key key,
+      this.iconExtra,
+      this.textColor = Style.primaryColor,
+      this.subtitle,
+      this.onLongPress})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +24,10 @@ class ItemListaSimples extends StatelessWidget {
       child: Column(
         children: <Widget>[
           ListTile(
-            title: Text(titulo,
+            title: Text(
+              title,
               style: TextStyle(
-                color: corTexto,
+                color: textColor,
                 fontSize: 22.0,
               ),
             ),
@@ -29,7 +35,7 @@ class ItemListaSimples extends StatelessWidget {
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                iconeExtra,
+                iconExtra,
                 Icon(
                   Icons.arrow_forward_ios,
                   size: 16.0,
@@ -37,7 +43,9 @@ class ItemListaSimples extends StatelessWidget {
                 ),
               ].where((w) => w != null).toList(),
             ),
-            subtitle: subtitulo != null && subtitulo.isNotEmpty ? Text(this.subtitulo) : null,
+            subtitle: subtitle != null && subtitle.isNotEmpty
+                ? Text(this.subtitle)
+                : null,
             contentPadding: EdgeInsets.only(top: 2, bottom: 2),
             onLongPress: onLongPress,
           ),
@@ -46,5 +54,4 @@ class ItemListaSimples extends StatelessWidget {
       ),
     );
   }
-
 }

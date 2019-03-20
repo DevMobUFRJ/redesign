@@ -7,7 +7,7 @@ import 'package:redesign/modulos/events/event_form.dart';
 import 'package:redesign/modulos/user/favorite.dart';
 import 'package:redesign/services/my_app.dart';
 import 'package:redesign/widgets/base_screen.dart';
-import 'package:redesign/widgets/dados_asincronos.dart';
+import 'package:redesign/widgets/async_data.dart';
 
 class EventsScreen extends StatelessWidget {
   @override
@@ -123,7 +123,7 @@ class _EventsListState extends State<EventsList> {
                     child: Row(children: [
                       Expanded(
                         child: TextField(
-                          onChanged: didChangeSearchText,
+                          onChanged: searchTextChanged,
                           controller: _searchController,
                           cursorColor: Style.lightGrey,
                           decoration: InputDecoration(
@@ -245,7 +245,7 @@ class _EventsListState extends State<EventsList> {
                                 )
                               ],
                             ),
-                            NomeTextAsync(
+                            NameTextAsync(
                               record.createdBy,
                               TextStyle(
                                 color: Colors.black45,
@@ -305,11 +305,11 @@ class _EventsListState extends State<EventsList> {
     });
     if (!searching) {
       _searchController.text = "";
-      didChangeSearchText("");
+      searchTextChanged("");
     }
   }
 
-  didChangeSearchText(String text) {
+  searchTextChanged(String text) {
     setState(() {
       search = text.toLowerCase();
     });

@@ -3,40 +3,40 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:redesign/styles/style.dart';
 import 'package:redesign/modulos/forum/forum_post.dart';
-import 'package:redesign/modulos/forum/forum_post_exibir.dart';
+import 'package:redesign/modulos/forum/forum_post_display.dart';
 import 'package:redesign/modulos/forum/forum_post_form.dart';
-import 'package:redesign/modulos/forum/forum_tema.dart';
-import 'package:redesign/widgets/dados_asincronos.dart';
+import 'package:redesign/modulos/forum/forum_topic.dart';
+import 'package:redesign/widgets/async_data.dart';
 import 'package:redesign/widgets/base_screen.dart';
 
-class ForumPostLista extends StatefulWidget {
-  final ForumTema tema;
+class ForumPostList extends StatefulWidget {
+  final ForumTopic topic;
 
-  ForumPostLista(this.tema);
+  ForumPostList(this.topic);
 
   @override
-  ForumPostListaState createState() => ForumPostListaState(tema);
+  ForumPostListState createState() => ForumPostListState(topic);
 }
 
-class ForumPostListaState extends State<ForumPostLista> {
-  bool buscando = false;
-  TextEditingController _buscaController = TextEditingController();
-  String busca = "";
+class ForumPostListState extends State<ForumPostList> {
+  bool searching = false;
+  TextEditingController _searchController = TextEditingController();
+  String search = "";
   
-  ForumTema tema;
+  ForumTopic topic;
 
-  ForumPostListaState(this.tema);
+  ForumPostListState(this.topic);
 
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      title: tema.titulo,
+      title: topic.title,
       body: _buildBody(context),
       fab: FloatingActionButton(
         onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ForumPostForm(tema),
+                builder: (context) => ForumPostForm(topic),
               ),
             ),
         child: Icon(Icons.add),
@@ -48,7 +48,7 @@ class ForumPostListaState extends State<ForumPostLista> {
               Icons.search,
               color: Colors.white
           ),
-          onPressed: () => alternarBusca(),
+          onPressed: () => toggleSearch(),
         ),
       ],
     );
@@ -58,7 +58,7 @@ class ForumPostListaState extends State<ForumPostLista> {
     return StreamBuilder<QuerySnapshot>(
       stream: Firestore.instance
           .collection(ForumPost.collectionName)
-          .where("temaId", isEqualTo: tema.reference.documentID)
+          .where("temaId", isEqualTo: topic.reference.documentID)
           .orderBy("data", descending: true)
           .limit(50)
           .snapshots(),
@@ -85,7 +85,7 @@ class ForumPostListaState extends State<ForumPostLista> {
       Expanded(
         child: ListView(
           children: [
-            buscando ?
+            searching ?
             Container(
               margin: EdgeInsets.only(bottom: 15),
               decoration: ShapeDecoration(shape: StadiumBorder()),
@@ -93,8 +93,8 @@ class ForumPostListaState extends State<ForumPostLista> {
                 children: [
                   Expanded(
                     child: TextField(
-                      onChanged: textoBuscaMudou,
-                      controller: _buscaController,
+                      onChanged: searchTextChanged,
+                      controller: _searchController,
                       cursorColor: Style.lightGrey,
                       decoration: InputDecoration(
                         hintText: "Buscar",
@@ -115,27 +115,27 @@ class ForumPostListaState extends State<ForumPostLista> {
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
     ForumPost post = ForumPost.fromMap(data.data, reference: data.reference);
     
-    if(!post.titulo.toLowerCase().contains(busca)
-      && !post.descricao.toLowerCase().contains(busca))
+    if(!post.title.toLowerCase().contains(search)
+      && !post.description.toLowerCase().contains(search))
       return Container();
     
     return _PostItem(post);
   }
   
-  alternarBusca(){
+  toggleSearch(){
     setState((){
-      buscando = !buscando;
+      searching = !searching;
     });
     
-    if(!buscando) {
-      _buscaController.text = "";
-      textoBuscaMudou("");
+    if(!searching) {
+      _searchController.text = "";
+      searchTextChanged("");
     }
   }
 
-  textoBuscaMudou(String texto){
+  searchTextChanged(String text){
     setState(() {
-      busca = texto.toLowerCase();
+      search = text.toLowerCase();
     });
   }
 }
@@ -164,7 +164,7 @@ class _PostState extends State<_PostItem> {
           children: <Widget>[
             Row(
               children: <Widget>[
-                CircleAvatarAsync(post.criadoPor, radius: 23,),
+                CircleAvatarAsync(post.createdBy, radius: 23,),
                 Expanded(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -176,15 +176,15 @@ class _PostState extends State<_PostItem> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(
-                                post.titulo,
+                                post.title,
                                 style: TextStyle(
                                     color: Style.buttonBlue, fontSize: 18),
                                 maxLines: 1,
                                 overflow: TextOverflow.clip,
                                 softWrap: false,
                               ),
-                              NomeTextAsync(
-                                post.criadoPor,
+                              NameTextAsync(
+                                post.createdBy,
                                 TextStyle(
                                   color: Colors.black54,
                                   fontSize: 14,
@@ -220,7 +220,7 @@ class _PostState extends State<_PostItem> {
       onTap: () => Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ForumPostExibir(post),
+          builder: (context) => ForumPostDisplay(post),
         ),
       ),
     );

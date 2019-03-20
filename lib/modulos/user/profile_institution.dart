@@ -9,7 +9,7 @@ import 'package:redesign/modulos/user/institution.dart';
 import 'package:redesign/modulos/user/profile_person.dart';
 import 'package:redesign/modulos/user/user.dart';
 import 'package:redesign/services/my_app.dart';
-import 'package:redesign/widgets/dados_asincronos.dart';
+import 'package:redesign/widgets/async_data.dart';
 import 'package:redesign/widgets/base_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:redesign/services/helper.dart';
@@ -348,7 +348,7 @@ class _UsersListState extends State<_UsersList> {
       leading: Hero(
           tag: user.reference.documentID,
           child:
-              CircleAvatarAsync(user.reference.documentID, clicavel: true)),
+              CircleAvatarAsync(user.reference.documentID, clickable: true)),
       onTap: () => Navigator.push(
             context,
             MaterialPageRoute(

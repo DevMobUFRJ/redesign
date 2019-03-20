@@ -2,21 +2,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:redesign/styles/style.dart';
-import 'package:redesign/modulos/forum/forum_post_lista.dart';
-import 'package:redesign/modulos/forum/forum_tema.dart';
-import 'package:redesign/widgets/item_lista_simples.dart';
+import 'package:redesign/modulos/forum/forum_post_list.dart';
+import 'package:redesign/modulos/forum/forum_topic.dart';
+import 'package:redesign/widgets/simple_list_item.dart';
 import 'package:redesign/widgets/base_screen.dart';
 
-class ForumTemaLista extends StatefulWidget {
+class ForumTopicList extends StatefulWidget {
 
   @override
-  ForumTemaListaState createState() => ForumTemaListaState();
+  ForumTopicListState createState() => ForumTopicListState();
 }
 
-class ForumTemaListaState extends State<ForumTemaLista> {
-  bool buscando = false;
-  TextEditingController _buscaController = TextEditingController();
-  String busca = "";
+class ForumTopicListState extends State<ForumTopicList> {
+  bool searching = false;
+  TextEditingController _searchController = TextEditingController();
+  String search = "";
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +29,7 @@ class ForumTemaListaState extends State<ForumTemaLista> {
             Icons.search,
             color: Colors.white
           ),
-          onPressed: () => alternarBusca(),
+          onPressed: () => toggleSearch(),
         ),
       ],
     );
@@ -37,7 +37,7 @@ class ForumTemaListaState extends State<ForumTemaLista> {
 
   Widget _buildBody(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance.collection(ForumTema.collectionName)
+      stream: Firestore.instance.collection(ForumTopic.collectionName)
           .orderBy("titulo")
           .snapshots(),
       builder: (context, snapshot) {
@@ -54,7 +54,7 @@ class ForumTemaListaState extends State<ForumTemaLista> {
           Expanded(
             child:  ListView(
               children: [
-                buscando ?
+                searching ?
                 Container(
                   margin: EdgeInsets.only(bottom: 5),
                   decoration: ShapeDecoration(shape: StadiumBorder()),
@@ -62,8 +62,8 @@ class ForumTemaListaState extends State<ForumTemaLista> {
                     children: [
                       Expanded(
                         child: TextField(
-                          onChanged: textoBuscaMudou,
-                          controller: _buscaController,
+                          onChanged: searchTextChanged,
+                          controller: _searchController,
                           cursorColor: Style.lightGrey,
                           decoration: InputDecoration(
                             hintText: "Buscar",
@@ -84,37 +84,37 @@ class ForumTemaListaState extends State<ForumTemaLista> {
   }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
-    ForumTema tema = ForumTema.fromMap(data.data, reference: data.reference);
+    ForumTopic topic = ForumTopic.fromMap(data.data, reference: data.reference);
 
-    if(!tema.titulo.toLowerCase().contains(busca))
+    if(!topic.title.toLowerCase().contains(search))
       return Container();
 
-    return ItemListaSimples(
-      tema.titulo,
-      () => tapItem(tema),
+    return SimpleListItem(
+      topic.title,
+      () => tapItem(topic),
       key: ValueKey(data.documentID)
     );
   }
 
-  tapItem(ForumTema tema){
+  tapItem(ForumTopic topic){
     Navigator.push(context,
-      MaterialPageRoute(builder: (context) => ForumPostLista(tema),),
+      MaterialPageRoute(builder: (context) => ForumPostList(topic),),
     );
   }
 
-  alternarBusca(){
+  toggleSearch(){
     setState((){
-      buscando = !buscando;
+      searching = !searching;
     });
-    if(!buscando) {
-      _buscaController.text = "";
-      textoBuscaMudou("");
+    if(!searching) {
+      _searchController.text = "";
+      searchTextChanged("");
     }
   }
 
-  textoBuscaMudou(String texto){
+  searchTextChanged(String text){
     setState(() {
-      busca = texto.toLowerCase();
+      search = text.toLowerCase();
     });
   }
 }
