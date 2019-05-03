@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:redesign/styles/Style.dart';
+import 'package:redesign/styles/style.dart';
 import 'package:redesign/modulos/registration/registration_options.dart';
 import 'package:redesign/modulos/login/forgot_password.dart';
 import 'package:redesign/modulos/user/user.dart';
