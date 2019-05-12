@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:async/async.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -27,6 +29,7 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   GoogleMapController mapController;
   List<Marker> markers = [];
+  Map<String, BitmapDescriptor> _markerIcon = Map<String, BitmapDescriptor>();
   List<Institution> institutions = [];
   bool mapLoaded = false;
   bool hasUser = false;
@@ -54,19 +57,15 @@ class _MapScreenState extends State<MapScreen> {
   _getCurrentUser() async {
     FirebaseAuth _auth = FirebaseAuth.instance;
     FirebaseUser _currentUser = await _auth.currentUser();
-    if(_currentUser != null){
-      authSuccess(_currentUser);
-    } else {
+    if(_currentUser == null){
       findUserError(null);
+    } else {
+      /// Usuario já estava em cache, então vai pro mapa.
+      mCurrentUser = _currentUser;
+      MyApp.firebaseUser = _currentUser;
+      Firestore.instance.collection(User.collectionName).document(_currentUser.uid).get()
+          .then(didFindUser).catchError(findUserError);
     }
-  }
-
-  /// Usuario já estava em cache, então vai pro mapa.
-  void authSuccess(FirebaseUser user){
-    mCurrentUser = user;
-    MyApp.firebaseUser = user;
-    Firestore.instance.collection(User.collectionName).document(user.uid).get()
-        .then(didFindUser).catchError(findUserError);
   }
 
   void didFindUser(DocumentSnapshot snapshot){
@@ -138,7 +137,7 @@ class _MapScreenState extends State<MapScreen> {
           ),
         ],
       ),
-      endDrawer: MyApp.isStudent() ? null : _drawerFilter(this),
+      endDrawer: MyApp.isStudent() ? null : _DrawerFilter(this),
       body: MyApp.isStudent() ?
         MapStudent(context) :
         GoogleMap(
@@ -148,6 +147,7 @@ class _MapScreenState extends State<MapScreen> {
           ),
           onMapCreated: _onMapCreated,
           myLocationEnabled: false,
+          markers: markers.toSet(),
         ),
     );
   }
@@ -155,7 +155,12 @@ class _MapScreenState extends State<MapScreen> {
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
     mapLoaded = true;
-    mapController.onInfoWindowTapped.add(_infoTapped);
+    //mapController.onInfoWindowTapped.add(_infoTapped);
+    _createMarkerImageFromAsset(context, "labdis");
+    _createMarkerImageFromAsset(context, "escola");
+    _createMarkerImageFromAsset(context, "incubadora");
+    _createMarkerImageFromAsset(context, "laboratorio");
+    _createMarkerImageFromAsset(context, "empreendedor");
     getInstitutionsPutMarker();
     setState(() {
       controller.moveCamera(CameraUpdate.newCameraPosition(
@@ -167,8 +172,8 @@ class _MapScreenState extends State<MapScreen> {
     });
   }
 
-  void _infoTapped(Marker marker){
-    Institution institution = institutions[markers.indexOf(marker)];
+  void _infoTapped(String institutionId){
+    Institution institution = institutions[markers.indexWhere((m) => m.markerId.value == institutionId)];
     Navigator.push(
         context,
         MaterialPageRoute(builder:(context) =>
@@ -180,11 +185,9 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  getInstitutionsPutMarker(){
-    if(!mapLoaded || !hasUser){ //Aguardando condições pra botar o marcador
-      return;
-    }
 
+
+   void _createMarkers() {
     Stream<QuerySnapshot> query = Firestore.instance.collection(User.collectionName)
         .where("tipo", isEqualTo: UserType.institution.index)
         .where("ativo", isEqualTo: 1)
@@ -209,17 +212,49 @@ class _MapScreenState extends State<MapScreen> {
         }
 
         LatLng center = LatLng(institution.lat, institution.lng);
-        mapController.addMarker(
-          MarkerOptions(
-            position: center,
-            infoWindowText: InfoWindowText(institution.name, "Detalhes"),
-            icon: BitmapDescriptor.fromAsset("images/icones/ic_" + icon + ".png"),
-        )).then((marker) {
-          markers.add(marker);
-          institutions.add(institution);
-        });
+        Marker marker = Marker(
+          markerId: MarkerId(institution.reference.documentID),
+          position: center,
+          icon: _markerIcon[icon],
+          infoWindow: InfoWindow(
+            title: institution.name,
+            snippet: "Detalhes",
+            onTap: (){ _infoTapped(institution.reference.documentID); },
+          ),
+          flat: false,
+          visible: incubators,
+        );
+        markers.add(marker);
+        institutions.add(institution);
       }
     });
+  }
+
+  Future<void> _createMarkerImageFromAsset(BuildContext context, String icon) async {
+    if (_markerIcon[icon] == null) {
+      final ImageConfiguration imageConfiguration =
+      createLocalImageConfiguration(context);
+      BitmapDescriptor.fromAssetImage(
+          imageConfiguration, "images/icones/ic_" + icon + ".png")
+          .then((bitmap) => _updateBitmap(icon, bitmap));
+    }
+  }
+
+  void _updateBitmap(String icon, BitmapDescriptor bitmap) {
+    setState(() {
+      _markerIcon[icon] = bitmap;
+    });
+  }
+
+  /// Método chamado duas vezes: uma após obter o usuário do cache/login,
+  /// outra após o carregamento do mapa. A criação dos marcadores só será
+  /// feita na segunda chamada.
+  getInstitutionsPutMarker(){
+    //Aguardando condições pra botar o marcador
+    if(!mapLoaded || !hasUser){
+      return;
+    }
+    _createMarkers();
   }
 
   void onFilterChanged(){
@@ -227,33 +262,28 @@ class _MapScreenState extends State<MapScreen> {
       Institution institution = institutions[i];
 
       if (institution.occupation == Occupation.incubadora) {
-        if(incubators){
-          mapController.updateMarker(markers[i], MarkerOptions(visible: true));
-        } else {
-          mapController.updateMarker(markers[i], MarkerOptions(visible: false));
+        if(markers[i].visible != incubators) {
+          markers[i] = markers[i].copyWith(visibleParam: incubators);
         }
       } else if (institution.occupation == Occupation.escola) {
-        if(schools){
-          mapController.updateMarker(markers[i], MarkerOptions(visible: true));
-        } else {
-          mapController.updateMarker(markers[i], MarkerOptions(visible: false));
+        if(markers[i].visible != schools) {
+          markers[i] = markers[i].copyWith(visibleParam: schools);
         }
-      } else if (institution.occupation == Occupation.laboratorio && institution.email != Helper.emailLabdis) {
-        if(labs){
-          mapController.updateMarker(markers[i], MarkerOptions(visible: true));
-        } else {
-          mapController.updateMarker(markers[i], MarkerOptions(visible: false));
+      } else if (institution.occupation == Occupation.laboratorio
+          && institution.email != Helper.emailLabdis) {
+        if(markers[i].visible != labs) {
+          markers[i] = markers[i].copyWith(visibleParam: labs);
         }
       } else if (institution.occupation == Occupation.empreendedor) {
-        if(entrepreneurs){
-          mapController.updateMarker(markers[i], MarkerOptions(visible: true));
-        } else {
-          mapController.updateMarker(markers[i], MarkerOptions(visible: false));
+        if(markers[i].visible != entrepreneurs) {
+          markers[i] = markers[i].copyWith(visibleParam: entrepreneurs);
         }
       }
     }
+    setState(() {});
   }
 
+  /// Método intenso pra contar mensagens não lidas do chat.
   void countUnreadMessages(){
     unreadMessages = 0;
     getData().first.then((snaps) => snaps.forEach((query){
@@ -290,17 +320,17 @@ class _MapScreenState extends State<MapScreen> {
   }
 }
 
-class _drawerFilter extends StatefulWidget {
+class _DrawerFilter extends StatefulWidget {
 
   final _MapScreenState parent;
 
-  _drawerFilter(this.parent);
+  _DrawerFilter(this.parent);
 
   @override
   _FilterState createState() => _FilterState();
 }
 
-class _FilterState extends State<_drawerFilter>  {
+class _FilterState extends State<_DrawerFilter>  {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
