@@ -6,12 +6,12 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^0.1.2
-  google_maps_flutter: ^0.2.0+3
-  firebase_core: ^0.3.0
-  firebase_auth: ^0.8.1
-  cloud_firestore: ^0.9.0
-  firebase_analytics: ^2.0.0
-  firebase_storage: ^2.0.1
+  google_maps_flutter: ^0.5.11+1
+  firebase_core: ^0.3.4
+  firebase_auth: ^0.8.4+5
+  cloud_firestore: ^0.10.1
+  firebase_analytics: ^2.1.1
+  firebase_storage: ^2.1.1+2
 
   json_serializable: ^2.0.1
   intl: 0.15.7
