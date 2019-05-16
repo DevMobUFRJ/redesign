@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.portraitDown,
     ]);
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'REDEsign',
       theme: Style.main,
       initialRoute: '/',
 
