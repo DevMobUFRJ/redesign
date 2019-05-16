@@ -26,7 +26,6 @@ class NameTextAsync extends StatefulWidget {
 
 class _NameTextState extends State<NameTextAsync> {
   final String user;
-//  TextStyle style;
   final String prefix;
   String nome = "";
 
@@ -91,7 +90,7 @@ class _CircleAvatarAsyncState extends State<CircleAvatarAsync> {
       } else {
         FirebaseStorage.instance.ref()
             .child("perfil/" + widget.userId + ".jpg")
-            .getData(36000).then(gotProfilePhoto)
+            .getData(36000).then(receivedProfilePhoto)
             .catchError((e){});
         if(widget.clickable != null) {
           Firestore.instance.collection(User.collectionName).document(
@@ -102,8 +101,7 @@ class _CircleAvatarAsyncState extends State<CircleAvatarAsync> {
     }
   }
 
-  //TODO: procurar nome melhor para a função
-  gotProfilePhoto(List<int> img){
+  receivedProfilePhoto(List<int> img){
     setState(() {
       image = img;
     });

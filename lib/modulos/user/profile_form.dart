@@ -85,7 +85,7 @@ class _UserFormState extends State<_UserForm> {
 
     ImageHelper.Image image = ImageHelper.decodeImage(imageFile.readAsBytesSync());
 
-    image = ImageHelper.copyResize(image, 100, 100);
+    image = ImageHelper.copyResize(image, width: 100, height: 100);
 
     setState(() {
       newImage = ImageHelper.encodeJpg(image, quality: 85);
@@ -376,7 +376,7 @@ class _InstitutionFormState extends State<_InstitutionForm> {
 
     ImageHelper.Image image = ImageHelper.decodeImage(imageFile.readAsBytesSync());
 
-    image = ImageHelper.copyResize(image, 100, 100);
+    image = ImageHelper.copyResize(image, width: 100, height: 100);
 
     setState(() {
       newImage = ImageHelper.encodeJpg(image, quality: 85);

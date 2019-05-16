@@ -84,9 +84,6 @@ class _ForgotState extends State<_ForgotPage> {
   }
 
   sendEmail(){
-    // TODO A função catchError tem um bug que será resolvido na versão 0.7.0
-    // do pacote firebase_auth. Até lá, não da pra saber quando deu erro, talvez
-    // só se usar um timeout, podemos considerar depois. (George, 03/01/2019)
     FirebaseAuth.instance.sendPasswordResetEmail(email: emailController.text)
         .then(emailSent)
         .catchError(sendError);

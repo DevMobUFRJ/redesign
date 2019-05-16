@@ -96,7 +96,6 @@ class _CreateEventState extends State<CreateEventPage>{
                   labelText: 'Hora (ex. 16:30)',
                 ),
                 controller: _hourController,
-                //initialValue: ,
                 keyboardType: TextInputType.datetime,
                 inputFormatters: [new LengthLimitingTextInputFormatter(5)],
                 validator: (val) =>

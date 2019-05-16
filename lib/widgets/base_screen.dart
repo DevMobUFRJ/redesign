@@ -40,7 +40,6 @@ class BaseScreen extends StatelessWidget {
       ),
       body: Padding(
           padding: bodyPadding,
-          //padding: EdgeInsets.all(16),
           child: body
       ),
       floatingActionButton: fab,
