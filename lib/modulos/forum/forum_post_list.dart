@@ -195,8 +195,6 @@ class _PostState extends State<_PostItem> {
                         ),
                       ),
                       Container(
-                        //alignment: Alignment.bottomRight,
-                        //padding: EdgeInsets.only(right: 10),
                         child: Icon(
                           Icons.arrow_forward_ios,
                           color: Style.buttonBlue,

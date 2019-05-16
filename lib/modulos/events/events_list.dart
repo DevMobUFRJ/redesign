@@ -193,70 +193,71 @@ class _EventsListState extends State<EventsList> {
                     margin: const EdgeInsets.only(left: 10.0, right: 10.0),
                   ),
                   Expanded(
-                      child: Container(
-                    height: 70.0,
-                    alignment: Alignment.topLeft,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Column(
-                          mainAxisSize: MainAxisSize.max,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Expanded(
-                                  child: Text(
-                                    record.name,
-                                    style: TextStyle(
-                                        fontSize: 17, color: Colors.black54),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.clip,
+                    child: Container(
+                      height: 70.0,
+                      alignment: Alignment.topLeft,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Column(
+                            mainAxisSize: MainAxisSize.max,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Text(
+                                      record.name,
+                                      style: TextStyle(
+                                          fontSize: 17, color: Colors.black54),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.clip,
+                                    ),
                                   ),
-                                ),
-                                data.data['favorito'] != null &&
-                                        data.data['favorito']
-                                    ? Container(
-                                        padding: EdgeInsets.only(top: 10),
-                                        child: Icon(Icons.star,
-                                            color: Style.primaryColor,
-                                            size: 16))
-                                    : Container(),
-                                Container(
-                                  padding: EdgeInsets.only(top: 10),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      Container(
-                                        //alignment: Alignment.bottomRight,
-                                        //padding: EdgeInsets.only(right: 10),
-                                        child: Icon(
-                                          Icons.arrow_forward_ios,
-                                          color: Style.buttonBlue,
-                                          size: 20,
+                                  data.data['favorito'] != null &&
+                                          data.data['favorito']
+                                      ? Container(
+                                          padding: EdgeInsets.only(top: 10),
+                                          child: Icon(Icons.star,
+                                              color: Style.primaryColor,
+                                              size: 16))
+                                      : Container(),
+                                  Container(
+                                    padding: EdgeInsets.only(top: 10),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        Container(
+                                          child: Icon(
+                                            Icons.arrow_forward_ios,
+                                            color: Style.buttonBlue,
+                                            size: 20,
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                            NameTextAsync(
-                              record.createdBy,
-                              TextStyle(
-                                color: Colors.black45,
-                                fontSize: 15,
+                                      ],
+                                    ),
+                                  )
+                                ],
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
+                              NameTextAsync(
+                                record.createdBy,
+                                TextStyle(
+                                  color: Colors.black45,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  )),
+                  ),
                 ],
               ),
               Padding(
@@ -300,9 +301,11 @@ class _EventsListState extends State<EventsList> {
   }
 
   toggleSearch() {
-    setState(() {
-      searching = !searching;
-    });
+    setState(
+      () {
+        searching = !searching;
+      },
+    );
     if (!searching) {
       _searchController.text = "";
       searchTextChanged("");
@@ -310,8 +313,10 @@ class _EventsListState extends State<EventsList> {
   }
 
   searchTextChanged(String text) {
-    setState(() {
-      search = text.toLowerCase();
-    });
+    setState(
+      () {
+        search = text.toLowerCase();
+      },
+    );
   }
 }
