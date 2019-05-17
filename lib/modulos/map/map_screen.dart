@@ -223,7 +223,6 @@ class _MapScreenState extends State<MapScreen> {
             onTap: (){ _infoTapped(institution.reference.documentID); },
           ),
           flat: false,
-          visible: incubators,
         );
         markers.add(marker);
         institutions.add(institution);
