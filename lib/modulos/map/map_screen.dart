@@ -224,8 +224,10 @@ class _MapScreenState extends State<MapScreen> {
           ),
           flat: false,
         );
-        markers.add(marker);
-        institutions.add(institution);
+        setState(() {
+          markers.add(marker);
+          institutions.add(institution);
+        });
       }
     });
   }
