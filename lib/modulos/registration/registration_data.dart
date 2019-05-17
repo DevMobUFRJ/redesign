@@ -267,8 +267,8 @@ class _PasswordFormState extends State<_PasswordForm> {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text('Sua conta foi criada, mas ainda precisa ser ativada pela'
-                    ' nossa equipe. Você receberá um email assim que puder usá-la.'),
+                Text('Sua conta foi criada, mas ainda precisará ser ativada pela'
+                    ' nossa equipe.'),
               ],
             ),
           ),
