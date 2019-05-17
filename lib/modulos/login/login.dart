@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:redesign/styles/style.dart';
 import 'package:redesign/modulos/registration/registration_options.dart';
@@ -20,22 +21,29 @@ class Login extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomPadding: true,
       body: Center(
         child: Container(
           color: Style.darkBackground,
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(top: 50, bottom: 50),
-                child: Image.asset(
-                  'images/rede_logo.png',
-                  fit: BoxFit.fitWidth,
-                  width: 200,
-                ),
+          child: ListView(
+            children: <Widget>[
+              Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(top: 50, bottom: 50),
+                    child: Hero(
+                      tag: "redesign-logo",
+                      child: Image.asset(
+                        'images/rede_logo.png',
+                        fit: BoxFit.contain,
+                        width: 200,
+                      ),
+                    ),
+                  ),
+                  _LoginPage(),
+                ],
               ),
-              _LoginPage(),
             ],
           ),
         ),
@@ -56,31 +64,30 @@ class _LoginState extends State<_LoginPage> {
     return _onBack();
   }
 
+  _onBack() {
+    setState(() {
+      showingLogin = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return showingLogin
         ? WillPopScope(child: _LoginForm(), onWillPop: _onWillPop)
         : Container(
-            padding: EdgeInsets.all(15.0),
+            padding: EdgeInsets.all(12.0),
             child: Column(
               children: [
                 Padding(
                     padding: EdgeInsets.only(bottom: 10),
                     child: StandardButton("Entrar", showLogin,
-                        Style.main.primaryColor, Style.lightGrey)),
-                Padding(
-                  padding: EdgeInsets.only(top: 10),
-                  child: StandardButton("Cadastrar-se", openSignUpScreen,
-                      Style.buttonDarkGrey, Style.lightGrey),
+                        Style.main.primaryColor, Style.lightGrey)
                 ),
+                StandardButton("Cadastrar-se", openSignUpScreen,
+                  Style.buttonDarkGrey, Style.lightGrey),
               ],
-            ));
-  }
-
-  _onBack() {
-    setState(() {
-      showingLogin = false;
-    });
+            ),
+    );
   }
 
   showLogin() {
@@ -110,76 +117,81 @@ class _LoginFormState extends State<_LoginForm> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: EdgeInsets.all(15.0),
-        child: Column(
-          children: [
-            Padding(
-                padding: EdgeInsets.only(bottom: 10),
-                child: TextField(
-                  style: TextStyle(
-                      decorationColor: Style.lightGrey, color: Colors.white),
-                  cursorColor: Style.buttonBlue,
-                  decoration: InputDecoration(
-                    labelText: 'E-mail',
-                    labelStyle: TextStyle(color: Colors.white54),
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white54),
-                    ),
-                  ),
-                  controller: emailController,
-                )),
-            TextField(
+      padding: EdgeInsets.all(12.0),
+      child: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.only(bottom: 10),
+            child: TextField(
               style: TextStyle(
-                  decorationColor: Style.lightGrey, color: Colors.white),
+                decorationColor: Style.lightGrey, color: Colors.white
+              ),
               cursorColor: Style.buttonBlue,
               decoration: InputDecoration(
-                labelText: 'Senha',
+                labelText: 'E-mail',
                 labelStyle: TextStyle(color: Colors.white54),
                 enabledBorder: UnderlineInputBorder(
                   borderSide: BorderSide(color: Colors.white54),
                 ),
               ),
-              obscureText: true,
-              controller: passwordController,
+              controller: emailController,
             ),
-            GestureDetector(
-              child: Container(
-                  padding: EdgeInsets.only(top: 8, bottom: 4),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      Text("Esqueci a senha",
-                          style: TextStyle(
-                              color: Style.primaryColorLighter,
-                              fontWeight: FontWeight.w300,
-                              fontSize: 12.0),
-                          textAlign: TextAlign.end),
-                    ],
-                  )),
-              onTap: forgotPassword,
+          ),
+          TextField(
+            style: TextStyle(
+              decorationColor: Style.lightGrey, color: Colors.white
             ),
-            Padding(
-              padding: EdgeInsets.only(top: 8),
-              child: StandardButton(
-                  "Entrar", login, Style.main.primaryColor, Style.lightGrey),
+            cursorColor: Style.buttonBlue,
+            decoration: InputDecoration(
+              labelText: 'Senha',
+              labelStyle: TextStyle(color: Colors.white54),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.white54),
+              ),
             ),
-          ],
-        ));
+            obscureText: true,
+            controller: passwordController,
+          ),
+          GestureDetector(
+            child: Container(
+              padding: EdgeInsets.only(top: 12, bottom: 4),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  Text("Esqueci a senha",
+                    style: TextStyle(
+                      color: Style.primaryColorLighter,
+                      fontWeight: FontWeight.w300,
+                      fontSize: 12.0
+                    ),
+                    textAlign: TextAlign.end
+                  ),
+                ],
+              ),
+            ),
+            onTap: forgotPassword,
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 8),
+            child: StandardButton(
+              "Entrar", login, Style.main.primaryColor, Style.lightGrey
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   /// Tenta logar o usuário pelo email e senha do formulário
   login() async {
     if (blocked) return;
-
-    if (emailController.text == null ||
-        emailController.text == "" ||
-        passwordController.text == null ||
-        passwordController.text == "") {
-      emailController.text = "george@hotmail.com";
-      passwordController.text = "123456";
-    }
-
     blocked = true;
+
+    if(emailController.text.isEmpty || passwordController.text.isEmpty){
+      _showMessageError("Preencha todos os campos.");
+      blocked = false;
+      return;
+    }
 
     _logging(true);
     await _auth
@@ -203,7 +215,8 @@ class _LoginFormState extends State<_LoginForm> {
   void findUser(DocumentSnapshot snapshot) {
     if (snapshot.data['tipo'] == UserType.institution.index) {
       MyApp.setUser(
-          Institution.fromMap(snapshot.data, reference: snapshot.reference));
+          Institution.fromMap(snapshot.data, reference: snapshot.reference)
+      );
     } else {
       MyApp.setUser(User.fromMap(snapshot.data, reference: snapshot.reference));
     }
@@ -224,8 +237,31 @@ class _LoginFormState extends State<_LoginForm> {
   }
 
   void findUserError(e) {
+    print("Find user errir");
+    print(e);
     _logging(false);
-    _showError();
+
+    if(e.runtimeType == PlatformException){
+      print("Exceção plataforma");
+      PlatformException exc = e;
+      switch(exc.code){
+        case "ERROR_INVALID_EMAIL":
+          _showMessageError("Erro. Email Inválido.");
+          break;
+        case "ERROR_USER_NOT_FOUND":
+          _showMessageError("Erro. Email não cadastrado.");
+          break;
+        case "ERROR_WRONG_PASSWORD":
+          _showMessageError("Erro. Senha Incorreta.");
+          break;
+        default:
+          _showError();
+          break;
+      }
+      print("Code: " + exc.code);
+    } else {
+      _showError();
+    }
     blocked = false;
   }
 
@@ -278,7 +314,7 @@ void _showMessageError(String message) {
         Text(message),
       ],
     ),
-    duration: Duration(seconds: 4),
+    duration: Duration(seconds: 12),
   ));
 }
 
@@ -289,7 +325,10 @@ void _logging(bool isLoading) {
       content: Row(
         children: <Widget>[
           CircularProgressIndicator(),
-          Text(" Aguarde..."),
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Text("Aguarde..."),
+          ),
         ],
       ),
     ));
