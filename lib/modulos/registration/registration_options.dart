@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:redesign/modulos/registration/registration_data.dart';
 import 'package:redesign/widgets/standard_button.dart';
 import 'package:redesign/styles/style.dart';
@@ -10,10 +11,17 @@ class RegistrationOptions extends StatelessWidget {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 15, 34, 38),
       body: Padding(
-        padding: EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[logo(), _RegistrationPage()],
+        padding: EdgeInsets.all(12.0),
+        child: ListView(
+          children: <Widget>[
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                logo(),
+                _RegistrationPage(),
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -22,11 +30,14 @@ class RegistrationOptions extends StatelessWidget {
 
 Widget logo() {
   return Padding(
-    padding: EdgeInsets.only(top: 50, bottom: 20),
-    child: Image.asset(
-      'images/rede_logo.png',
-      fit: BoxFit.fitWidth,
-      width: 200,
+    padding: EdgeInsets.only(top: 38, bottom: 20),
+    child: Hero(
+      tag: "redesign-logo",
+      child: Image.asset(
+        'images/rede_logo.png',
+        fit: BoxFit.contain,
+        width: 120,
+      ),
     ),
   );
 }
@@ -39,6 +50,16 @@ class _RegistrationPage extends StatefulWidget {
 class _RegistrationState extends State<_RegistrationPage> {
   String option = "";
 
+  Future<bool> _onWillPop() {
+    return _onBack();
+  }
+
+  _onBack() {
+    setState(() {
+      option = "";
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     switch (option) {
@@ -46,16 +67,16 @@ class _RegistrationState extends State<_RegistrationPage> {
         return registerOptions();
         break;
       case "universidade":
-        return universityOptions();
+        return WillPopScope(child: universityOptions(), onWillPop: _onWillPop,);
         break;
       case "escola":
-        return schoolOptions();
+        return WillPopScope(child: schoolOptions(), onWillPop: _onWillPop,);
         break;
       case "incubadora":
-        return incubatorOptions();
+        return WillPopScope(child: incubatorOptions(), onWillPop: _onWillPop,);
         break;
       case "outra":
-        return incubatorOptions();
+        return WillPopScope(child: incubatorOptions(), onWillPop: _onWillPop,);
         break;
     }
     return null;
@@ -86,117 +107,97 @@ class _RegistrationState extends State<_RegistrationPage> {
   }
 
   Widget registerOptions() {
-    return Expanded(
-      child: Container(
-        padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
-        child: ListView(
-          children: <Widget>[
-            text("Olá! para começar, informe sua origem."),
-            StandardButton("Universidade", universityRegister, Style.buttonBlue,
-                Style.lightGrey),
-            StandardButton(
-                "Escola", schoolRegister, Style.buttonBlue, Style.lightGrey),
-            StandardButton("Incubadora", incubatorRegister, Style.buttonBlue,
-                Style.lightGrey),
-            StandardButton(
-                "Outra",
-                () => registerData(UserType.person, Occupation.outra),
-                Style.buttonGrey,
-                Style.lightGrey),
-          ],
-        ),
-      ),
+    return Column(
+      children: <Widget>[
+        text("Olá! Para começar, informe sua origem."),
+        StandardButton("Universidade", universityRegister, Style.buttonBlue,
+            Style.lightGrey),
+        StandardButton(
+            "Escola", schoolRegister, Style.buttonBlue, Style.lightGrey),
+        StandardButton(
+            "Incubadora", incubatorRegister, Style.buttonBlue, Style.lightGrey),
+        StandardButton(
+            "Outra",
+            () => registerData(UserType.person, Occupation.outra),
+            Style.buttonGrey,
+            Style.lightGrey),
+      ],
     );
   }
 
   Widget universityOptions() {
-    return Expanded(
-      child: Container(
-        padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
-        child: ListView(
-          children: <Widget>[
-            text("Você é ..."),
-            StandardButton(
-                "Bolsista",
-                () => registerData(UserType.person, Occupation.bolsista),
-                Style.buttonBlue,
-                Style.lightGrey),
-            StandardButton(
-                "Professor(a)",
-                () => registerData(UserType.person, Occupation.professor),
-                Style.buttonBlue,
-                Style.lightGrey),
-            StandardButton(
-                "Estudante",
-                () => registerData(UserType.person, Occupation.discente),
-                Style.buttonBlue,
-                Style.lightGrey),
-            StandardButton(
-                "Laboratório",
-                () =>
-                    registerData(UserType.institution, Occupation.laboratorio),
-                Style.buttonBlue,
-                Style.lightGrey),
-            StandardButton(
-                "Outro(a)",
-                () => registerData(UserType.person, Occupation.outra),
-                Style.buttonGrey,
-                Style.lightGrey),
-          ],
-        ),
-      ),
+    return Column(
+      children: <Widget>[
+        text("Você é ..."),
+        StandardButton(
+            "Bolsista",
+            () => registerData(UserType.person, Occupation.bolsista),
+            Style.buttonBlue,
+            Style.lightGrey),
+        StandardButton(
+            "Professor(a)",
+            () => registerData(UserType.person, Occupation.professor),
+            Style.buttonBlue,
+            Style.lightGrey),
+        StandardButton(
+            "Estudante",
+            () => registerData(UserType.person, Occupation.discente),
+            Style.buttonBlue,
+            Style.lightGrey),
+        StandardButton(
+            "Laboratório",
+            () =>
+                registerData(UserType.institution, Occupation.laboratorio),
+            Style.buttonBlue,
+            Style.lightGrey),
+        StandardButton(
+            "Outro(a)",
+            () => registerData(UserType.person, Occupation.outra),
+            Style.buttonGrey,
+            Style.lightGrey),
+      ],
     );
   }
 
   Widget schoolOptions() {
-    return Expanded(
-      child: Container(
-        padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
-        child: ListView(
-          children: <Widget>[
-            text("Você é ..."),
-            StandardButton(
-                "Aluno(a)",
-                () => registerData(UserType.person, Occupation.aluno),
-                Style.purple,
-                Style.lightGrey),
-            StandardButton(
-                "Professor(a)",
-                () => registerData(UserType.person, Occupation.professor),
-                Style.purple,
-                Style.lightGrey),
-            StandardButton(
-                "Escola",
-                () => registerData(UserType.institution, Occupation.escola),
-                Style.purple,
-                Style.lightGrey),
-          ],
-        ),
-      ),
+    return Column(
+      children: <Widget>[
+        text("Você é ..."),
+        StandardButton(
+            "Aluno(a)",
+            () => registerData(UserType.person, Occupation.aluno),
+            Style.purple,
+            Style.lightGrey),
+        StandardButton(
+            "Professor(a)",
+            () => registerData(UserType.person, Occupation.professor),
+            Style.purple,
+            Style.lightGrey),
+        StandardButton(
+            "Escola",
+            () => registerData(UserType.institution, Occupation.escola),
+            Style.purple,
+            Style.lightGrey),
+      ],
     );
   }
 
   Widget incubatorOptions() {
-    return Expanded(
-      child: Container(
-        padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
-        child: ListView(
-          children: <Widget>[
-            text("Você é ..."),
-            StandardButton(
-                "Empreendedor(a)",
-                () =>
-                    registerData(UserType.institution, Occupation.empreendedor),
-                Style.yellow,
-                Style.lightGrey),
-            StandardButton(
-                "Incubadora",
-                () => registerData(UserType.institution, Occupation.incubadora),
-                Style.yellow,
-                Style.lightGrey),
-          ],
-        ),
-      ),
+    return Column(
+      children: <Widget>[
+        text("Você é ..."),
+        StandardButton(
+            "Empreendedor(a)",
+            () =>
+                registerData(UserType.institution, Occupation.empreendedor),
+            Style.yellow,
+            Style.lightGrey),
+        StandardButton(
+            "Incubadora",
+            () => registerData(UserType.institution, Occupation.incubadora),
+            Style.yellow,
+            Style.lightGrey),
+      ],
     );
   }
 
@@ -205,9 +206,9 @@ class _RegistrationState extends State<_RegistrationPage> {
       context,
       MaterialPageRoute(
         builder: (context) => RegistrationData(
-              type: userType,
-              occupation: occupation,
-            ),
+          type: userType,
+          occupation: occupation,
+        ),
       ),
     );
   }
@@ -218,11 +219,10 @@ Widget text(String text) {
     mainAxisAlignment: MainAxisAlignment.center,
     children: <Widget>[
       Container(
-        padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
         child: Text(
           text,
           style: TextStyle(
-              color: Colors.white, fontSize: 15, fontFamily: "Montserrat"),
+            color: Colors.white, fontSize: 15, fontFamily: "Montserrat"),
         ),
       ),
     ],

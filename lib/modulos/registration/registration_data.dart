@@ -33,10 +33,18 @@ class RegistrationData extends StatelessWidget {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Color.fromARGB(255, 15, 34, 38),
-      body: Container(
-        padding: EdgeInsets.all(20.0),
+      body: Padding(
+        padding: EdgeInsets.all(12.0),
         child: ListView(
-          children: <Widget>[_logo(), _RegistrationForm()],
+          children: <Widget>[
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                _logo(),
+                _RegistrationForm(),
+              ],
+            )
+          ],
         ),
       ),
     );
@@ -44,15 +52,15 @@ class RegistrationData extends StatelessWidget {
 }
 
 Widget _logo() {
-  return Container(
-    alignment: Alignment.center,
-    height: 250,
-    width: 250,
-    padding: EdgeInsets.only(top: 50, bottom: 20),
-    child: Image.asset(
-      'images/rede_logo.png',
-      fit: BoxFit.contain,
-      width: 200,
+  return Padding(
+    padding: EdgeInsets.only(top: 38, bottom: 20),
+    child: Hero(
+      tag: "redesign-logo",
+      child: Image.asset(
+        'images/rede_logo.png',
+        fit: BoxFit.contain,
+        width: 120,
+      ),
     ),
   );
 }
@@ -68,55 +76,63 @@ class _RegistrationFormState extends State<_RegistrationForm> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
 
+  Future<bool> _onWillPop() {
+    return _onBack();
+  }
+
+  _onBack() {
+    setState(() {
+      registerPassword = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return registerPassword
-        ? _PasswordForm()
-        : Container(
-            padding: EdgeInsets.only(top: 15.0),
-            child: Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(bottom: 10),
-                  child: TextField(
-                    style: TextStyle(
-                        decorationColor: Style.lightGrey, color: Colors.white),
-                    cursorColor: Style.buttonBlue,
-                    decoration: InputDecoration(
-                      labelText: 'Nome',
-                      labelStyle: TextStyle(color: Colors.white54),
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white54),
-                      ),
-                    ),
-                    controller: _nameController,
+        ? WillPopScope(child: _PasswordForm(), onWillPop: _onWillPop,)
+        : Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(bottom: 10),
+              child: TextField(
+                style: TextStyle(
+                  decorationColor: Style.lightGrey, color: Colors.white
+                ),
+                cursorColor: Style.buttonBlue,
+                decoration: InputDecoration(
+                  labelText: 'Nome',
+                  labelStyle: TextStyle(color: Colors.white54),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white54),
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(bottom: 10),
-                  child: TextFormField(
-                    style: TextStyle(
-                        decorationColor: Style.lightGrey, color: Colors.white),
-                    decoration: InputDecoration(
-                      labelText: 'E-mail',
-                      labelStyle: TextStyle(color: Colors.white54),
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white54),
-                      ),
-                    ),
-                    controller: _emailController,
-                    autovalidate: true,
-                    validator: (val) =>
-                        Validators.email(val) ? null : 'Email inválido',
-                  ),
-                ),
-                Padding(
-                    padding: EdgeInsets.only(bottom: 10),
-                    child: StandardButton("Próximo", showPassword,
-                        Style.main.primaryColor, Style.lightGrey)),
-              ],
+                controller: _nameController,
+              ),
             ),
-          );
+            Padding(
+              padding: EdgeInsets.only(bottom: 10),
+              child: TextFormField(
+                style: TextStyle(
+                  decorationColor: Style.lightGrey, color: Colors.white),
+                decoration: InputDecoration(
+                  labelText: 'E-mail',
+                  labelStyle: TextStyle(color: Colors.white54),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white54),
+                  ),
+                ),
+                controller: _emailController,
+                autovalidate: true,
+                validator: (val) =>
+                    Validators.email(val) ? null : 'Email inválido',
+              ),
+            ),
+            Padding(
+                padding: EdgeInsets.only(bottom: 10),
+                child: StandardButton("Próximo", showPassword,
+                    Style.main.primaryColor, Style.lightGrey)),
+          ],
+        );
   }
 
   showPassword() {
@@ -149,7 +165,7 @@ class _PasswordFormState extends State<_PasswordForm> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: EdgeInsets.only(top: 15.0),
+        padding: EdgeInsets.only(top: 10),
         child: Column(
           children: [
             Padding(
@@ -281,7 +297,10 @@ showMessage(String message,
             : Container(
                 height: 0,
               ),
-        Text(message),
+        Padding(
+          padding: const EdgeInsets.only(left: 8),
+          child: Text(message),
+        ),
       ],
     ),
     backgroundColor: cor,
