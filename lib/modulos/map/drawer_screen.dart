@@ -56,7 +56,7 @@ class DrawerScreenState extends State<DrawerScreen> {
                   ),
                   Container(
                     width:160.0 ,
-                    margin: EdgeInsets.all(10.0),
+                    margin: EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 10.0),
                     child: Column (
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
@@ -76,7 +76,7 @@ class DrawerScreenState extends State<DrawerScreen> {
                           maxLines: 1,
                         ),
                         Container(
-                          padding: EdgeInsets.fromLTRB(0.0, 16.0, 0.0, 0.0),
+                          padding: EdgeInsets.fromLTRB(0.0, 6.0, 0.0, 0.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget> [
