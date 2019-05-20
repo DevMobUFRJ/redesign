@@ -122,7 +122,6 @@ class _RegistrationFormState extends State<_RegistrationForm> {
                   ),
                 ),
                 controller: _emailController,
-                autovalidate: true,
                 validator: (val) =>
                     Validators.email(val) ? null : 'Email inválido',
               ),
@@ -182,7 +181,6 @@ class _PasswordFormState extends State<_PasswordForm> {
                   ),
                   obscureText: true,
                   controller: _passwordController,
-                  autovalidate: true,
                   validator: (val) => !val.isNotEmpty && val.length < 6
                       ? 'Mínimo 6 caracteres'
                       : null,
@@ -201,7 +199,6 @@ class _PasswordFormState extends State<_PasswordForm> {
                   ),
                   obscureText: true,
                   controller: _confirmPasswordController,
-                  autovalidate: true,
                   validator: (val) => val != _passwordController.text
                       ? 'Confirmação incorreta'
                       : null,

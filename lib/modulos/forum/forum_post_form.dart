@@ -35,13 +35,11 @@ class ForumPostFormState extends State<ForumPostForm> {
       title: "Novo Problema",
       body: Scaffold(
         key: _scaffoldKey,
-        resizeToAvoidBottomPadding: false,
         body: Stack(
           alignment: Alignment.bottomCenter,
           children: <Widget>[
             Form(
               key: _formKey,
-              autovalidate: true,
               child: Column(
                 children: <Widget>[
                   Expanded(

@@ -68,7 +68,6 @@ class _ForgotState extends State<_ForgotPage> {
                     ),
                   ),
                   controller: emailController,
-                  autovalidate: true,
                   validator: (val) => Validators.email(val) ? null : 'Email inválido',
                 )
             ),

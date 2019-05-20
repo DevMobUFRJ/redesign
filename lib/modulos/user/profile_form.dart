@@ -124,7 +124,6 @@ class _UserFormState extends State<_UserForm> {
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
-      autovalidate: true,
       child: ListView(
         children: <Widget>[
           Column(
@@ -415,7 +414,6 @@ class _InstitutionFormState extends State<_InstitutionForm> {
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
-      autovalidate: true,
       child: ListView(
         children: <Widget>[
           Column(

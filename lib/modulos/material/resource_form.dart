@@ -31,7 +31,6 @@ class ResourceFormState extends State<ResourceForm> {
         resizeToAvoidBottomPadding: false,
         body: Form(
           key: _formKey,
-          autovalidate: true,
           child: ListView(
             children: <Widget>[
               TextFormField(
