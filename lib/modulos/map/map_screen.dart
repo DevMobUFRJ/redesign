@@ -97,7 +97,6 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     MediaQueryData queryData;
     queryData = MediaQuery.of(context);
-    print("Pixel ratio: " + queryData.devicePixelRatio.toString());
     if(!hasUser){
       return Scaffold(
         body: Row(

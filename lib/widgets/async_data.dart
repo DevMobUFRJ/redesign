@@ -6,6 +6,7 @@ import 'package:redesign/modulos/user/institution.dart';
 import 'package:redesign/modulos/user/profile_institution.dart';
 import 'package:redesign/modulos/user/profile_person.dart';
 import 'package:redesign/modulos/user/user.dart';
+import 'package:redesign/services/helper.dart';
 import 'package:redesign/services/my_app.dart';
 
 /// Idealmente, aqui ficam todos os widgets padronizados para lidar com dados
@@ -90,7 +91,7 @@ class _CircleAvatarAsyncState extends State<CircleAvatarAsync> {
       } else {
         FirebaseStorage.instance.ref()
             .child("perfil/" + widget.userId + ".jpg")
-            .getData(36000).then(receivedProfilePhoto)
+            .getData(Helper.maxProfileImageSize).then(receivedProfilePhoto)
             .catchError((e){});
         if(widget.clickable != null) {
           Firestore.instance.collection(User.collectionName).document(

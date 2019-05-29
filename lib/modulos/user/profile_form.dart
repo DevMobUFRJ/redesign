@@ -1,9 +1,11 @@
 import 'dart:io';
+import 'dart:ui' as prefix0;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:redesign/services/helper.dart';
 import 'package:redesign/styles/fb_icon_icons.dart';
 import 'package:redesign/styles/style.dart';
 import 'package:redesign/modulos/user/institution.dart';
@@ -66,7 +68,7 @@ class _UserFormState extends State<_UserForm> {
   Institution relatedInstitution;
 
   _UserFormState(this.user){
-    reference.getData(38000).then((value) => setState((){
+    reference.getData(Helper.maxProfileImageSize).then((value) => setState((){
       currentImage = value;
     }));
   }
@@ -214,7 +216,7 @@ class _UserFormState extends State<_UserForm> {
             validator: (val) => val.isEmpty ? null : Validators.url(val) ? null : 'Site inválido',
             initialValue: user.site,
             onSaved: (val){
-              if(!val.startsWith("http")){
+              if(!val.startsWith("http") && val.isNotEmpty){
                 val = "http://" + val;
               }
               user.site = val;
@@ -231,7 +233,7 @@ class _UserFormState extends State<_UserForm> {
             validator: (val) => val.isEmpty ? null : Validators.facebookUrl(val) ? null : 'Link do facebook inválido',
             initialValue: user.facebook,
             onSaved: (val){
-              if(!val.startsWith("http")){
+              if(!val.startsWith("http") && val.isNotEmpty){
                 val = "http://" + val;
               }
               user.facebook = val;
@@ -359,19 +361,24 @@ class _InstitutionFormState extends State<_InstitutionForm> {
 
   Institution institution;
 
-  _InstitutionFormState(this.institution);
+  _InstitutionFormState(this.institution){
+      reference.getData(Helper.maxProfileImageSize).then((value) => setState((){
+        currentImage = value;
+      }));
+  }
 
   List<int> currentImage;
   List<int> newImage;
 
   Future getImage() async {
-    loading(true, message: "Enviando foto...");
     File imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
 
     if(imageFile == null){
       loading(false);
       return;
     }
+
+    loading(true, message: "Enviando foto...");
 
     ImageHelper.Image image = ImageHelper.decodeImage(imageFile.readAsBytesSync());
 
@@ -484,7 +491,7 @@ class _InstitutionFormState extends State<_InstitutionForm> {
             validator: (val) => val.isEmpty ? null : Validators.url(val) ? null : 'Site inválido',
             initialValue: institution.site,
             onSaved: (val){
-              if(!val.startsWith("http")){
+              if(!val.startsWith("http") && val.isNotEmpty){
                 val = "http://" + val;
               }
               institution.site = val;
@@ -501,7 +508,7 @@ class _InstitutionFormState extends State<_InstitutionForm> {
             validator: (val) => val.isEmpty ? null : Validators.facebookUrl(val) ? null : 'Link do facebook inválido',
             initialValue: institution.facebook,
             onSaved: (val){
-              if(!val.startsWith("http")){
+              if(!val.startsWith("http") && val.isNotEmpty){
                 val = "http://" + val;
               }
               institution.facebook = val;
@@ -532,7 +539,8 @@ class _InstitutionFormState extends State<_InstitutionForm> {
             initialValue: institution.city,
             onSaved: (val){
               if(val != institution.city) addressChanged = true;
-              institution.city = val; },
+              institution.city = val;
+            },
           ),
           Container(
               padding: const EdgeInsets.only(top: 20.0),
@@ -555,10 +563,11 @@ class _InstitutionFormState extends State<_InstitutionForm> {
     Navigator.pop(context);
   }
 
-  saveError(){
+  saveError(e){
     loading(false);
     blocked = false;
     showMessage("Erro ao atualizar informações");
+    print(e);
   }
 
   void _submitForm() async{
@@ -586,6 +595,7 @@ class _InstitutionFormState extends State<_InstitutionForm> {
       } catch(e) {
         loading(false);
         showMessage("Erro ao atualizar informações");
+        print(e);
       }
     }
   }
@@ -597,7 +607,7 @@ void showMessage(String message, [MaterialColor color = Colors.red]) {
 }
 
 void loading(bool isLoading, {String message = "Aguarde"}) {
-  blocked = !isLoading;
+  blocked = isLoading;
   if(isLoading) {
     _scaffoldKey.currentState.showSnackBar(
         SnackBar(
@@ -605,7 +615,10 @@ void loading(bool isLoading, {String message = "Aguarde"}) {
           content: Row(
             children: <Widget>[
               CircularProgressIndicator(),
-              Text(" " + message)
+              Padding(
+                padding: const EdgeInsets.only(left: 4.0),
+                child: Text( message),
+              )
             ],
           ),
         ));

@@ -7,7 +7,7 @@ class Institution extends User {
   double lat;
   double lng;
 
-  Institution({name, email, description='', site='', facebook='', occupation='', active=false,
+  Institution({name, email, description='', site='', facebook='', occupation='', active=0,
     this.address='', this.city='', this.lat=0.0, this.lng=0.0, reference}) :
     super(name: name, email: email, description: description, site: site,
         facebook: facebook, occupation: occupation, reference: reference,

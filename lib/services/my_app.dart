@@ -71,7 +71,10 @@ class MyApp {
 
   static void updateImage(){
     if(imageMemory == null && userId() != null){
-      FirebaseStorage.instance.ref().child("perfil/" + userId() + ".jpg").getData(38000).then(saveImage);
+      FirebaseStorage.instance.ref().child("perfil/" + userId() + ".jpg")
+          .getData(Helper.maxProfileImageSize)
+          .then(saveImage)
+          .catchError((e){});
     }
   }
 

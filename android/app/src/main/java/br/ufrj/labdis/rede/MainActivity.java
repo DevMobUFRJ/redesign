@@ -1,4 +1,4 @@
-package br.ufrj.labdis.redesign;
+package br.ufrj.labdis.rede;
 
 import android.os.Bundle;
 

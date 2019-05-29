@@ -4,6 +4,8 @@ class Helper {
 
   static const String emailLabdis = "labdis.ufrj@gmail.com";
 
+  static const int maxProfileImageSize = 38000; // In bytes for storage.getData
+
   /// Retorna o nome da ocupação para o tipo de instituição passada.
   /// Ocupacao secundária: Aluno, Bolsista, Estudante.
   ///

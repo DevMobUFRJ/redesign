@@ -249,12 +249,13 @@ class _PasswordFormState extends State<_PasswordForm> {
     _waitActivationDialog();
   }
 
-  errorSignUp() {
+  errorSignUp(e) {
     showMessage("Erro no cadastro");
     buttonBlocked = false;
   }
 
   Future<void> _waitActivationDialog() async {
+
     return showDialog<void>(
       context: context,
       barrierDismissible: false,
