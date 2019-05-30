@@ -586,7 +586,7 @@ class _InstitutionFormState extends State<_InstitutionForm> {
         if (addressChanged && institution.address.isNotEmpty &&
             institution.city.isNotEmpty) {
           final query = institution.address + " - " + institution.city;
-          var addresses = await Geocoder.google("***REMOVED***").findAddressesFromQuery(query);
+          var addresses = await Geocoder.google(  ** API KEY **  ).findAddressesFromQuery(query);
           var first = addresses.first;
           institution.lat = first.coordinates.latitude;
           institution.lng = first.coordinates.longitude;
