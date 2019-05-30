@@ -14,3 +14,6 @@ pubspec.lock
 bin/
 gen/
 out/
+
+api_keys.txt
+passwords.txt
