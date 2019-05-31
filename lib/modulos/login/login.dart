@@ -237,7 +237,7 @@ class _LoginFormState extends State<_LoginForm> {
   }
 
   void findUserError(e) {
-    print("Find user errir");
+    print("Find user error");
     print(e);
     _logging(false);
 
