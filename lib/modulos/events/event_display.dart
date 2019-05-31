@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:redesign/styles/fb_icon_icons.dart';
 import 'package:redesign/modulos/events/event.dart';
 import 'package:redesign/modulos/events/event_form.dart';
@@ -236,9 +237,9 @@ class _DisplayEvent extends State<EventForm> {
                       monthPortuguese(event.date.month) +
                       " de " +
                       event.date.year.toString() +
-                      " às " +
+                      " às " + (event.date.hour < 10 ? "0" : "") +
                       event.date.hour.toString() +
-                      ":" +
+                      ":" + (event.date.minute < 10 ? "0" : "")  +
                       event.date.minute.toString(),
                   style: TextStyle(color: Colors.black54),
                 ),
@@ -296,10 +297,14 @@ class _DisplayEvent extends State<EventForm> {
             padding: EdgeInsets.only(top: 10),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                Text(
-                  event.description,
-                  style: TextStyle(color: Colors.black45),
+                Flexible(
+                  child: Text(
+                    event.description,
+                    textAlign: TextAlign.justify,
+                    style: TextStyle(color: Colors.black54),
+                  ),
                 ),
               ],
             ),
