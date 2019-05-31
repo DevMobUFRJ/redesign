@@ -146,7 +146,8 @@ class _ChatScreenState extends State<ChatScreen> {
     }
     Message newMessage = Message(description: _controller.text, createdBy: MyApp.userId(), date: DateTime.now());
     _messagesReference.add(newMessage.toJson());
-    _chat.reference.updateData({'ultima_mensagem': newMessage.date.toIso8601String()});
+    _chat.reference.updateData(
+        {'ultima_mensagem': newMessage.date.toIso8601String()});
     _controller.text = "";
   }
 

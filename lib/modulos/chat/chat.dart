@@ -48,7 +48,7 @@ class Chat {
       {
         'user1': user1,
         'user2': user2,
-        'ultima_mensagem': lastMessage.toIso8601String(),
+        'ultima_mensagem': lastMessage?.toIso8601String(),
       };
 
 }
