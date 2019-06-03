@@ -5,6 +5,11 @@ import 'package:redesign/styles/style.dart';
 import 'package:redesign/modulos/user/user.dart';
 import 'package:redesign/widgets/base_screen.dart';
 
+/// Tela de administração para liberar acesso de novos usuários cadastrados.
+/// Apenas o usuário com email labdis (configurado no `services/my_app.dart`)
+/// tem acesso a esta página através do drawer menu.
+/// Usuários novos cadastrados tem o campo "ativo"=0. Autorizados=1, e
+/// bloqueados=0.
 class AuthScreen extends StatefulWidget {
   @override
   _AuthScreenState createState() => _AuthScreenState();

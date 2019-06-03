@@ -10,7 +10,10 @@ class BaseScreen extends StatelessWidget {
   final List<IconButton> extraActions = [];
   final EdgeInsets bodyPadding;
 
-  BaseScreen({@required this.title, this.body, this.fab, this.bodyPadding=const EdgeInsets.fromLTRB(16, 8, 16, 0), actions}){
+  BaseScreen({@required this.title, this.body, this.fab,
+    this.bodyPadding=const EdgeInsets.fromLTRB(16, 8, 16, 0),
+    actions
+  }){
     if(actions != null){
       this.extraActions.addAll(actions);
     }
