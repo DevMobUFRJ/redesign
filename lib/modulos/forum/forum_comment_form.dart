@@ -8,6 +8,8 @@ import 'package:redesign/services/my_app.dart';
 import 'package:redesign/widgets/standard_button.dart';
 import 'package:redesign/widgets/base_screen.dart';
 
+FocusNode _focusDescription = FocusNode();
+
 class ForumCommentForm extends StatefulWidget {
   final CollectionReference reference;
 
@@ -52,6 +54,10 @@ class ForumCommentFormState extends State<ForumCommentForm> {
                           validator: (val) => val.isEmpty ? 'Título é obrigatório' : null,
                           inputFormatters: [LengthLimitingTextInputFormatter(50)],
                           onSaved: (val) => comment.title = val,
+                          textInputAction: TextInputAction.next,
+                          onFieldSubmitted: (v){
+                            FocusScope.of(context).requestFocus(_focusDescription);
+                          },
                         ),
                         Padding(
                           padding: const EdgeInsets.only(bottom: 70.0),
@@ -66,6 +72,9 @@ class ForumCommentFormState extends State<ForumCommentForm> {
                               val.length > 15 ? null : 'Descreva melhor sua solução',
                             inputFormatters: [LengthLimitingTextInputFormatter(500)],
                             onSaved: (val) => comment.description = val,
+                            focusNode: _focusDescription,
+                            textInputAction: TextInputAction.send,
+                            onFieldSubmitted: (v) => _submitForm(),
                           ),
                         ),
                       ],

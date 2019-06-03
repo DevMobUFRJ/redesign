@@ -113,6 +113,7 @@ class _LoginFormState extends State<_LoginForm> {
   bool blocked = false;
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  FocusNode focusPassword = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -135,6 +136,10 @@ class _LoginFormState extends State<_LoginForm> {
                 ),
               ),
               controller: emailController,
+              textInputAction: TextInputAction.next,
+              onSubmitted: (v){
+                FocusScope.of(context).requestFocus(focusPassword);
+              },
             ),
           ),
           TextField(
@@ -151,6 +156,11 @@ class _LoginFormState extends State<_LoginForm> {
             ),
             obscureText: true,
             controller: passwordController,
+            textInputAction: TextInputAction.send,
+            focusNode: focusPassword,
+            onSubmitted: (v){
+              login();
+            },
           ),
           GestureDetector(
             child: Container(

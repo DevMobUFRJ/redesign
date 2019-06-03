@@ -152,7 +152,7 @@ class _EventsListState extends State<EventsList> {
       behavior: HitTestBehavior.translucent,
       child: Container(
         key: ValueKey(record.name),
-        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 6.0),
+        padding: const EdgeInsets.only(top: 2, bottom: 2),
         child: Container(
           height: 89,
           child: Column(
