@@ -189,7 +189,7 @@ class _CommentsListState extends State<_CommentsList> {
                                           fontSize: 18),
                                     ),
                                     NameTextAsync(
-                                      post.createdBy,
+                                      comment.createdBy,
                                       TextStyle(
                                           color: Colors.black54, fontSize: 14),
                                       prefix: "",
