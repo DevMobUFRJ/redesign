@@ -22,8 +22,8 @@ class Institution extends User {
   {
     address = map['endereco'];
     city = map['cidade'];
-    lat = (map['lat'] as num).toDouble();
-    lng = (map['lng'] as num).toDouble();
+    lat = ((map['lat'] ?? 0) as num).toDouble();
+    lng = ((map['lng'] ?? 0) as num).toDouble();
   }
 
   @override

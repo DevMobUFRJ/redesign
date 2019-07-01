@@ -78,6 +78,25 @@ class Helper {
     }
   }
 
+  /// Retorna um titulo no plural para a instituicao.
+  static UserType getTypeFromOccupation(String occupation){
+    switch(occupation){
+      case Occupation.laboratorio:
+      case Occupation.escola:
+      case Occupation.empreendedor:
+      case Occupation.incubadora:
+        return UserType.institution;
+
+      case Occupation.bolsista:
+      case Occupation.discente:
+      case Occupation.professor:
+      case Occupation.aluno:
+      case Occupation.outra:
+      default:
+        return UserType.person;
+    }
+  }
+
   static String convertToDMYString(DateTime d){
     try{
       return (d.day < 10 ? "0" : "") + d.day.toString() + "/" + (d.month < 10 ? "0" : "") + d.month.toString() + "/" + d.year.toString();

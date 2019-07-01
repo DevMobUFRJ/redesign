@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:ui' as prefix0;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -66,6 +65,7 @@ class _UserFormState extends State<_UserForm> {
 
   User user;
   Institution relatedInstitution;
+  String selectedType;
 
   _UserFormState(this.user){
     reference.getData(Helper.maxProfileImageSize).then((value) => setState((){
@@ -176,6 +176,7 @@ class _UserFormState extends State<_UserForm> {
             initialValue: user.description,
             onSaved: (val) => user.description = val,
           ),
+          _buildDropdownAccountType(),
           _buildDropdown(),
           Container(
             padding: EdgeInsets.only(top: 4),
@@ -273,10 +274,37 @@ class _UserFormState extends State<_UserForm> {
   saved(dynamic){
     loading(false);
     blocked = false;
-    Navigator.pop(context);
+    if(user.type == UserType.institution){
+      return showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Tipo de conta alterado'),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Text('Por favor, faça login novamente.'),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Ok'),
+                onPressed: () {
+                  MyApp.logout(context);
+                },
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      Navigator.pop(context);
+    }
   }
 
-  saveError(){
+  saveError(dynamic){
     loading(false);
     blocked = false;
     showMessage("Erro ao atualizar informações");
@@ -344,6 +372,37 @@ class _UserFormState extends State<_UserForm> {
       ),
     );
   }
+
+  Widget _buildDropdownAccountType(){
+    return DropdownButtonFormField<String>(
+      items: Occupation.all.map( (String type) {
+        if(type == user.occupation){
+          selectedType = type;
+        }
+
+        return DropdownMenuItem<String>(
+          value: type,
+          child: Text(type),
+          key: ValueKey(type),
+        );
+      }).where((d) => d != null).toList(),
+      onChanged: (String c){
+        print("Changed state");
+        setState(() {
+          selectedType = c;
+          user.occupation = c;
+          user.type = Helper.getTypeFromOccupation(c);
+        });
+      },
+      value: selectedType,
+      decoration: const InputDecoration(
+        icon: const Icon(Icons.account_box,
+          color: Style.primaryColor,
+        ),
+        labelText: 'Tipo de Conta',
+      ),
+    );
+  }
 }
 
 class _InstitutionForm extends StatefulWidget {
@@ -360,11 +419,12 @@ class _InstitutionFormState extends State<_InstitutionForm> {
   bool addressChanged = false;
 
   Institution institution;
+  String selectedType;
 
   _InstitutionFormState(this.institution){
       reference.getData(Helper.maxProfileImageSize).then((value) => setState((){
         currentImage = value;
-      }));
+      })).catchError((e){});
   }
 
   List<int> currentImage;
@@ -480,6 +540,7 @@ class _InstitutionFormState extends State<_InstitutionForm> {
             initialValue: institution.email,
             enabled: false,
           ),
+          _buildDropdownAccountType(),
           TextFormField(
             decoration: const InputDecoration(
               icon: const Icon(Icons.link,
@@ -560,7 +621,34 @@ class _InstitutionFormState extends State<_InstitutionForm> {
   saved(dynamic){
     loading(false);
     blocked = false;
-    Navigator.pop(context);
+    if(institution.type == UserType.person){
+      return showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Tipo de conta alterado'),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Text('Por favor, faça login novamente.'),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Ok'),
+                onPressed: () {
+                  MyApp.logout(context);
+                },
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      Navigator.pop(context);
+    }
   }
 
   saveError(e){
@@ -568,6 +656,37 @@ class _InstitutionFormState extends State<_InstitutionForm> {
     blocked = false;
     showMessage("Erro ao atualizar informações");
     print(e);
+  }
+
+  Widget _buildDropdownAccountType(){
+    return DropdownButtonFormField<String>(
+      items: Occupation.all.map( (String type) {
+        if(type == institution.occupation){
+          selectedType = type;
+        }
+
+        return DropdownMenuItem<String>(
+          value: type,
+          child: Text(type),
+          key: ValueKey(type),
+        );
+      }).where((d) => d != null).toList(),
+      onChanged: (String c){
+        print("Changed state");
+        setState(() {
+          selectedType = c;
+          institution.occupation = c;
+          institution.type = Helper.getTypeFromOccupation(c);
+        });
+      },
+      value: selectedType,
+      decoration: const InputDecoration(
+        icon: const Icon(Icons.account_box,
+          color: Style.primaryColor,
+        ),
+        labelText: 'Tipo de Conta',
+      ),
+    );
   }
 
   void _submitForm() async{

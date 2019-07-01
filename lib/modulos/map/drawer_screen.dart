@@ -38,7 +38,7 @@ class DrawerScreenState extends State<DrawerScreen> {
                   GestureDetector(
                     onTap: () => MyApp.gotoProfile(context),
                     child: Hero(
-                      tag: MyApp.userId(),
+                      tag: MyApp.userId() ?? "",
                       child: Container(
                         width: 90.0,
                         height: 90.0,

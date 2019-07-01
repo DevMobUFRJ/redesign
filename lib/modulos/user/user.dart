@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// Se for TipoUsuario.pessoa, é da classe usuario.
-/// Se for TipoUsuario.instituicao, é da classe Instituicao.
+/// Se for UserType.person, é da classe usuario.
+/// Se for UserType.institution, é da classe Instituicao.
 enum UserType { person, institution }
 
 class Occupation {
@@ -14,7 +14,18 @@ class Occupation {
   static const String aluno = "Aluno";
   static const String escola = "Escola";
   static const String outra = "Outra";
+
+  static List<String> all = []
+    ..add(bolsista)
+    ..add(professor)
+    ..add(laboratorio)
+    ..add(empreendedor)
+    ..add(incubadora)
+    ..add(aluno)
+    ..add(escola)
+    ..add(outra);
 }
+
 
 class User {
 
