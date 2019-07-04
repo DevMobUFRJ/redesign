@@ -31,8 +31,8 @@ android {
         applicationId "br.ufrj.labdis.rede"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 8
-        versionName "3.0"
+        versionCode 10
+        versionName "3.1.1"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
