@@ -3,7 +3,6 @@ description: Rede de integração
 
 environment:
   sdk: '>=2.0.0 <3.0.0'
-  flutter: 1.5.4-hotfix.2
 
 dependencies:
   flutter:

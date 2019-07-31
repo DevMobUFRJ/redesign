@@ -1,14 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:redesign/styles/fb_icon_icons.dart';
-import 'package:redesign/styles/style.dart';
+import 'package:intl/intl.dart';
 import 'package:redesign/modulos/events/event.dart';
 import 'package:redesign/services/my_app.dart';
 import 'package:redesign/services/validators.dart';
-import 'package:redesign/widgets/standard_button.dart';
+import 'package:redesign/styles/fb_icon_icons.dart';
+import 'package:redesign/styles/style.dart';
 import 'package:redesign/widgets/base_screen.dart';
-import 'package:intl/intl.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:redesign/widgets/standard_button.dart';
 
 class CreateEvent extends StatelessWidget {
   final Event event;
@@ -38,6 +38,15 @@ class _CreateEventState extends State<CreateEventPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _hourController = TextEditingController();
+  // Os controllers repetidos abaixo são necessários para evitar que o valor
+  // do campo seja perdido quando o usuario rolar a tela
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _placeController = TextEditingController();
+  final TextEditingController _addrController = TextEditingController();
+  final TextEditingController _cityController = TextEditingController();
+  final TextEditingController _descController = TextEditingController();
+  final TextEditingController _fbController = TextEditingController();
 
   Event event;
   bool blocked = false;
@@ -69,8 +78,9 @@ class _CreateEventState extends State<CreateEventPage> {
                 ),
                 initialValue: event.name,
                 validator: (val) => val.isEmpty ? 'Nome é obrigatório' : null,
-                inputFormatters: [new LengthLimitingTextInputFormatter(50)],
+                inputFormatters: [LengthLimitingTextInputFormatter(50)],
                 onSaved: (val) => event.name = val,
+                controller: _nameController,
               ),
               TextFormField(
                 decoration: const InputDecoration(
@@ -79,9 +89,10 @@ class _CreateEventState extends State<CreateEventPage> {
                 ),
                 initialValue: convertToDMYString(event.date),
                 keyboardType: TextInputType.datetime,
-                inputFormatters: [new LengthLimitingTextInputFormatter(10)],
+                inputFormatters: [LengthLimitingTextInputFormatter(10)],
                 validator: (val) => isDateValid(val) ? null : 'Data inválida',
                 onSaved: (val) => event.date = convertToDateTime(val),
+                controller: _dateController,
               ),
               TextFormField(
                 decoration: const InputDecoration(
@@ -90,7 +101,7 @@ class _CreateEventState extends State<CreateEventPage> {
                 ),
                 controller: _hourController,
                 keyboardType: TextInputType.datetime,
-                inputFormatters: [new LengthLimitingTextInputFormatter(5)],
+                inputFormatters: [LengthLimitingTextInputFormatter(5)],
                 validator: (val) => isHourValid(val) ? null : 'Hora inválida',
                 //Não precisa de onSaved pois é salvo c/ a data pelo controller
               ),
@@ -101,8 +112,9 @@ class _CreateEventState extends State<CreateEventPage> {
                 ),
                 initialValue: event.local,
                 validator: (val) => val.isEmpty ? 'Local é obrigatório' : null,
-                inputFormatters: [new LengthLimitingTextInputFormatter(50)],
+                inputFormatters: [LengthLimitingTextInputFormatter(50)],
                 onSaved: (val) => event.local = val,
+                controller: _placeController,
               ),
               TextFormField(
                 decoration: const InputDecoration(
@@ -112,8 +124,9 @@ class _CreateEventState extends State<CreateEventPage> {
                 initialValue: event.address,
                 validator: (val) =>
                     val.isEmpty ? 'Endereço é obrigatório' : null,
-                inputFormatters: [new LengthLimitingTextInputFormatter(100)],
+                inputFormatters: [LengthLimitingTextInputFormatter(100)],
                 onSaved: (val) => event.address = val,
+                controller: _addrController,
               ),
               TextFormField(
                 decoration: const InputDecoration(
@@ -122,8 +135,9 @@ class _CreateEventState extends State<CreateEventPage> {
                 ),
                 initialValue: event.city,
                 validator: (val) => val.isEmpty ? 'Cidade é obrigatório' : null,
-                inputFormatters: [new LengthLimitingTextInputFormatter(20)],
+                inputFormatters: [LengthLimitingTextInputFormatter(20)],
                 onSaved: (val) => event.city = val,
+                controller: _cityController,
               ),
               TextFormField(
                 decoration: const InputDecoration(
@@ -136,8 +150,9 @@ class _CreateEventState extends State<CreateEventPage> {
                 validator: (val) => val.isEmpty
                     ? 'Descrição é obrigatório'
                     : val.length > 20 ? null : 'Descreva melhor seu evento',
-                inputFormatters: [new LengthLimitingTextInputFormatter(500)],
+                inputFormatters: [LengthLimitingTextInputFormatter(500)],
                 onSaved: (val) => event.description = val,
+                controller: _descController,
               ),
               TextFormField(
                 decoration: const InputDecoration(
@@ -148,8 +163,9 @@ class _CreateEventState extends State<CreateEventPage> {
                 validator: (val) =>
                     Validators.facebookUrl(val) ? null : 'Link inválido',
                 keyboardType: TextInputType.emailAddress,
-                inputFormatters: [new LengthLimitingTextInputFormatter(80)],
+                inputFormatters: [LengthLimitingTextInputFormatter(80)],
                 onSaved: (val) => event.facebookUrl = val,
+                controller: _fbController,
               ),
               Container(
                   padding: const EdgeInsets.only(top: 20.0),

@@ -1,32 +1,34 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:redesign/services/helper.dart';
-import 'package:redesign/styles/fb_icon_icons.dart';
-import 'package:redesign/styles/style.dart';
+import 'package:geocoder/geocoder.dart';
+import 'package:image/image.dart' as ImageHelper;
+import 'package:image_picker/image_picker.dart';
 import 'package:redesign/modulos/user/institution.dart';
 import 'package:redesign/modulos/user/user.dart';
+import 'package:redesign/services/helper.dart';
 import 'package:redesign/services/my_app.dart';
 import 'package:redesign/services/validators.dart';
-import 'package:redesign/widgets/standard_button.dart';
+import 'package:redesign/styles/fb_icon_icons.dart';
+import 'package:redesign/styles/style.dart';
 import 'package:redesign/widgets/base_screen.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:image/image.dart' as ImageHelper;
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:geocoder/geocoder.dart';
+import 'package:redesign/widgets/standard_button.dart';
 
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 final FirebaseStorage _storage = FirebaseStorage.instance;
-StorageReference reference = _storage.ref().child("perfil/" + MyApp.userId() + ".jpg");
+StorageReference reference =
+    _storage.ref().child("perfil/" + MyApp.userId() + ".jpg");
 bool blocked = false;
 
 class ProfileForm extends StatefulWidget {
   @override
-  ProfileFormState createState() => MyApp.user != null ?
-    ProfileFormState(user: MyApp.user) : ProfileFormState(institution: MyApp.institution);
+  ProfileFormState createState() => MyApp.user != null
+      ? ProfileFormState(user: MyApp.user)
+      : ProfileFormState(institution: MyApp.institution);
 }
 
 class ProfileFormState extends State<ProfileForm> {
@@ -42,8 +44,7 @@ class ProfileFormState extends State<ProfileForm> {
       body: Scaffold(
         key: _scaffoldKey,
         resizeToAvoidBottomPadding: false,
-        body: user != null ?
-            _UserForm(user) : _InstitutionForm(institution),
+        body: user != null ? _UserForm(user) : _InstitutionForm(institution),
       ),
     );
   }
@@ -63,14 +64,22 @@ class _UserForm extends StatefulWidget {
 class _UserFormState extends State<_UserForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  // Os controllers repetidos abaixo são necessários para evitar que o valor
+  // do campo seja perdido quando o usuario rolar a tela
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _descController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _siteController = TextEditingController();
+  final TextEditingController _fbController = TextEditingController();
+
   User user;
   Institution relatedInstitution;
   String selectedType;
 
-  _UserFormState(this.user){
-    reference.getData(Helper.maxProfileImageSize).then((value) => setState((){
-      currentImage = value;
-    }));
+  _UserFormState(this.user) {
+    reference.getData(Helper.maxProfileImageSize).then((value) => setState(() {
+          currentImage = value;
+        }));
   }
 
   List<int> currentImage;
@@ -80,12 +89,13 @@ class _UserFormState extends State<_UserForm> {
     loading(true, message: "Enviando foto...");
     File imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
 
-    if(imageFile == null){
+    if (imageFile == null) {
       loading(false);
       return;
     }
 
-    ImageHelper.Image image = ImageHelper.decodeImage(imageFile.readAsBytesSync());
+    ImageHelper.Image image =
+        ImageHelper.decodeImage(imageFile.readAsBytesSync());
 
     image = ImageHelper.copyResize(image, width: 100, height: 100);
 
@@ -93,7 +103,7 @@ class _UserFormState extends State<_UserForm> {
       newImage = ImageHelper.encodeJpg(image, quality: 85);
     });
 
-    if(newImage.length > 38000){
+    if (newImage.length > 38000) {
       showMessage("Erro: Imagem muito grande");
       newImage = null;
       return;
@@ -101,23 +111,25 @@ class _UserFormState extends State<_UserForm> {
 
     //Upload the file to firebase
     StorageUploadTask uploadTask = reference.putData(newImage);
-    uploadTask.onComplete.then((s) => uploadDone(newImage)).catchError((e) => uploadError(e));
+    uploadTask.onComplete
+        .then((s) => uploadDone(newImage))
+        .catchError((e) => uploadError(e));
   }
 
-  void uploadDone(image){
+  void uploadDone(image) {
     loading(false);
     showMessage("Foto atualizada", Colors.green);
-    setState((){
+    setState(() {
       newImage = image;
       currentImage = image;
     });
     MyApp.imageMemory = image;
   }
 
-  void uploadError(e){
+  void uploadError(e) {
     loading(false);
     showMessage("Erro ao atualizar foto");
-    setState((){
+    setState(() {
       newImage = null;
     });
   }
@@ -132,27 +144,30 @@ class _UserFormState extends State<_UserForm> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               GestureDetector(
-                onTap: (){ getImage(); },
+                onTap: () {
+                  getImage();
+                },
                 child: Container(
                   width: 100.0,
                   height: 100.0,
                   decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: newImage == null ? currentImage == null ?
-                          AssetImage("images/perfil_placeholder.png") :
-                          MemoryImage(currentImage):
-                          MemoryImage(newImage),
-                    )
-                  ),
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: newImage == null
+                            ? currentImage == null
+                                ? AssetImage("images/perfil_placeholder.png")
+                                : MemoryImage(currentImage)
+                            : MemoryImage(newImage),
+                      )),
                 ),
               ),
             ],
           ),
           TextFormField(
             decoration: const InputDecoration(
-              icon: const Icon(Icons.person,
+              icon: const Icon(
+                Icons.person,
                 color: Style.primaryColor,
               ),
               labelText: 'Nome',
@@ -161,10 +176,12 @@ class _UserFormState extends State<_UserForm> {
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
             initialValue: user.name,
             onSaved: (val) => user.name = val,
+            controller: _nameController,
           ),
           TextFormField(
             decoration: const InputDecoration(
-              icon: const Icon(Icons.description,
+              icon: const Icon(
+                Icons.description,
                 color: Style.primaryColor,
               ),
               labelText: 'Descrição',
@@ -175,27 +192,30 @@ class _UserFormState extends State<_UserForm> {
             inputFormatters: [LengthLimitingTextInputFormatter(500)],
             initialValue: user.description,
             onSaved: (val) => user.description = val,
+            controller: _descController,
           ),
           _buildDropdownAccountType(),
           _buildDropdown(),
           Container(
             padding: EdgeInsets.only(top: 4),
-            child: relatedInstitution == null ? Container() :
-                GestureDetector(
-                  child: Text("Remover seleção",
-                    textAlign: TextAlign.end,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.red,
+            child: relatedInstitution == null
+                ? Container()
+                : GestureDetector(
+                    child: Text(
+                      "Remover seleção",
+                      textAlign: TextAlign.end,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.red,
+                      ),
                     ),
+                    onTap: () {
+                      setState(() {
+                        user.idInstitution = "";
+                        relatedInstitution = null;
+                      });
+                    },
                   ),
-                  onTap: (){
-                    setState(() {
-                      user.idInstitution = "";
-                      relatedInstitution = null;
-                    });
-                  },
-                ),
           ),
           TextFormField(
             decoration: const InputDecoration(
@@ -205,53 +225,63 @@ class _UserFormState extends State<_UserForm> {
             inputFormatters: [LengthLimitingTextInputFormatter(500)],
             initialValue: user.email,
             enabled: false,
+            controller: _emailController,
           ),
           TextFormField(
             decoration: const InputDecoration(
-              icon: const Icon(Icons.link,
+              icon: const Icon(
+                Icons.link,
                 color: Style.primaryColor,
               ),
               labelText: 'Site',
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
-            validator: (val) => val.isEmpty ? null : Validators.url(val) ? null : 'Site inválido',
+            validator: (val) => val.isEmpty
+                ? null
+                : Validators.url(val) ? null : 'Site inválido',
             initialValue: user.site,
-            onSaved: (val){
-              if(!val.startsWith("http") && val.isNotEmpty){
+            onSaved: (val) {
+              if (!val.startsWith("http") && val.isNotEmpty) {
                 val = "http://" + val;
               }
               user.site = val;
             },
+            controller: _siteController,
           ),
           TextFormField(
             decoration: const InputDecoration(
-              icon: const Icon(FbIcon.facebook_official,
+              icon: const Icon(
+                FbIcon.facebook_official,
                 color: Style.primaryColor,
               ),
               labelText: 'Facebook',
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
-            validator: (val) => val.isEmpty ? null : Validators.facebookUrl(val) ? null : 'Link do facebook inválido',
+            validator: (val) => val.isEmpty
+                ? null
+                : Validators.facebookUrl(val)
+                    ? null
+                    : 'Link do facebook inválido',
             initialValue: user.facebook,
-            onSaved: (val){
-              if(!val.startsWith("http") && val.isNotEmpty){
+            onSaved: (val) {
+              if (!val.startsWith("http") && val.isNotEmpty) {
                 val = "http://" + val;
               }
               user.facebook = val;
             },
+            controller: _fbController,
           ),
           Container(
               padding: const EdgeInsets.only(top: 20.0),
               child: StandardButton("Salvar", _submitForm,
-                  Style.main.primaryColor, Style.lightGrey)
-          ),
+                  Style.main.primaryColor, Style.lightGrey)),
         ],
       ),
     );
   }
 
   void _submitForm() {
-    if(blocked) return;
+    if (blocked) return;
 
     blocked = true;
     final FormState form = _formKey.currentState;
@@ -265,16 +295,15 @@ class _UserFormState extends State<_UserForm> {
       save(user);
     }
   }
-  
-  save(User user){
-    user.reference.updateData(user.toJson())
-        .then(saved).catchError(saveError);
+
+  save(User user) {
+    user.reference.updateData(user.toJson()).then(saved).catchError(saveError);
   }
 
-  saved(dynamic){
+  saved(dynamic) {
     loading(false);
     blocked = false;
-    if(user.type == UserType.institution){
+    if (user.type == UserType.institution) {
       return showDialog<void>(
         context: context,
         barrierDismissible: false,
@@ -304,15 +333,16 @@ class _UserFormState extends State<_UserForm> {
     }
   }
 
-  saveError(dynamic){
+  saveError(dynamic) {
     loading(false);
     blocked = false;
     showMessage("Erro ao atualizar informações");
   }
 
-  Widget _buildDropdown(){
+  Widget _buildDropdown() {
     return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance.collection(User.collectionName)
+      stream: Firestore.instance
+          .collection(User.collectionName)
           .where("tipo", isEqualTo: UserType.institution.index)
           .where("ativo", isEqualTo: 1)
           .orderBy("nome")
@@ -320,7 +350,7 @@ class _UserFormState extends State<_UserForm> {
       builder: (context, snapshot) {
         if (!snapshot.hasData) return CircularProgressIndicator();
 
-        if (snapshot.data.documents.length == 0){
+        if (snapshot.data.documents.length == 0) {
           return Text("Não há instituições cadastradas");
         }
 
@@ -329,34 +359,38 @@ class _UserFormState extends State<_UserForm> {
     );
   }
 
-  Widget _buildItems(BuildContext context, List<DocumentSnapshot> data){
+  Widget _buildItems(BuildContext context, List<DocumentSnapshot> data) {
     return DropdownButtonFormField<Institution>(
-      items: data.map( (DocumentSnapshot doc) {
-        Institution institution = Institution.fromMap(doc.data, reference: doc.reference);
+      items: data
+          .map((DocumentSnapshot doc) {
+            Institution institution =
+                Institution.fromMap(doc.data, reference: doc.reference);
 
-        // Verificar se o tipo do usuário é compatível com a instituição
-        if(institution.occupation == Occupation.incubadora){
-          if(user.occupation != Occupation.empreendedor) return null;
-        } else if (institution.occupation == Occupation.laboratorio){
-          if(user.occupation != Occupation.professor &&
-              user.occupation != Occupation.bolsista &&
-              user.occupation != Occupation.discente) return null;
-        } else if (institution.occupation == Occupation.escola){
-          if(user.occupation != Occupation.professor &&
-            user.occupation != Occupation.aluno) return null;
-        }
+            // Verificar se o tipo do usuário é compatível com a instituição
+            if (institution.occupation == Occupation.incubadora) {
+              if (user.occupation != Occupation.empreendedor) return null;
+            } else if (institution.occupation == Occupation.laboratorio) {
+              if (user.occupation != Occupation.professor &&
+                  user.occupation != Occupation.bolsista &&
+                  user.occupation != Occupation.discente) return null;
+            } else if (institution.occupation == Occupation.escola) {
+              if (user.occupation != Occupation.professor &&
+                  user.occupation != Occupation.aluno) return null;
+            }
 
-        if(institution.reference.documentID == user.idInstitution){
-          relatedInstitution = institution;
-        }
+            if (institution.reference.documentID == user.idInstitution) {
+              relatedInstitution = institution;
+            }
 
-        return DropdownMenuItem<Institution>(
-          value: institution,
-          child: Text(institution.name),
-          key: ValueKey(institution.reference.documentID),
-        );
-      }).where((d) => d != null).toList(),
-      onChanged: (Institution c){
+            return DropdownMenuItem<Institution>(
+              value: institution,
+              child: Text(institution.name),
+              key: ValueKey(institution.reference.documentID),
+            );
+          })
+          .where((d) => d != null)
+          .toList(),
+      onChanged: (Institution c) {
         print("Changed state");
         setState(() {
           relatedInstitution = c;
@@ -365,7 +399,8 @@ class _UserFormState extends State<_UserForm> {
       },
       value: relatedInstitution,
       decoration: const InputDecoration(
-        icon: const Icon(Icons.account_balance,
+        icon: const Icon(
+          Icons.account_balance,
           color: Style.primaryColor,
         ),
         labelText: 'Instituição',
@@ -373,20 +408,23 @@ class _UserFormState extends State<_UserForm> {
     );
   }
 
-  Widget _buildDropdownAccountType(){
+  Widget _buildDropdownAccountType() {
     return DropdownButtonFormField<String>(
-      items: Occupation.all.map( (String type) {
-        if(type == user.occupation){
-          selectedType = type;
-        }
+      items: Occupation.all
+          .map((String type) {
+            if (type == user.occupation) {
+              selectedType = type;
+            }
 
-        return DropdownMenuItem<String>(
-          value: type,
-          child: Text(type),
-          key: ValueKey(type),
-        );
-      }).where((d) => d != null).toList(),
-      onChanged: (String c){
+            return DropdownMenuItem<String>(
+              value: type,
+              child: Text(type),
+              key: ValueKey(type),
+            );
+          })
+          .where((d) => d != null)
+          .toList(),
+      onChanged: (String c) {
         print("Changed state");
         setState(() {
           selectedType = c;
@@ -396,7 +434,8 @@ class _UserFormState extends State<_UserForm> {
       },
       value: selectedType,
       decoration: const InputDecoration(
-        icon: const Icon(Icons.account_box,
+        icon: const Icon(
+          Icons.account_box,
           color: Style.primaryColor,
         ),
         labelText: 'Tipo de Conta',
@@ -421,10 +460,13 @@ class _InstitutionFormState extends State<_InstitutionForm> {
   Institution institution;
   String selectedType;
 
-  _InstitutionFormState(this.institution){
-      reference.getData(Helper.maxProfileImageSize).then((value) => setState((){
-        currentImage = value;
-      })).catchError((e){});
+  _InstitutionFormState(this.institution) {
+    reference
+        .getData(Helper.maxProfileImageSize)
+        .then((value) => setState(() {
+              currentImage = value;
+            }))
+        .catchError((e) {});
   }
 
   List<int> currentImage;
@@ -433,14 +475,15 @@ class _InstitutionFormState extends State<_InstitutionForm> {
   Future getImage() async {
     File imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
 
-    if(imageFile == null){
+    if (imageFile == null) {
       loading(false);
       return;
     }
 
     loading(true, message: "Enviando foto...");
 
-    ImageHelper.Image image = ImageHelper.decodeImage(imageFile.readAsBytesSync());
+    ImageHelper.Image image =
+        ImageHelper.decodeImage(imageFile.readAsBytesSync());
 
     image = ImageHelper.copyResize(image, width: 100, height: 100);
 
@@ -448,7 +491,7 @@ class _InstitutionFormState extends State<_InstitutionForm> {
       newImage = ImageHelper.encodeJpg(image, quality: 85);
     });
 
-    if(newImage.length > 38000){
+    if (newImage.length > 38000) {
       showMessage("Erro: Imagem muito grande");
       newImage = null;
       return;
@@ -456,23 +499,25 @@ class _InstitutionFormState extends State<_InstitutionForm> {
 
     //Upload the file to firebase
     StorageUploadTask uploadTask = reference.putData(newImage);
-    uploadTask.onComplete.then((s) => uploadDone(newImage)).catchError((e) => uploadError(e));
+    uploadTask.onComplete
+        .then((s) => uploadDone(newImage))
+        .catchError((e) => uploadError(e));
   }
 
-  void uploadDone(image){
+  void uploadDone(image) {
     loading(false);
     showMessage("Foto atualizada", Colors.green);
-    setState((){
+    setState(() {
       newImage = image;
       currentImage = image;
     });
     MyApp.imageMemory = image;
   }
 
-  void uploadError(e){
+  void uploadError(e) {
     loading(false);
     showMessage("Erro ao atualizar foto");
-    setState((){
+    setState(() {
       newImage = null;
     });
   }
@@ -487,7 +532,9 @@ class _InstitutionFormState extends State<_InstitutionForm> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               GestureDetector(
-                onTap: (){ getImage(); },
+                onTap: () {
+                  getImage();
+                },
                 child: Container(
                   width: 100.0,
                   height: 100.0,
@@ -495,19 +542,20 @@ class _InstitutionFormState extends State<_InstitutionForm> {
                       shape: BoxShape.circle,
                       image: DecorationImage(
                         fit: BoxFit.cover,
-                        image: newImage == null ? currentImage == null ?
-                        AssetImage("images/perfil_placeholder.png") :
-                        MemoryImage(currentImage):
-                        MemoryImage(newImage),
-                      )
-                  ),
+                        image: newImage == null
+                            ? currentImage == null
+                                ? AssetImage("images/perfil_placeholder.png")
+                                : MemoryImage(currentImage)
+                            : MemoryImage(newImage),
+                      )),
                 ),
               ),
             ],
           ),
           TextFormField(
             decoration: const InputDecoration(
-              icon: const Icon(Icons.people,
+              icon: const Icon(
+                Icons.people,
                 color: Style.primaryColor,
               ),
               labelText: 'Nome',
@@ -519,7 +567,8 @@ class _InstitutionFormState extends State<_InstitutionForm> {
           ),
           TextFormField(
             decoration: const InputDecoration(
-              icon: const Icon(Icons.description,
+              icon: const Icon(
+                Icons.description,
                 color: Style.primaryColor,
               ),
               labelText: 'Descrição',
@@ -543,16 +592,19 @@ class _InstitutionFormState extends State<_InstitutionForm> {
           _buildDropdownAccountType(),
           TextFormField(
             decoration: const InputDecoration(
-              icon: const Icon(Icons.link,
+              icon: const Icon(
+                Icons.link,
                 color: Style.primaryColor,
               ),
               labelText: 'Site',
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
-            validator: (val) => val.isEmpty ? null : Validators.url(val) ? null : 'Site inválido',
+            validator: (val) => val.isEmpty
+                ? null
+                : Validators.url(val) ? null : 'Site inválido',
             initialValue: institution.site,
-            onSaved: (val){
-              if(!val.startsWith("http") && val.isNotEmpty){
+            onSaved: (val) {
+              if (!val.startsWith("http") && val.isNotEmpty) {
                 val = "http://" + val;
               }
               institution.site = val;
@@ -560,16 +612,21 @@ class _InstitutionFormState extends State<_InstitutionForm> {
           ),
           TextFormField(
             decoration: const InputDecoration(
-              icon: const Icon(FbIcon.facebook_official,
+              icon: const Icon(
+                FbIcon.facebook_official,
                 color: Style.primaryColor,
               ),
               labelText: 'Facebook',
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
-            validator: (val) => val.isEmpty ? null : Validators.facebookUrl(val) ? null : 'Link do facebook inválido',
+            validator: (val) => val.isEmpty
+                ? null
+                : Validators.facebookUrl(val)
+                    ? null
+                    : 'Link do facebook inválido',
             initialValue: institution.facebook,
-            onSaved: (val){
-              if(!val.startsWith("http") && val.isNotEmpty){
+            onSaved: (val) {
+              if (!val.startsWith("http") && val.isNotEmpty) {
                 val = "http://" + val;
               }
               institution.facebook = val;
@@ -577,51 +634,54 @@ class _InstitutionFormState extends State<_InstitutionForm> {
           ),
           TextFormField(
             decoration: const InputDecoration(
-              icon: const Icon(Icons.location_on,
+              icon: const Icon(
+                Icons.location_on,
                 color: Style.primaryColor,
               ),
               labelText: 'Endereço (Rua, Número)',
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
             initialValue: institution.address,
-            onSaved: (val){
-              if(val != institution.address) addressChanged = true;
+            onSaved: (val) {
+              if (val != institution.address) addressChanged = true;
               institution.address = val;
             },
           ),
           TextFormField(
             decoration: const InputDecoration(
-              icon: const Icon(Icons.location_city,
+              icon: const Icon(
+                Icons.location_city,
                 color: Style.primaryColor,
               ),
               labelText: 'Cidade',
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(40)],
             initialValue: institution.city,
-            onSaved: (val){
-              if(val != institution.city) addressChanged = true;
+            onSaved: (val) {
+              if (val != institution.city) addressChanged = true;
               institution.city = val;
             },
           ),
           Container(
               padding: const EdgeInsets.only(top: 20.0),
               child: StandardButton("Salvar", _submitForm,
-                  Style.main.primaryColor, Style.lightGrey)
-          ),
+                  Style.main.primaryColor, Style.lightGrey)),
         ],
       ),
     );
   }
 
-  save(Institution institution){
-    institution.reference.updateData(institution.toJson())
-        .then(saved).catchError(saveError);
+  save(Institution institution) {
+    institution.reference
+        .updateData(institution.toJson())
+        .then(saved)
+        .catchError(saveError);
   }
 
-  saved(dynamic){
+  saved(dynamic) {
     loading(false);
     blocked = false;
-    if(institution.type == UserType.person){
+    if (institution.type == UserType.person) {
       return showDialog<void>(
         context: context,
         barrierDismissible: false,
@@ -651,27 +711,30 @@ class _InstitutionFormState extends State<_InstitutionForm> {
     }
   }
 
-  saveError(e){
+  saveError(e) {
     loading(false);
     blocked = false;
     showMessage("Erro ao atualizar informações");
     print(e);
   }
 
-  Widget _buildDropdownAccountType(){
+  Widget _buildDropdownAccountType() {
     return DropdownButtonFormField<String>(
-      items: Occupation.all.map( (String type) {
-        if(type == institution.occupation){
-          selectedType = type;
-        }
+      items: Occupation.all
+          .map((String type) {
+            if (type == institution.occupation) {
+              selectedType = type;
+            }
 
-        return DropdownMenuItem<String>(
-          value: type,
-          child: Text(type),
-          key: ValueKey(type),
-        );
-      }).where((d) => d != null).toList(),
-      onChanged: (String c){
+            return DropdownMenuItem<String>(
+              value: type,
+              child: Text(type),
+              key: ValueKey(type),
+            );
+          })
+          .where((d) => d != null)
+          .toList(),
+      onChanged: (String c) {
         print("Changed state");
         setState(() {
           selectedType = c;
@@ -681,7 +744,8 @@ class _InstitutionFormState extends State<_InstitutionForm> {
       },
       value: selectedType,
       decoration: const InputDecoration(
-        icon: const Icon(Icons.account_box,
+        icon: const Icon(
+          Icons.account_box,
           color: Style.primaryColor,
         ),
         labelText: 'Tipo de Conta',
@@ -689,8 +753,8 @@ class _InstitutionFormState extends State<_InstitutionForm> {
     );
   }
 
-  void _submitForm() async{
-    if(blocked) return;
+  void _submitForm() async {
+    if (blocked) return;
 
     blocked = true;
     final FormState form = _formKey.currentState;
@@ -702,7 +766,8 @@ class _InstitutionFormState extends State<_InstitutionForm> {
       loading(true);
       form.save(); //Executa cada evento "onSaved" dos campos do formulário
       try {
-        if (addressChanged && institution.address.isNotEmpty &&
+        if (addressChanged &&
+            institution.address.isNotEmpty &&
             institution.city.isNotEmpty) {
           final query = institution.address + " - " + institution.city;
           var addresses = await Geocoder.google(  ** API KEY **  ).findAddressesFromQuery(query);
@@ -711,7 +776,7 @@ class _InstitutionFormState extends State<_InstitutionForm> {
           institution.lng = first.coordinates.longitude;
         }
         save(institution);
-      } catch(e) {
+      } catch (e) {
         loading(false);
         showMessage("Erro ao atualizar informações");
         print(e);
@@ -727,20 +792,19 @@ void showMessage(String message, [MaterialColor color = Colors.red]) {
 
 void loading(bool isLoading, {String message = "Aguarde"}) {
   blocked = isLoading;
-  if(isLoading) {
-    _scaffoldKey.currentState.showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.amber,
-          content: Row(
-            children: <Widget>[
-              CircularProgressIndicator(),
-              Padding(
-                padding: const EdgeInsets.only(left: 4.0),
-                child: Text( message),
-              )
-            ],
-          ),
-        ));
+  if (isLoading) {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      backgroundColor: Colors.amber,
+      content: Row(
+        children: <Widget>[
+          CircularProgressIndicator(),
+          Padding(
+            padding: const EdgeInsets.only(left: 4.0),
+            child: Text(message),
+          )
+        ],
+      ),
+    ));
   } else {
     _scaffoldKey.currentState.hideCurrentSnackBar();
   }
