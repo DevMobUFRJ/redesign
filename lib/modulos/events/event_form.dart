@@ -80,7 +80,6 @@ class _CreateEventState extends State<CreateEventPage> {
                 validator: (val) => val.isEmpty ? 'Nome é obrigatório' : null,
                 inputFormatters: [LengthLimitingTextInputFormatter(50)],
                 onSaved: (val) => event.name = val,
-                controller: _nameController,
               ),
               TextFormField(
                 decoration: const InputDecoration(
@@ -92,7 +91,6 @@ class _CreateEventState extends State<CreateEventPage> {
                 inputFormatters: [LengthLimitingTextInputFormatter(10)],
                 validator: (val) => isDateValid(val) ? null : 'Data inválida',
                 onSaved: (val) => event.date = convertToDateTime(val),
-                controller: _dateController,
               ),
               TextFormField(
                 decoration: const InputDecoration(
@@ -114,7 +112,6 @@ class _CreateEventState extends State<CreateEventPage> {
                 validator: (val) => val.isEmpty ? 'Local é obrigatório' : null,
                 inputFormatters: [LengthLimitingTextInputFormatter(50)],
                 onSaved: (val) => event.local = val,
-                controller: _placeController,
               ),
               TextFormField(
                 decoration: const InputDecoration(
@@ -126,7 +123,6 @@ class _CreateEventState extends State<CreateEventPage> {
                     val.isEmpty ? 'Endereço é obrigatório' : null,
                 inputFormatters: [LengthLimitingTextInputFormatter(100)],
                 onSaved: (val) => event.address = val,
-                controller: _addrController,
               ),
               TextFormField(
                 decoration: const InputDecoration(
@@ -137,7 +133,6 @@ class _CreateEventState extends State<CreateEventPage> {
                 validator: (val) => val.isEmpty ? 'Cidade é obrigatório' : null,
                 inputFormatters: [LengthLimitingTextInputFormatter(20)],
                 onSaved: (val) => event.city = val,
-                controller: _cityController,
               ),
               TextFormField(
                 decoration: const InputDecoration(
@@ -152,7 +147,6 @@ class _CreateEventState extends State<CreateEventPage> {
                     : val.length > 20 ? null : 'Descreva melhor seu evento',
                 inputFormatters: [LengthLimitingTextInputFormatter(500)],
                 onSaved: (val) => event.description = val,
-                controller: _descController,
               ),
               TextFormField(
                 decoration: const InputDecoration(
@@ -165,7 +159,6 @@ class _CreateEventState extends State<CreateEventPage> {
                 keyboardType: TextInputType.emailAddress,
                 inputFormatters: [LengthLimitingTextInputFormatter(80)],
                 onSaved: (val) => event.facebookUrl = val,
-                controller: _fbController,
               ),
               Container(
                   padding: const EdgeInsets.only(top: 20.0),

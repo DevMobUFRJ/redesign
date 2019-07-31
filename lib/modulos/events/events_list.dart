@@ -261,7 +261,7 @@ class _EventsListState extends State<EventsList> {
                 ],
               ),
               Padding(
-                padding: EdgeInsets.only(top: 3),
+                padding: EdgeInsets.only(top: 1),
                 child: Divider(
                   color: Colors.black87,
                 ),
