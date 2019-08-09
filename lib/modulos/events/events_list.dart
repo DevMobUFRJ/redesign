@@ -1,13 +1,13 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:redesign/styles/style.dart';
+import 'package:flutter/material.dart';
 import 'package:redesign/modulos/events/event.dart';
 import 'package:redesign/modulos/events/event_display.dart';
 import 'package:redesign/modulos/events/event_form.dart';
 import 'package:redesign/modulos/user/favorite.dart';
 import 'package:redesign/services/my_app.dart';
-import 'package:redesign/widgets/base_screen.dart';
+import 'package:redesign/styles/style.dart';
 import 'package:redesign/widgets/async_data.dart';
+import 'package:redesign/widgets/base_screen.dart';
 
 class EventsScreen extends StatelessWidget {
   @override
@@ -52,17 +52,17 @@ class _EventsListState extends State<EventsList> {
             ? null
             : FloatingActionButton(
                 onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CreateEvent(),
-                      ),
-                    ),
-                child: Icon(Icons.add),
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CreateEvent(),
+                  ),
+                ),
+                child: const Icon(Icons.add),
                 backgroundColor: Style.main.primaryColor,
               ),
         actions: <IconButton>[
           IconButton(
-            icon: Icon(Icons.search, color: Colors.white),
+            icon: const Icon(Icons.search, color: Colors.white),
             onPressed: () => toggleSearch(),
           ),
         ]);
@@ -118,18 +118,20 @@ class _EventsListState extends State<EventsList> {
           children: [
             searching
                 ? Container(
-                    margin: EdgeInsets.only(bottom: 5),
-                    decoration: ShapeDecoration(shape: StadiumBorder()),
+                    margin: const EdgeInsets.only(bottom: 5),
+                    decoration: const ShapeDecoration(shape: StadiumBorder()),
                     child: Row(children: [
                       Expanded(
                         child: TextField(
                           onChanged: searchTextChanged,
                           controller: _searchController,
                           cursorColor: Style.lightGrey,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                               hintText: "Buscar",
-                              prefixIcon: Icon(Icons.search,
-                                  color: Style.primaryColor)),
+                              prefixIcon: const Icon(
+                                Icons.search,
+                                color: Style.primaryColor,
+                              )),
                         ),
                       ),
                     ]))
@@ -169,7 +171,7 @@ class _EventsListState extends State<EventsList> {
                       children: <Widget>[
                         Text(
                           record.date.day.toString(),
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Style.buttonBlue,
                             fontSize: 40,
                             fontWeight: FontWeight.w700,
@@ -177,7 +179,7 @@ class _EventsListState extends State<EventsList> {
                         ),
                         Text(
                           initialsMonth(record.date.month),
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Style.buttonBlue,
                             fontSize: 20,
                             fontWeight: FontWeight.w700,
@@ -212,7 +214,7 @@ class _EventsListState extends State<EventsList> {
                                   Expanded(
                                     child: Text(
                                       record.name,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 17, color: Colors.black54),
                                       maxLines: 1,
                                       overflow: TextOverflow.clip,
@@ -221,20 +223,22 @@ class _EventsListState extends State<EventsList> {
                                   data.data['favorito'] != null &&
                                           data.data['favorito']
                                       ? Container(
-                                          padding: EdgeInsets.only(top: 10),
-                                          child: Icon(Icons.star,
+                                          padding:
+                                              const EdgeInsets.only(top: 10),
+                                          child: const Icon(Icons.star,
                                               color: Style.primaryColor,
-                                              size: 16))
+                                              size: 16),
+                                        )
                                       : Container(),
                                   Container(
-                                    padding: EdgeInsets.only(top: 10),
+                                    padding: const EdgeInsets.only(top: 10),
                                     child: Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
                                       mainAxisSize: MainAxisSize.min,
                                       children: <Widget>[
                                         Container(
-                                          child: Icon(
+                                          child: const Icon(
                                             Icons.arrow_forward_ios,
                                             color: Style.buttonBlue,
                                             size: 20,
@@ -247,7 +251,7 @@ class _EventsListState extends State<EventsList> {
                               ),
                               NameTextAsync(
                                 record.createdBy,
-                                TextStyle(
+                                const TextStyle(
                                   color: Colors.black45,
                                   fontSize: 15,
                                 ),
@@ -260,7 +264,7 @@ class _EventsListState extends State<EventsList> {
                   ),
                 ],
               ),
-              Padding(
+              const Padding(
                 padding: EdgeInsets.only(top: 1),
                 child: Divider(
                   color: Colors.black87,
@@ -271,11 +275,11 @@ class _EventsListState extends State<EventsList> {
         ),
       ),
       onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => EventForm(event: record),
-            ),
-          ),
+        context,
+        MaterialPageRoute(
+          builder: (context) => EventForm(event: record),
+        ),
+      ),
     );
   }
 

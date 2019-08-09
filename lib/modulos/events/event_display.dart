@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:redesign/styles/fb_icon_icons.dart';
 import 'package:redesign/modulos/events/event.dart';
 import 'package:redesign/modulos/events/event_form.dart';
 import 'package:redesign/modulos/user/favorite.dart';
 import 'package:redesign/services/my_app.dart';
+import 'package:redesign/styles/fb_icon_icons.dart';
+import 'package:redesign/styles/style.dart';
 import 'package:redesign/widgets/async_data.dart';
 import 'package:redesign/widgets/base_screen.dart';
-import 'package:redesign/styles/style.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EventForm extends StatefulWidget {
@@ -46,19 +46,19 @@ class _DisplayEvent extends State<EventForm> {
         actions: event.createdBy == MyApp.userId()
             ? [
                 IconButton(
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.edit,
                     color: Colors.white,
                   ),
                   onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CreateEvent(event: this.event),
-                        ),
-                      ),
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CreateEvent(event: this.event),
+                    ),
+                  ),
                 ),
                 IconButton(
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.delete,
                   ),
                   onPressed: () => deleteEvent(context),
@@ -112,21 +112,21 @@ class _DisplayEvent extends State<EventForm> {
 
   Widget _body() {
     return Container(
-      padding: EdgeInsets.only(top: 5),
+      padding: const EdgeInsets.only(top: 5),
       child: ListView(
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   shape: BoxShape.rectangle,
                 ),
                 child: Column(
                   children: <Widget>[
                     Text(
                       event.date.day.toString(),
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Style.buttonBlue,
                         fontSize: 40,
                         fontWeight: FontWeight.w700,
@@ -134,7 +134,8 @@ class _DisplayEvent extends State<EventForm> {
                     ),
                     Text(
                       initialsMonth(event.date.month),
-                      style: TextStyle(color: Style.buttonBlue, fontSize: 30),
+                      style: const TextStyle(
+                          color: Style.buttonBlue, fontSize: 30),
                     ),
                   ],
                 ),
@@ -160,14 +161,14 @@ class _DisplayEvent extends State<EventForm> {
                       children: <Widget>[
                         Text(
                           event.name,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 18,
                           ),
                           maxLines: 2,
                         ),
                         NameTextAsync(
                           event.createdBy,
-                          TextStyle(
+                          const TextStyle(
                             color: Colors.black45,
                             fontSize: 15,
                           ),
@@ -186,8 +187,8 @@ class _DisplayEvent extends State<EventForm> {
                               : GestureDetector(
                                   child: Container(
                                     alignment: Alignment.bottomRight,
-                                    padding: EdgeInsets.only(right: 10),
-                                    child: Icon(
+                                    padding: const EdgeInsets.only(right: 10),
+                                    child: const Icon(
                                       FbIcon.facebook_official,
                                       color: Style.primaryColor,
                                       size: 28,
@@ -199,12 +200,12 @@ class _DisplayEvent extends State<EventForm> {
                             child: Container(
                               alignment: Alignment.bottomRight,
                               child: isFavorite
-                                  ? Icon(
+                                  ? const Icon(
                                       Icons.star,
                                       color: Style.primaryColor,
                                       size: 28,
                                     )
-                                  : Icon(
+                                  : const Icon(
                                       Icons.star_border,
                                       color: Style.primaryColor,
                                       size: 28,
@@ -220,12 +221,12 @@ class _DisplayEvent extends State<EventForm> {
               )),
             ],
           ),
-          Divider(
+          const Divider(
             color: Colors.black45,
           ),
           Container(
             alignment: Alignment.topLeft,
-            padding: EdgeInsets.only(top: 10, bottom: 15),
+            padding: const EdgeInsets.only(top: 10, bottom: 15),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -237,38 +238,40 @@ class _DisplayEvent extends State<EventForm> {
                       monthPortuguese(event.date.month) +
                       " de " +
                       event.date.year.toString() +
-                      " às " + (event.date.hour < 10 ? "0" : "") +
+                      " às " +
+                      (event.date.hour < 10 ? "0" : "") +
                       event.date.hour.toString() +
-                      ":" + (event.date.minute < 10 ? "0" : "")  +
+                      ":" +
+                      (event.date.minute < 10 ? "0" : "") +
                       event.date.minute.toString(),
-                  style: TextStyle(color: Colors.black54),
+                  style: const TextStyle(color: Colors.black54),
                 ),
-                Padding(padding: EdgeInsets.only(bottom: 10)),
+                Padding(padding: const EdgeInsets.only(bottom: 10)),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Container(
-                      child: Icon(
+                      child: const Icon(
                         Icons.location_on,
                         color: Colors.black45,
                         size: 24,
                       ),
                     ),
-                    Container(
+                    Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
                           Text(
                             event.local,
-                            style:
-                                TextStyle(fontSize: 18, color: Colors.black54),
+                            style: const TextStyle(
+                                fontSize: 18, color: Colors.black54),
                           ),
                           Text(event.address,
-                              style: TextStyle(color: Colors.black45)),
+                              style: const TextStyle(color: Colors.black45)),
                           Text(
                             event.city,
-                            style: TextStyle(color: Colors.black45),
+                            style: const TextStyle(color: Colors.black45),
                           ),
                         ],
                       ),
@@ -279,22 +282,24 @@ class _DisplayEvent extends State<EventForm> {
             ),
           ),
           Container(
-              padding: EdgeInsets.only(top: 20),
+              padding: const EdgeInsets.only(top: 20),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(
+                  const Text(
                     "Descrição",
                     style: TextStyle(
-                        fontWeight: FontWeight.w500, color: Colors.black54),
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black54,
+                    ),
                   ),
                 ],
               )),
-          Divider(
+          const Divider(
             color: Colors.black45,
           ),
           Container(
-            padding: EdgeInsets.only(top: 10),
+            padding: const EdgeInsets.only(top: 10),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.max,
@@ -303,7 +308,7 @@ class _DisplayEvent extends State<EventForm> {
                   child: Text(
                     event.description,
                     textAlign: TextAlign.justify,
-                    style: TextStyle(color: Colors.black54),
+                    style: const TextStyle(color: Colors.black54),
                   ),
                 ),
               ],

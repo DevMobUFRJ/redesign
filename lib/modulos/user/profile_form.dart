@@ -18,7 +18,7 @@ import 'package:redesign/styles/style.dart';
 import 'package:redesign/widgets/base_screen.dart';
 import 'package:redesign/widgets/standard_button.dart';
 
-final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+GlobalKey<ScaffoldState> _scaffoldKey;
 final FirebaseStorage _storage = FirebaseStorage.instance;
 StorageReference reference =
     _storage.ref().child("perfil/" + MyApp.userId() + ".jpg");
@@ -35,7 +35,9 @@ class ProfileFormState extends State<ProfileForm> {
   Institution institution;
   User user;
 
-  ProfileFormState({this.user, this.institution});
+  ProfileFormState({this.user, this.institution}) {
+    _scaffoldKey = GlobalKey<ScaffoldState>();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,11 +68,11 @@ class _UserFormState extends State<_UserForm> {
 
   // Os controllers repetidos abaixo são necessários para evitar que o valor
   // do campo seja perdido quando o usuario rolar a tela
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _descController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _siteController = TextEditingController();
-  final TextEditingController _fbController = TextEditingController();
+  TextEditingController _nameController,
+      _descController,
+      _emailController,
+      _siteController,
+      _fbController;
 
   User user;
   Institution relatedInstitution;
@@ -80,6 +82,11 @@ class _UserFormState extends State<_UserForm> {
     reference.getData(Helper.maxProfileImageSize).then((value) => setState(() {
           currentImage = value;
         }));
+    _nameController = TextEditingController(text: user.name);
+    _descController = TextEditingController(text: user.description);
+    _emailController = TextEditingController(text: user.email);
+    _siteController = TextEditingController(text: user.site);
+    _fbController = TextEditingController(text: user.facebook);
   }
 
   List<int> currentImage;
@@ -174,7 +181,6 @@ class _UserFormState extends State<_UserForm> {
             ),
             validator: (val) => val.isEmpty ? 'Nome é obrigatório' : null,
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
-            initialValue: user.name,
             onSaved: (val) => user.name = val,
             controller: _nameController,
           ),
@@ -190,21 +196,20 @@ class _UserFormState extends State<_UserForm> {
             maxLines: 4,
             validator: (val) => val.isEmpty ? 'Descrição é obrigatório' : null,
             inputFormatters: [LengthLimitingTextInputFormatter(500)],
-            initialValue: user.description,
             onSaved: (val) => user.description = val,
             controller: _descController,
           ),
           _buildDropdownAccountType(),
           _buildDropdown(),
           Container(
-            padding: EdgeInsets.only(top: 4),
+            padding: const EdgeInsets.only(top: 4),
             child: relatedInstitution == null
                 ? Container()
                 : GestureDetector(
-                    child: Text(
+                    child: const Text(
                       "Remover seleção",
                       textAlign: TextAlign.end,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 12,
                         color: Colors.red,
                       ),
@@ -223,7 +228,6 @@ class _UserFormState extends State<_UserForm> {
               labelText: 'Email (não editável)',
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(500)],
-            initialValue: user.email,
             enabled: false,
             controller: _emailController,
           ),
@@ -239,7 +243,6 @@ class _UserFormState extends State<_UserForm> {
             validator: (val) => val.isEmpty
                 ? null
                 : Validators.url(val) ? null : 'Site inválido',
-            initialValue: user.site,
             onSaved: (val) {
               if (!val.startsWith("http") && val.isNotEmpty) {
                 val = "http://" + val;
@@ -262,7 +265,6 @@ class _UserFormState extends State<_UserForm> {
                 : Validators.facebookUrl(val)
                     ? null
                     : 'Link do facebook inválido',
-            initialValue: user.facebook,
             onSaved: (val) {
               if (!val.startsWith("http") && val.isNotEmpty) {
                 val = "http://" + val;
@@ -272,9 +274,10 @@ class _UserFormState extends State<_UserForm> {
             controller: _fbController,
           ),
           Container(
-              padding: const EdgeInsets.only(top: 20.0),
-              child: StandardButton("Salvar", _submitForm,
-                  Style.main.primaryColor, Style.lightGrey)),
+            padding: const EdgeInsets.only(top: 20.0),
+            child: StandardButton("Salvar", _submitForm,
+                Style.main.primaryColor, Style.lightGrey),
+          ),
         ],
       ),
     );
@@ -460,6 +463,16 @@ class _InstitutionFormState extends State<_InstitutionForm> {
   Institution institution;
   String selectedType;
 
+  // Os controllers repetidos abaixo são necessários para evitar que o valor
+  // do campo seja perdido quando o usuario rolar a tela
+  TextEditingController _nameController,
+      _descController,
+      _emailController,
+      _siteController,
+      _fbController,
+      _addrController,
+      _cityController;
+
   _InstitutionFormState(this.institution) {
     reference
         .getData(Helper.maxProfileImageSize)
@@ -467,6 +480,13 @@ class _InstitutionFormState extends State<_InstitutionForm> {
               currentImage = value;
             }))
         .catchError((e) {});
+    _nameController = TextEditingController(text: institution.name);
+    _descController = TextEditingController(text: institution.description);
+    _emailController = TextEditingController(text: institution.email);
+    _siteController = TextEditingController(text: institution.site);
+    _fbController = TextEditingController(text: institution.facebook);
+    _addrController = TextEditingController(text: institution.address);
+    _cityController = TextEditingController(text: institution.city);
   }
 
   List<int> currentImage;
@@ -562,7 +582,7 @@ class _InstitutionFormState extends State<_InstitutionForm> {
             ),
             validator: (val) => val.isEmpty ? 'Nome é obrigatório' : null,
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
-            initialValue: institution.name,
+            controller: _nameController,
             onSaved: (val) => institution.name = val,
           ),
           TextFormField(
@@ -577,7 +597,7 @@ class _InstitutionFormState extends State<_InstitutionForm> {
             maxLines: 4,
             validator: (val) => val.isEmpty ? 'Descrição é obrigatório' : null,
             inputFormatters: [LengthLimitingTextInputFormatter(500)],
-            initialValue: institution.description,
+            controller: _descController,
             onSaved: (val) => institution.description = val,
           ),
           TextFormField(
@@ -586,7 +606,7 @@ class _InstitutionFormState extends State<_InstitutionForm> {
               labelText: 'Email (não editável)',
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(500)],
-            initialValue: institution.email,
+            controller: _emailController,
             enabled: false,
           ),
           _buildDropdownAccountType(),
@@ -602,7 +622,7 @@ class _InstitutionFormState extends State<_InstitutionForm> {
             validator: (val) => val.isEmpty
                 ? null
                 : Validators.url(val) ? null : 'Site inválido',
-            initialValue: institution.site,
+            controller: _siteController,
             onSaved: (val) {
               if (!val.startsWith("http") && val.isNotEmpty) {
                 val = "http://" + val;
@@ -624,7 +644,7 @@ class _InstitutionFormState extends State<_InstitutionForm> {
                 : Validators.facebookUrl(val)
                     ? null
                     : 'Link do facebook inválido',
-            initialValue: institution.facebook,
+            controller: _fbController,
             onSaved: (val) {
               if (!val.startsWith("http") && val.isNotEmpty) {
                 val = "http://" + val;
@@ -641,7 +661,7 @@ class _InstitutionFormState extends State<_InstitutionForm> {
               labelText: 'Endereço (Rua, Número)',
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(50)],
-            initialValue: institution.address,
+            controller: _addrController,
             onSaved: (val) {
               if (val != institution.address) addressChanged = true;
               institution.address = val;
@@ -656,7 +676,7 @@ class _InstitutionFormState extends State<_InstitutionForm> {
               labelText: 'Cidade',
             ),
             inputFormatters: [LengthLimitingTextInputFormatter(40)],
-            initialValue: institution.city,
+            controller: _cityController,
             onSaved: (val) {
               if (val != institution.city) addressChanged = true;
               institution.city = val;

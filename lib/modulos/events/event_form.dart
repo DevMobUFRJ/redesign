@@ -40,13 +40,13 @@ class _CreateEventState extends State<CreateEventPage> {
   final TextEditingController _hourController = TextEditingController();
   // Os controllers repetidos abaixo são necessários para evitar que o valor
   // do campo seja perdido quando o usuario rolar a tela
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _dateController = TextEditingController();
-  final TextEditingController _placeController = TextEditingController();
-  final TextEditingController _addrController = TextEditingController();
-  final TextEditingController _cityController = TextEditingController();
-  final TextEditingController _descController = TextEditingController();
-  final TextEditingController _fbController = TextEditingController();
+  TextEditingController _nameController,
+      _dateController,
+      _localController,
+      _addrController,
+      _cityController,
+      _descController,
+      _fbController;
 
   Event event;
   bool blocked = false;
@@ -61,6 +61,14 @@ class _CreateEventState extends State<CreateEventPage> {
       String hour = convertToHMString(event.date);
       if (hour != null) _hourController.text = hour;
     }
+    _nameController = TextEditingController(text: event.name);
+    _dateController =
+        TextEditingController(text: convertToDMYString(event.date));
+    _localController = TextEditingController(text: event.local);
+    _addrController = TextEditingController(text: event.address);
+    _cityController = TextEditingController(text: event.city);
+    _descController = TextEditingController(text: event.description);
+    _fbController = TextEditingController(text: event.facebookUrl);
   }
 
   @override
@@ -76,7 +84,7 @@ class _CreateEventState extends State<CreateEventPage> {
                   icon: const Icon(Icons.person),
                   labelText: 'Nome do Evento',
                 ),
-                initialValue: event.name,
+                controller: _nameController,
                 validator: (val) => val.isEmpty ? 'Nome é obrigatório' : null,
                 inputFormatters: [LengthLimitingTextInputFormatter(50)],
                 onSaved: (val) => event.name = val,
@@ -86,7 +94,7 @@ class _CreateEventState extends State<CreateEventPage> {
                   icon: const Icon(Icons.calendar_today),
                   labelText: 'Data (dd/mm/aaaa)',
                 ),
-                initialValue: convertToDMYString(event.date),
+                controller: _dateController,
                 keyboardType: TextInputType.datetime,
                 inputFormatters: [LengthLimitingTextInputFormatter(10)],
                 validator: (val) => isDateValid(val) ? null : 'Data inválida',
@@ -108,7 +116,7 @@ class _CreateEventState extends State<CreateEventPage> {
                   icon: const Icon(Icons.home),
                   labelText: 'Nome do Local',
                 ),
-                initialValue: event.local,
+                controller: _localController,
                 validator: (val) => val.isEmpty ? 'Local é obrigatório' : null,
                 inputFormatters: [LengthLimitingTextInputFormatter(50)],
                 onSaved: (val) => event.local = val,
@@ -118,7 +126,7 @@ class _CreateEventState extends State<CreateEventPage> {
                   icon: const Icon(Icons.location_on),
                   labelText: 'Endereço',
                 ),
-                initialValue: event.address,
+                controller: _addrController,
                 validator: (val) =>
                     val.isEmpty ? 'Endereço é obrigatório' : null,
                 inputFormatters: [LengthLimitingTextInputFormatter(100)],
@@ -129,7 +137,7 @@ class _CreateEventState extends State<CreateEventPage> {
                   icon: const Icon(Icons.location_city),
                   labelText: 'Cidade',
                 ),
-                initialValue: event.city,
+                controller: _cityController,
                 validator: (val) => val.isEmpty ? 'Cidade é obrigatório' : null,
                 inputFormatters: [LengthLimitingTextInputFormatter(20)],
                 onSaved: (val) => event.city = val,
@@ -139,7 +147,7 @@ class _CreateEventState extends State<CreateEventPage> {
                   icon: const Icon(Icons.description),
                   labelText: 'Descrição',
                 ),
-                initialValue: event.description,
+                controller: _descController,
                 keyboardType: TextInputType.multiline,
                 maxLines: 4,
                 validator: (val) => val.isEmpty
@@ -153,7 +161,7 @@ class _CreateEventState extends State<CreateEventPage> {
                   icon: const Icon(FbIcon.facebook_official),
                   labelText: 'Link do Evento no facebook',
                 ),
-                initialValue: event.facebookUrl,
+                controller: _fbController,
                 validator: (val) =>
                     Validators.facebookUrl(val) ? null : 'Link inválido',
                 keyboardType: TextInputType.emailAddress,
