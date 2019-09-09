@@ -57,7 +57,7 @@ class ResourceFormState extends State<ResourceForm> {
                 ),
                 validator: (val) => val.isEmpty ? 'Link é obrigatório' :
                   Validators.url(val) ? null : 'Link inválido',
-                inputFormatters: [LengthLimitingTextInputFormatter(70)],
+                inputFormatters: [LengthLimitingTextInputFormatter(300)],
                 onSaved: (val){
                   if(!val.startsWith("http")){
                     val = "http://" + val;
