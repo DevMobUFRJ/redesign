@@ -162,8 +162,9 @@ class _CreateEventState extends State<CreateEventPage> {
                   labelText: 'Link do Evento no facebook',
                 ),
                 controller: _fbController,
-                validator: (val) =>
-                    Validators.facebookUrl(val) ? null : 'Link inválido',
+                validator: (val) => val.isEmpty
+                    ? null
+                    : (Validators.facebookUrl(val) ? null : 'Link inválido'),
                 keyboardType: TextInputType.emailAddress,
                 inputFormatters: [LengthLimitingTextInputFormatter(80)],
                 onSaved: (val) => event.facebookUrl = val,
