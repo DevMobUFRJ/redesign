@@ -11,21 +11,29 @@ class ForumPost {
 
   DocumentReference reference;
 
-  ForumPost({this.title, this.description, this.createdBy, this.topicId, this.date, this.reference});
+  ForumPost(
+      {this.title,
+      this.description,
+      this.createdBy,
+      this.topicId,
+      this.date,
+      this.reference});
 
-  ForumPost.fromMap(Map<String, dynamic> data, {this.reference}) :
-    title = data['titulo'] ?? '',
-    description = data['descricao'] ?? '',
-    createdBy = data['criadoPor'] ?? '',
-    topicId = data['temaId'] ?? '',
-    date = data['data'] != null ? DateTime.tryParse(data['data']) : '';
+  ForumPost.fromMap(Map<String, dynamic> data, {this.reference})
+      : title = data['titulo'] ?? '',
+        description = data['descricao'] ?? '',
+        createdBy = data['criadoPor'] ?? '',
+        topicId = data['temaId'] ?? '',
+        date = data['data'] != null ? DateTime.tryParse(data['data']) : '';
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         'titulo': title,
         'descricao': description,
         'criadoPor': createdBy,
         'temaId': topicId,
         'data': date.toIso8601String(),
       };
+  deletePost() {
+    reference.delete();
+  }
 }

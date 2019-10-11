@@ -22,7 +22,7 @@ class ForumPostListState extends State<ForumPostList> {
   bool searching = false;
   TextEditingController _searchController = TextEditingController();
   String search = "";
-  
+
   ForumTopic topic;
 
   ForumPostListState(this.topic);
@@ -34,20 +34,17 @@ class ForumPostListState extends State<ForumPostList> {
       body: _buildBody(context),
       fab: FloatingActionButton(
         onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ForumPostForm(topic),
-              ),
-            ),
+          context,
+          MaterialPageRoute(
+            builder: (context) => ForumPostForm(topic: topic),
+          ),
+        ),
         child: Icon(Icons.add),
         backgroundColor: Style.main.primaryColor,
       ),
       actions: <IconButton>[
         IconButton(
-          icon: Icon(
-              Icons.search,
-              color: Colors.white
-          ),
+          icon: Icon(Icons.search, color: Colors.white),
           onPressed: () => toggleSearch(),
         ),
       ],
@@ -65,7 +62,7 @@ class ForumPostListState extends State<ForumPostList> {
       builder: (context, snapshot) {
         if (!snapshot.hasData) return LinearProgressIndicator();
 
-        if(snapshot.data.documents.length == 0)
+        if (snapshot.data.documents.length == 0)
           return Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -85,28 +82,27 @@ class ForumPostListState extends State<ForumPostList> {
       Expanded(
         child: ListView(
           children: [
-            searching ?
-            Container(
-              margin: EdgeInsets.only(bottom: 15),
-              decoration: ShapeDecoration(shape: StadiumBorder()),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      onChanged: searchTextChanged,
-                      controller: _searchController,
-                      cursorColor: Style.lightGrey,
-                      decoration: InputDecoration(
-                        hintText: "Buscar",
-                        prefixIcon: Icon(Icons.search, color: Style.primaryColor)
+            searching
+                ? Container(
+                    margin: EdgeInsets.only(bottom: 15),
+                    decoration: ShapeDecoration(shape: StadiumBorder()),
+                    child: Row(children: [
+                      Expanded(
+                        child: TextField(
+                          onChanged: searchTextChanged,
+                          controller: _searchController,
+                          cursorColor: Style.lightGrey,
+                          decoration: InputDecoration(
+                              hintText: "Buscar",
+                              prefixIcon: Icon(Icons.search,
+                                  color: Style.primaryColor)),
+                        ),
                       ),
-                    ),
-                  ),
-                ]
-              ),
-            )
-            : Container(),
-          ]..addAll(snapshot.map((data) => _buildListItem(context, data)).toList()),
+                    ]),
+                  )
+                : Container(),
+          ]..addAll(
+              snapshot.map((data) => _buildListItem(context, data)).toList()),
         ),
       ),
     ]);
@@ -114,26 +110,25 @@ class ForumPostListState extends State<ForumPostList> {
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
     ForumPost post = ForumPost.fromMap(data.data, reference: data.reference);
-    
-    if(!post.title.toLowerCase().contains(search)
-      && !post.description.toLowerCase().contains(search))
-      return Container();
-    
+
+    if (!post.title.toLowerCase().contains(search) &&
+        !post.description.toLowerCase().contains(search)) return Container();
+
     return _PostItem(post);
   }
-  
-  toggleSearch(){
-    setState((){
+
+  toggleSearch() {
+    setState(() {
       searching = !searching;
     });
-    
-    if(!searching) {
+
+    if (!searching) {
       _searchController.text = "";
       searchTextChanged("");
     }
   }
 
-  searchTextChanged(String text){
+  searchTextChanged(String text) {
     setState(() {
       search = text.toLowerCase();
     });
@@ -164,7 +159,10 @@ class _PostState extends State<_PostItem> {
           children: <Widget>[
             Row(
               children: <Widget>[
-                CircleAvatarAsync(post.createdBy, radius: 23,),
+                CircleAvatarAsync(
+                  post.createdBy,
+                  radius: 23,
+                ),
                 Expanded(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -184,12 +182,11 @@ class _PostState extends State<_PostItem> {
                                 softWrap: false,
                               ),
                               NameTextAsync(
-                                post.createdBy,
-                                TextStyle(
-                                  color: Colors.black54,
-                                  fontSize: 14,
-                                )
-                              ),
+                                  post.createdBy,
+                                  TextStyle(
+                                    color: Colors.black54,
+                                    fontSize: 14,
+                                  )),
                             ],
                           ),
                         ),
@@ -223,5 +220,4 @@ class _PostState extends State<_PostItem> {
       ),
     );
   }
-
 }

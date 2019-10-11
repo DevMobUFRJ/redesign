@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:redesign/services/my_app.dart';
 import 'package:redesign/styles/style.dart';
 import 'package:redesign/modulos/forum/forum_comment.dart';
 import 'package:redesign/modulos/forum/forum_comment_form.dart';
@@ -9,6 +10,8 @@ import 'package:redesign/services/helper.dart';
 import 'package:redesign/widgets/standard_button.dart';
 import 'package:redesign/widgets/async_data.dart';
 import 'package:redesign/widgets/forum_base_screen_post.dart';
+import 'forum_post_form.dart';
+import 'forum_topic.dart';
 
 class ForumPostDisplay extends StatefulWidget {
   final ForumPost post;
@@ -21,17 +24,66 @@ class ForumPostDisplay extends StatefulWidget {
 
 class ForumPostDisplayState extends State<ForumPostDisplay> {
   final ForumPost post;
+  ForumTopic topic;
 
   ForumPostDisplayState(this.post);
+
+  _deleteConfirmation() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Excluir post'),
+          content: Text('Deseja realmente excluir este post ?'),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Não'),
+              onPressed: () => Navigator.pop(context),
+            ),
+            FlatButton(
+              child: Text('Sim'),
+              onPressed: () {
+                post.deletePost();
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+            )
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return ForumBaseScreen(
       title: post.title,
+      actions: MyApp.userId() == post.createdBy || MyApp.isLabDis() == true
+          ? <IconButton>[
+              IconButton(
+                  icon: Icon(Icons.delete, color: Colors.white),
+                  onPressed: () => _deleteConfirmation()),
+              IconButton(
+                icon: Icon(
+                  Icons.edit,
+                  color: Colors.white,
+                ),
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ForumPostForm(editPost: post),
+                  ),
+                ),
+              )
+            ]
+          : null,
       body: Column(
         children: <Widget>[
           Container(
-            color: Style.darkBackground,
+            decoration: BoxDecoration(
+              border: Border(top: BorderSide(color: Style.darkBackground)),
+              color: Style.darkBackground,
+            ),
             padding: EdgeInsets.only(top: 8, bottom: 8, left: 16, right: 10),
             child: Column(
               children: <Widget>[
@@ -128,7 +180,7 @@ class _CommentsListState extends State<_CommentsList> {
           ListView(
               children: <Widget>[
             Container(
-              padding: EdgeInsets.only(left: 16, right: 16, bottom: 8),
+              padding: EdgeInsets.only(left: 16, right: 16, bottom: 8, top: 8),
               color: Style.darkBackground,
               child: Text(
                 post.description,
