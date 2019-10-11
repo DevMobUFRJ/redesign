@@ -12,6 +12,8 @@ import 'package:redesign/widgets/async_data.dart';
 import 'package:redesign/widgets/forum_base_screen_post.dart';
 import 'forum_post_form.dart';
 import 'forum_topic.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ForumPostDisplay extends StatefulWidget {
   final ForumPost post;
@@ -180,13 +182,27 @@ class _CommentsListState extends State<_CommentsList> {
           ListView(
               children: <Widget>[
             Container(
-              padding: EdgeInsets.only(left: 16, right: 16, bottom: 8, top: 8),
-              color: Style.darkBackground,
-              child: Text(
-                post.description,
-                style: TextStyle(color: Colors.white),
-              ),
-            )
+                padding:
+                    EdgeInsets.only(left: 16, right: 16, bottom: 8, top: 8),
+                color: Style.darkBackground,
+                child: Linkify(
+                  onOpen: (link) async {
+                    if (await canLaunch(link.url)) {
+                      await launch(link.url);
+                    } else {
+                      throw 'Could not launch $link';
+                    }
+                  },
+                  text: post.description,
+                  style: TextStyle(color: Colors.white),
+                  linkStyle: TextStyle(color: Colors.blue),
+                  humanize: true,
+                )
+//              Text(
+//                post.description,
+//                style: TextStyle(color: Colors.white),
+//              ),
+                )
           ]
                 ..addAll(snapshot
                     .map((data) => _buildListItem(context, data))
@@ -301,10 +317,19 @@ class _CommentsListState extends State<_CommentsList> {
                 Container(
                   alignment: Alignment.topLeft,
                   padding: EdgeInsets.only(left: 15, right: 15),
-                  child: Text(
-                    comment.description,
-                    textAlign: TextAlign.justify,
+                  child: Linkify(
+                    onOpen: (link) async {
+                      if (await canLaunch(link.url)) {
+                        await launch(link.url);
+                      } else {
+                        throw 'Could not launch $link';
+                      }
+                    },
+                    text: comment.description,
+                    linkStyle: TextStyle(color: Colors.blue),
+                    humanize: true,
                   ),
+//                    textAlign: TextAlign.justify,
                 )
               ],
             ),
