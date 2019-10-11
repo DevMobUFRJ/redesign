@@ -208,77 +208,110 @@ class _CommentsListState extends State<_CommentsList> {
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
     ForumComment comment =
         ForumComment.fromMap(data.data, reference: data.reference);
+
+    _deleteCommentConfirmation() {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Excluir Comentário'),
+            content: Text('Deseja realmente excluir este comentário ?'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Não'),
+                onPressed: () => Navigator.pop(context),
+              ),
+              FlatButton(
+                child: Text('Sim'),
+                onPressed: () {
+                  comment.deleteComment();
+                  Navigator.pop(context);
+                },
+              )
+            ],
+          );
+        },
+      );
+    }
+
     return Column(
       key: Key(data.documentID),
       children: <Widget>[
-        ExpansionTile(
-          title: Column(
-            children: <Widget>[
-              Container(
-                  key: ValueKey(data.documentID),
-                  child: Row(
-                    children: <Widget>[
-                      CircleAvatarAsync(
-                        comment.createdBy,
-                        radius: 23,
-                        clickable: true,
-                      ),
-                      Expanded(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Flexible(
-                              child: Container(
-                                padding: EdgeInsets.only(left: 10),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      comment.title,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                          color: Style.buttonBlue,
-                                          fontSize: 18),
+        GestureDetector(
+            child: ExpansionTile(
+              title: Column(
+                children: <Widget>[
+                  Container(
+                      key: ValueKey(data.documentID),
+                      child: Row(
+                        children: <Widget>[
+                          CircleAvatarAsync(
+                            comment.createdBy,
+                            radius: 23,
+                            clickable: true,
+                          ),
+                          Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Flexible(
+                                  child: Container(
+                                    padding: EdgeInsets.only(left: 10),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          comment.title,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                              color: Style.buttonBlue,
+                                              fontSize: 18),
+                                        ),
+                                        NameTextAsync(
+                                          comment.createdBy,
+                                          TextStyle(
+                                              color: Colors.black54,
+                                              fontSize: 14),
+                                          prefix: "",
+                                        )
+                                      ],
                                     ),
-                                    NameTextAsync(
-                                      comment.createdBy,
-                                      TextStyle(
-                                          color: Colors.black54, fontSize: 14),
-                                      prefix: "",
-                                    )
-                                  ],
+                                  ),
                                 ),
-                              ),
+                              ],
                             ),
-                          ],
-                        ),
-                      )
-                    ],
-                  )),
-            ],
-          ),
-          children: <Widget>[
-            Container(
-              alignment: Alignment.topLeft,
-              padding: EdgeInsets.only(left: 15, bottom: 5),
-              child: Text(
-                "Em " + Helper.convertToDMYString(comment.date),
-                style: TextStyle(
-                  fontSize: 11,
-                  color: Colors.black45,
+                          )
+                        ],
+                      )),
+                ],
+              ),
+              children: <Widget>[
+                Container(
+                  alignment: Alignment.topLeft,
+                  padding: EdgeInsets.only(left: 15, bottom: 5),
+                  child: Text(
+                    "Em " + Helper.convertToDMYString(comment.date),
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Colors.black45,
+                    ),
+                  ),
                 ),
-              ),
+                Container(
+                  alignment: Alignment.topLeft,
+                  padding: EdgeInsets.only(left: 15, right: 15),
+                  child: Text(
+                    comment.description,
+                    textAlign: TextAlign.justify,
+                  ),
+                )
+              ],
             ),
-            Container(
-              alignment: Alignment.topLeft,
-              padding: EdgeInsets.only(left: 15, right: 15),
-              child: Text(
-                comment.description,
-                textAlign: TextAlign.justify,
-              ),
-            )
-          ],
-        ),
+            onLongPress: () =>
+                MyApp.isLabDis() || MyApp.userId() == comment.createdBy
+                    ? _deleteCommentConfirmation()
+                    : null),
         myDivider()
       ],
     );

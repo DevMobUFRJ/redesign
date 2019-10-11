@@ -36,7 +36,7 @@ class ForumPostFormState extends State<ForumPostForm> {
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      title: edit == null ? "Novo Problema" : "editar",
+      title: edit == null ? "Novo Problema" : "Editar post",
       body: Scaffold(
         key: _scaffoldKey,
         body: Stack(
