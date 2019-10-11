@@ -13,15 +13,17 @@ FocusNode _focusDescription = FocusNode();
 
 class ForumPostForm extends StatefulWidget {
   final ForumTopic topic;
+  final ForumPost editPost;
 
-  ForumPostForm(this.topic);
+  ForumPostForm({this.topic, this.editPost});
 
   @override
-  ForumPostFormState createState() => ForumPostFormState(topic);
+  ForumPostFormState createState() => ForumPostFormState(topic, editPost);
 }
 
 class ForumPostFormState extends State<ForumPostForm> {
   ForumTopic topic;
+  ForumPost edit;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -29,12 +31,12 @@ class ForumPostFormState extends State<ForumPostForm> {
 
   ForumPost post = ForumPost();
 
-  ForumPostFormState(this.topic);
+  ForumPostFormState(this.topic, this.edit);
 
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      title: "Novo Problema",
+      title: edit == null ? "Novo Problema" : "editar",
       body: Scaffold(
         key: _scaffoldKey,
         body: Stack(
@@ -52,11 +54,18 @@ class ForumPostFormState extends State<ForumPostForm> {
                             icon: const Icon(Icons.short_text),
                             labelText: 'Título',
                           ),
-                          validator: (val) => val.isEmpty ? 'Título é obrigatório' : null,
-                          inputFormatters: [LengthLimitingTextInputFormatter(50)],
-                          onSaved: (val) => post.title = val,
+                          validator: (val) =>
+                              val.isEmpty ? 'Título é obrigatório' : null,
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(50)
+                          ],
+                          onSaved: (val) => edit == null
+                              ? post.title = val
+                              : edit.title = val,
                           textInputAction: TextInputAction.next,
-                          onFieldSubmitted: (v) => FocusScope.of(context).requestFocus(_focusDescription),
+                          onFieldSubmitted: (v) => FocusScope.of(context)
+                              .requestFocus(_focusDescription),
+                          initialValue: edit == null ? '' : edit.title,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(bottom: 70.0),
@@ -67,13 +76,21 @@ class ForumPostFormState extends State<ForumPostForm> {
                             ),
                             keyboardType: TextInputType.multiline,
                             maxLines: 4,
-                            validator: (val) => val.isEmpty ? 'Descrição é obrigatório' :
-                            val.length > 15 ? null : 'Descreva melhor seu problema',
-                            inputFormatters: [LengthLimitingTextInputFormatter(500)],
-                            onSaved: (val) => post.description = val,
+                            validator: (val) => val.isEmpty
+                                ? 'Descrição é obrigatório'
+                                : val.length > 15
+                                    ? null
+                                    : 'Descreva melhor seu problema',
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(500)
+                            ],
+                            onSaved: (val) => edit == null
+                                ? post.description = val
+                                : edit.description = val,
                             focusNode: _focusDescription,
                             textInputAction: TextInputAction.send,
                             onFieldSubmitted: (v) => _submitForm,
+                            initialValue: edit == null ? '' : edit.description,
                           ),
                         ),
                       ],
@@ -83,18 +100,31 @@ class ForumPostFormState extends State<ForumPostForm> {
               ),
             ),
             Container(
-              child: StandardButton("Salvar", _submitForm,
-                Style.main.primaryColor, Style.lightGrey
-              )
-            ),
+                child: StandardButton(
+                    "Salvar",
+                    edit == null ? _submitForm : _submitEdit,
+                    Style.main.primaryColor,
+                    Style.lightGrey)),
           ],
         ),
       ),
     );
   }
 
+  void _submitEdit() {
+    final FormState form = _formKey.currentState;
+
+    if (!form.validate()) {
+      showMessage('Por favor, complete todos os campos.');
+    } else {
+      form.save();
+      edit.date = DateTime.now();
+      editPost(edit);
+    }
+  }
+
   void _submitForm() {
-    if(blocked) return;
+    if (blocked) return;
 
     blocked = true;
     final FormState form = _formKey.currentState;
@@ -116,11 +146,22 @@ class ForumPostFormState extends State<ForumPostForm> {
         .showSnackBar(SnackBar(backgroundColor: color, content: Text(message)));
   }
 
-  savePost(ForumPost post){
-    Firestore.instance.collection(ForumPost.collectionName).add(post.toJson()).then(saved); //TODO pegar o erro
+  savePost(ForumPost post) {
+    Firestore.instance
+        .collection(ForumPost.collectionName)
+        .add(post.toJson())
+        .then(saved); //TODO pegar o erro
   }
 
-  saved(DocumentReference doc){
+  editPost(ForumPost post) {
+    Firestore.instance
+        .collection(ForumPost.collectionName)
+        .document(post.topicId)
+        .updateData(post.toJson());
+    Navigator.pop(context);
+  }
+
+  saved(DocumentReference doc) {
     Navigator.pop(context);
   }
 }
