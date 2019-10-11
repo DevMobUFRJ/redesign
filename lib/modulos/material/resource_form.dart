@@ -2,13 +2,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:redesign/styles/style.dart';
 import 'package:redesign/modulos/material/didactic_resource.dart';
 import 'package:redesign/services/validators.dart';
-import 'package:redesign/widgets/standard_button.dart';
+import 'package:redesign/styles/style.dart';
 import 'package:redesign/widgets/base_screen.dart';
+import 'package:redesign/widgets/standard_button.dart';
 
 class ResourceForm extends StatefulWidget {
+  final String resourcePath;
+
+  ResourceForm(this.resourcePath);
+
   @override
   ResourceFormState createState() => ResourceFormState();
 }
@@ -18,6 +22,8 @@ class ResourceFormState extends State<ResourceForm> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   bool blocked = false;
 
+  bool isFolder = false;
+
   DidacticResource resource = DidacticResource();
 
   ResourceFormState();
@@ -25,7 +31,7 @@ class ResourceFormState extends State<ResourceForm> {
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      title: "Novo Material",
+      title: isFolder ? "Nova Pasta" : "Novo Material",
       body: Scaffold(
         key: _scaffoldKey,
         resizeToAvoidBottomPadding: false,
@@ -33,12 +39,20 @@ class ResourceFormState extends State<ResourceForm> {
           key: _formKey,
           child: ListView(
             children: <Widget>[
+              CheckboxListTile(
+                title: const Text("Criar como pasta de materiais?"),
+                onChanged: (newVal) {
+                  setState(() => isFolder = newVal);
+                },
+                value: isFolder,
+              ),
               TextFormField(
                 decoration: const InputDecoration(
                   icon: const Icon(Icons.short_text),
                   labelText: 'Título',
                 ),
-                validator: (val) => val.trim().isEmpty ? 'Título é obrigatório' : null,
+                validator: (val) =>
+                    val.trim().isEmpty ? 'Título é obrigatório' : null,
                 inputFormatters: [LengthLimitingTextInputFormatter(40)],
                 onSaved: (val) => resource.title = val.trim(),
               ),
@@ -50,26 +64,28 @@ class ResourceFormState extends State<ResourceForm> {
                 inputFormatters: [LengthLimitingTextInputFormatter(200)],
                 onSaved: (val) => resource.description = val.trim(),
               ),
-              TextFormField(
-                decoration: const InputDecoration(
-                  icon: const Icon(Icons.link),
-                  labelText: 'Link',
-                ),
-                validator: (val) => val.isEmpty ? 'Link é obrigatório' :
-                  Validators.url(val) ? null : 'Link inválido',
-                inputFormatters: [LengthLimitingTextInputFormatter(300)],
-                onSaved: (val){
-                  if(!val.startsWith("http")){
-                    val = "http://" + val;
-                  }
-                  resource.url = val;
-                },
-              ),
+              isFolder
+                  ? Container()
+                  : TextFormField(
+                      decoration: const InputDecoration(
+                        icon: const Icon(Icons.link),
+                        labelText: 'Link',
+                      ),
+                      validator: (val) => val.isEmpty
+                          ? 'Link é obrigatório'
+                          : Validators.url(val) ? null : 'Link inválido',
+                      inputFormatters: [LengthLimitingTextInputFormatter(300)],
+                      onSaved: (val) {
+                        if (!val.startsWith("http")) {
+                          val = "http://" + val;
+                        }
+                        isFolder ? resource.url = "" : resource.url = val;
+                      },
+                    ),
               Container(
                   padding: const EdgeInsets.only(top: 20.0),
-                  child: StandardButton("Enviar", _submitForm,
-                      Style.main.primaryColor, Style.lightGrey)
-              ),
+                  child: StandardButton("Salvar", _submitForm,
+                      Style.main.primaryColor, Style.lightGrey)),
             ],
           ),
         ),
@@ -78,7 +94,7 @@ class ResourceFormState extends State<ResourceForm> {
   }
 
   void _submitForm() {
-    if(blocked) return;
+    if (blocked) return;
 
     blocked = true;
     final FormState form = _formKey.currentState;
@@ -87,6 +103,7 @@ class ResourceFormState extends State<ResourceForm> {
       showMessage('Por favor, complete todos os campos.');
     } else {
       form.save(); //Executa cada evento "onSaved" dos campos do formulário
+      resource.isFolder = this.isFolder;
       resource.date = DateTime.now();
       save(resource);
     }
@@ -98,11 +115,14 @@ class ResourceFormState extends State<ResourceForm> {
         .showSnackBar(SnackBar(backgroundColor: color, content: Text(message)));
   }
 
-  save(DidacticResource resource){
-    Firestore.instance.collection(DidacticResource.collectionName).add(resource.toJson()).then(savedSuccessfully); //TODO pegar o erro
+  save(DidacticResource resource) {
+    Firestore.instance
+        .collection(widget.resourcePath)
+        .add(resource.toJson())
+        .then(savedSuccessfully); //TODO pegar o erro
   }
 
-  savedSuccessfully(DocumentReference doc){
+  savedSuccessfully(DocumentReference doc) {
     Navigator.pop(context);
   }
 }

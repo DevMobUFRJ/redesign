@@ -4,6 +4,7 @@ import 'package:redesign/styles/style.dart';
 
 class SimpleListItem extends StatelessWidget {
   final String title;
+  final double titleFontSize;
   final String subtitle;
   final VoidCallback callback;
   final Widget iconExtra;
@@ -15,6 +16,7 @@ class SimpleListItem extends StatelessWidget {
       this.iconExtra,
       this.textColor = Style.primaryColor,
       this.subtitle,
+      this.titleFontSize,
       this.onLongPress})
       : super(key: key);
 
@@ -28,7 +30,7 @@ class SimpleListItem extends StatelessWidget {
               title,
               style: TextStyle(
                 color: textColor,
-                fontSize: 22.0,
+                fontSize: titleFontSize ?? 22.0,
               ),
             ),
             onTap: callback,
@@ -49,7 +51,10 @@ class SimpleListItem extends StatelessWidget {
             contentPadding: EdgeInsets.only(top: 2, bottom: 2),
             onLongPress: onLongPress,
           ),
-          Divider(color: Colors.black38),
+          Divider(
+            color: Colors.black38,
+            height: 10,
+          ),
         ],
       ),
     );
