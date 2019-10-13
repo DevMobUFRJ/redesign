@@ -154,10 +154,7 @@ class ForumPostFormState extends State<ForumPostForm> {
   }
 
   editPost(ForumPost post) {
-    Firestore.instance
-        .collection(ForumPost.collectionName)
-        .document(post.topicId)
-        .updateData(post.toJson());
+    post.updatePost();
     Navigator.pop(context);
   }
 

@@ -33,6 +33,11 @@ class ForumPost {
         'temaId': topicId,
         'data': date.toIso8601String(),
       };
+
+  updatePost() {
+    reference.updateData(this.toJson());
+  }
+
   deletePost() {
     reference.delete();
   }
