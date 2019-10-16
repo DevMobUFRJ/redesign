@@ -16,8 +16,17 @@ class ResourceList extends StatefulWidget {
 }
 
 class ResourceListState extends State<ResourceList> {
-  /// Armazena o caminho/pasta atual que estamos visualizando
+  /// Armazena o caminho/pasta atual que estamos visualizando devido à
+  /// função de material dentro de material dentro de material.
   String currentPath = DidacticResource.collectionName;
+
+  /// Salva a última lista de documentos pra evitar um lag visual no setState
+  /// quando o currentPath é alterado, que buildava a lista duas vezes.
+  List<DocumentSnapshot> currentDocs = [];
+
+  /// Usada apenas quando o usuário clica pra acessar ou subir de pasta, para
+  /// evitar o lag visual mencionado no comentário acima.
+  bool loading = true;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +35,7 @@ class ResourceListState extends State<ResourceList> {
       body: _buildBody(context),
       fab: MyApp.isLabDis()
           ? FloatingActionButton(
-              onPressed: () => newResource(),
+              onPressed: () => _newResource(),
               child: const Icon(Icons.add),
               backgroundColor: Style.main.primaryColor,
             )
@@ -42,7 +51,12 @@ class ResourceListState extends State<ResourceList> {
           .orderBy("data", descending: true)
           .snapshots(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) return LinearProgressIndicator();
+        if (!snapshot.hasData ||
+            (loading && snapshot.data.documents == currentDocs))
+          return LinearProgressIndicator();
+
+        currentDocs = snapshot.data.documents;
+        loading = false;
 
         if (snapshot.data.documents.length == 0 && !currentPath.contains("/"))
           return Row(
@@ -58,42 +72,45 @@ class ResourceListState extends State<ResourceList> {
   }
 
   Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
-    return Column(children: [
-      Expanded(
-        child: ListView(
-          children: [
-            currentPath.contains("/")
-                ? Column(
-                    children: [
-                      ListTile(
-                        title: const Text("Voltar à pasta anterior"),
-                        leading: const Icon(
-                          Icons.arrow_back,
-                          size: 20,
-                        ),
-                        dense: true,
-                        contentPadding: const EdgeInsets.all(0),
-                        onTap: exitFolder,
-                      ),
-                      const Divider(
-                        color: Colors.black38,
-                        height: 4,
-                      )
-                    ],
-                  )
-                : Container(),
-            snapshot.length == 0
-                ? Container(
-                    padding: const EdgeInsets.all(16),
-                    child: const Text("Ainda não temos materiais aqui."),
-                    alignment: Alignment.center,
-                  )
-                : Container(),
-          ]..addAll(
-              snapshot.map((data) => _buildListItem(context, data)).toList()),
-        ),
-      ),
-    ]);
+    return loading
+        ? Container()
+        : Column(children: [
+            Expanded(
+              child: ListView(
+                children: [
+                  currentPath.contains("/")
+                      ? Column(
+                          children: [
+                            ListTile(
+                              title: const Text("Voltar à pasta anterior"),
+                              leading: const Icon(
+                                Icons.arrow_back,
+                                size: 20,
+                              ),
+                              dense: true,
+                              contentPadding: const EdgeInsets.all(0),
+                              onTap: _exitFolder,
+                            ),
+                            const Divider(
+                              color: Colors.black38,
+                              height: 4,
+                            )
+                          ],
+                        )
+                      : Container(),
+                  snapshot.length == 0
+                      ? Container(
+                          padding: const EdgeInsets.all(16),
+                          child: const Text("Ainda não temos materiais aqui."),
+                          alignment: Alignment.center,
+                        )
+                      : Container(),
+                ]..addAll(snapshot
+                    .map((data) => _buildListItem(context, data))
+                    .toList()),
+              ),
+            ),
+          ]);
   }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
@@ -101,47 +118,61 @@ class ResourceListState extends State<ResourceList> {
         DidacticResource.fromMap(data.data, reference: data.reference);
 
     if (material.isFolder) {
-      return SimpleListItem(
-        material.title,
-        () {
-          enterFolder(material);
-        },
-        titleFontSize: 18,
-        subtitle: material.description,
-        iconExtra: const Icon(
-          Icons.folder,
-          color: Style.primaryColor,
+      return Visibility(
+        visible: !loading,
+        child: SimpleListItem(
+          material.title,
+          () {
+            _enterFolder(material);
+          },
+          titleFontSize: 18,
+          subtitle: material.description,
+          iconExtra: const Icon(
+            Icons.folder,
+            color: Style.primaryColor,
+          ),
+          key: ValueKey(data.documentID),
+          onLongPress:
+              MyApp.isLabDis() ? () => _deleteResource(material) : null,
         ),
-        key: ValueKey(data.documentID),
-        onLongPress: MyApp.isLabDis() ? () => _deleteResource(material) : null,
       );
     } else {
-      return SimpleListItem(
-        material.title,
-        () {
-          _launchURL(material.url);
-        },
-        titleFontSize: 18,
-        subtitle: material.description,
-        iconExtra: const Icon(
-          Icons.link,
-          color: Style.primaryColor,
+      return Visibility(
+        visible: !loading,
+        child: SimpleListItem(
+          material.title,
+          () {
+            _launchURL(material.url);
+          },
+          titleFontSize: 18,
+          subtitle: material.description,
+          iconExtra: const Icon(
+            Icons.link,
+            color: Style.primaryColor,
+          ),
+          key: ValueKey(data.documentID),
+          onLongPress:
+              MyApp.isLabDis() ? () => _deleteResource(material) : null,
         ),
-        key: ValueKey(data.documentID),
-        onLongPress: MyApp.isLabDis() ? () => _deleteResource(material) : null,
       );
     }
   }
 
-  enterFolder(DidacticResource material) {
-    if (material.isFolder)
+  void _enterFolder(DidacticResource material) {
+    if (loading) return;
+
+    if (material.isFolder &&
+        !currentPath.contains(material.reference.documentID))
       setState(() {
+        loading = true;
         currentPath +=
             "/${material.reference.documentID}/${DidacticResource.collectionName}";
       });
   }
 
-  exitFolder() {
+  void _exitFolder() {
+    if (loading) return;
+
     if (currentPath.contains("/")) {
       String newPath = currentPath;
       int lastSlash = newPath.lastIndexOf("/");
@@ -150,17 +181,18 @@ class ResourceListState extends State<ResourceList> {
       newPath = newPath.replaceRange(lastSlash, newPath.length, "");
 
       setState(() {
+        loading = true;
         currentPath = newPath;
       });
     }
   }
 
-  newResource() {
+  void _newResource() {
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => ResourceForm(currentPath)));
   }
 
-  _launchURL(String url) async {
+  void _launchURL(String url) async {
     if (await canLaunch(url)) {
       await launch(url);
     }
