@@ -194,6 +194,7 @@ class _LoginFormState extends State<_LoginForm> {
 
   /// Tenta logar o usuário pelo email e senha do formulário
   login() async {
+    FocusScope.of(context).requestFocus(new FocusNode());
     if (blocked) return;
     blocked = true;
 
@@ -206,7 +207,7 @@ class _LoginFormState extends State<_LoginForm> {
     _logging(true);
     await _auth
         .signInWithEmailAndPassword(
-            email: emailController.text, password: passwordController.text)
+            email: emailController.text.trim(), password: passwordController.text)
         .then(authSuccess)
         .catchError(findUserError);
   }
