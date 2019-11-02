@@ -1,19 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:redesign/services/my_app.dart';
-import 'package:redesign/styles/style.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:redesign/modulos/forum/forum_comment.dart';
 import 'package:redesign/modulos/forum/forum_comment_form.dart';
+import 'package:redesign/modulos/forum/forum_comment_list_item.dart';
 import 'package:redesign/modulos/forum/forum_post.dart';
-import 'package:redesign/services/helper.dart';
-import 'package:redesign/widgets/standard_button.dart';
+import 'package:redesign/services/my_app.dart';
+import 'package:redesign/styles/style.dart';
 import 'package:redesign/widgets/async_data.dart';
 import 'package:redesign/widgets/forum_base_screen_post.dart';
+import 'package:redesign/widgets/standard_button.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import 'forum_post_form.dart';
 import 'forum_topic.dart';
-import 'package:flutter_linkify/flutter_linkify.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ForumPostDisplay extends StatefulWidget {
   final ForumPost post;
@@ -182,8 +183,7 @@ class _CommentsListState extends State<_CommentsList> {
           ListView(
               children: <Widget>[
             Container(
-                padding:
-                    EdgeInsets.only(left: 16, right: 16, bottom: 8, top: 8),
+                padding: EdgeInsets.only(left: 16, right: 16, bottom: 10),
                 color: Style.darkBackground,
                 child: Linkify(
                   onOpen: (link) async {
@@ -197,15 +197,12 @@ class _CommentsListState extends State<_CommentsList> {
                   style: TextStyle(color: Colors.white),
                   linkStyle: TextStyle(color: Colors.blue),
                   humanize: true,
-                )
-//              Text(
-//                post.description,
-//                style: TextStyle(color: Colors.white),
-//              ),
-                )
+                )),
           ]
                 ..addAll(snapshot
-                    .map((data) => _buildListItem(context, data))
+                    .map((data) => CommentListItem(ForumComment.fromMap(
+                        data.data,
+                        reference: data.reference)))
                     .toList())
                 // Padding extra no final da lista
                 ..add(Container(
@@ -217,136 +214,6 @@ class _CommentsListState extends State<_CommentsList> {
                 Style.main.primaryColor, Colors.white),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
-    ForumComment comment =
-        ForumComment.fromMap(data.data, reference: data.reference);
-
-    _deleteCommentConfirmation() {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Excluir Comentário'),
-            content: Text('Deseja realmente excluir este comentário ?'),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('Não'),
-                onPressed: () => Navigator.pop(context),
-              ),
-              FlatButton(
-                child: Text('Sim'),
-                onPressed: () {
-                  comment.deleteComment();
-                  Navigator.pop(context);
-                },
-              )
-            ],
-          );
-        },
-      );
-    }
-
-    return Column(
-      key: Key(data.documentID),
-      children: <Widget>[
-        GestureDetector(
-            child: ExpansionTile(
-              title: Column(
-                children: <Widget>[
-                  Container(
-                      key: ValueKey(data.documentID),
-                      child: Row(
-                        children: <Widget>[
-                          CircleAvatarAsync(
-                            comment.createdBy,
-                            radius: 23,
-                            clickable: true,
-                          ),
-                          Expanded(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Flexible(
-                                  child: Container(
-                                    padding: EdgeInsets.only(left: 10),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(
-                                          comment.title,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                              color: Style.buttonBlue,
-                                              fontSize: 18),
-                                        ),
-                                        NameTextAsync(
-                                          comment.createdBy,
-                                          TextStyle(
-                                              color: Colors.black54,
-                                              fontSize: 14),
-                                          prefix: "",
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
-                      )),
-                ],
-              ),
-              children: <Widget>[
-                Container(
-                  alignment: Alignment.topLeft,
-                  padding: EdgeInsets.only(left: 15, bottom: 5),
-                  child: Text(
-                    "Em " + Helper.convertToDMYString(comment.date),
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: Colors.black45,
-                    ),
-                  ),
-                ),
-                Container(
-                  alignment: Alignment.topLeft,
-                  padding: EdgeInsets.only(left: 15, right: 15),
-                  child: Linkify(
-                    onOpen: (link) async {
-                      if (await canLaunch(link.url)) {
-                        await launch(link.url);
-                      } else {
-                        throw 'Could not launch $link';
-                      }
-                    },
-                    text: comment.description,
-                    linkStyle: TextStyle(color: Colors.blue),
-                    humanize: true,
-                  ),
-//                    textAlign: TextAlign.justify,
-                )
-              ],
-            ),
-            onLongPress: () =>
-                MyApp.isLabDis() || MyApp.userId() == comment.createdBy
-                    ? _deleteCommentConfirmation()
-                    : null),
-        myDivider()
-      ],
-    );
-  }
-
-  Widget myDivider() {
-    return Padding(
-      padding: EdgeInsets.only(left: 16, right: 16),
-      child: Divider(
-        color: Colors.black54,
       ),
     );
   }
