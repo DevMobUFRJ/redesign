@@ -43,6 +43,7 @@ class ProfileFormState extends State<ProfileForm> {
   Widget build(BuildContext context) {
     return BaseScreen(
       title: "Editar Perfil",
+      bodyPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       body: Scaffold(
         key: _scaffoldKey,
         resizeToAvoidBottomPadding: false,
@@ -147,136 +148,146 @@ class _UserFormState extends State<_UserForm> {
       key: _formKey,
       child: ListView(
         children: <Widget>[
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              GestureDetector(
-                onTap: () {
-                  getImage();
-                },
-                child: Container(
-                  width: 100.0,
-                  height: 100.0,
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: newImage == null
-                            ? currentImage == null
-                                ? AssetImage("images/perfil_placeholder.png")
-                                : MemoryImage(currentImage)
-                            : MemoryImage(newImage),
-                      )),
-                ),
-              ),
-            ],
-          ),
-          TextFormField(
-            decoration: const InputDecoration(
-              icon: const Icon(
-                Icons.person,
-                color: Style.primaryColor,
-              ),
-              labelText: 'Nome',
-            ),
-            validator: (val) => val.isEmpty ? 'Nome é obrigatório' : null,
-            inputFormatters: [LengthLimitingTextInputFormatter(50)],
-            onSaved: (val) => user.name = val,
-            controller: _nameController,
-          ),
-          TextFormField(
-            decoration: const InputDecoration(
-              icon: const Icon(
-                Icons.description,
-                color: Style.primaryColor,
-              ),
-              labelText: 'Descrição',
-            ),
-            keyboardType: TextInputType.multiline,
-            maxLines: 4,
-            validator: (val) => val.isEmpty ? 'Descrição é obrigatório' : null,
-            inputFormatters: [LengthLimitingTextInputFormatter(500)],
-            onSaved: (val) => user.description = val,
-            controller: _descController,
-          ),
-          _buildDropdownAccountType(),
-          _buildDropdown(),
           Container(
-            padding: const EdgeInsets.only(top: 4),
-            child: relatedInstitution == null
-                ? Container()
-                : GestureDetector(
-                    child: const Text(
-                      "Remover seleção",
-                      textAlign: TextAlign.end,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.red,
+            padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: Column(
+              children: <Widget>[
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: () {
+                        getImage();
+                      },
+                      child: Container(
+                        width: 100.0,
+                        height: 100.0,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: newImage == null
+                                ? currentImage == null
+                                    ? AssetImage(
+                                        "images/perfil_placeholder.png")
+                                    : MemoryImage(currentImage)
+                                : MemoryImage(newImage),
+                          ),
+                        ),
                       ),
                     ),
-                    onTap: () {
-                      setState(() {
-                        user.idInstitution = "";
-                        relatedInstitution = null;
-                      });
-                    },
+                  ],
+                ),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    icon: const Icon(
+                      Icons.person,
+                      color: Style.primaryColor,
+                    ),
+                    labelText: 'Nome',
                   ),
-          ),
-          TextFormField(
-            decoration: const InputDecoration(
-              icon: const Icon(Icons.email),
-              labelText: 'Email (não editável)',
+                  validator: (val) => val.isEmpty ? 'Nome é obrigatório' : null,
+                  inputFormatters: [LengthLimitingTextInputFormatter(50)],
+                  onSaved: (val) => user.name = val,
+                  controller: _nameController,
+                ),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    icon: const Icon(
+                      Icons.description,
+                      color: Style.primaryColor,
+                    ),
+                    labelText: 'Descrição',
+                  ),
+                  keyboardType: TextInputType.multiline,
+                  maxLines: 4,
+                  validator: (val) =>
+                      val.isEmpty ? 'Descrição é obrigatório' : null,
+                  inputFormatters: [LengthLimitingTextInputFormatter(500)],
+                  onSaved: (val) => user.description = val,
+                  controller: _descController,
+                ),
+                _buildDropdownAccountType(),
+                _buildDropdown(),
+                Container(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: relatedInstitution == null
+                      ? Container()
+                      : GestureDetector(
+                          child: const Text(
+                            "Remover seleção",
+                            textAlign: TextAlign.end,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.red,
+                            ),
+                          ),
+                          onTap: () {
+                            setState(() {
+                              user.idInstitution = "";
+                              relatedInstitution = null;
+                            });
+                          },
+                        ),
+                ),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    icon: const Icon(Icons.email),
+                    labelText: 'Email (não editável)',
+                  ),
+                  inputFormatters: [LengthLimitingTextInputFormatter(500)],
+                  enabled: false,
+                  controller: _emailController,
+                ),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    icon: const Icon(
+                      Icons.link,
+                      color: Style.primaryColor,
+                    ),
+                    labelText: 'Site',
+                  ),
+                  inputFormatters: [LengthLimitingTextInputFormatter(50)],
+                  validator: (val) => val.isEmpty
+                      ? null
+                      : Validators.url(val) ? null : 'Site inválido',
+                  onSaved: (val) {
+                    if (!val.startsWith("http") && val.isNotEmpty) {
+                      val = "http://" + val;
+                    }
+                    user.site = val;
+                  },
+                  controller: _siteController,
+                ),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    icon: const Icon(
+                      FbIcon.facebook_official,
+                      color: Style.primaryColor,
+                    ),
+                    labelText: 'Facebook',
+                  ),
+                  inputFormatters: [LengthLimitingTextInputFormatter(50)],
+                  validator: (val) => val.isEmpty
+                      ? null
+                      : Validators.facebookUrl(val)
+                          ? null
+                          : 'Link do facebook inválido',
+                  onSaved: (val) {
+                    if (!val.startsWith("http") && val.isNotEmpty) {
+                      val = "http://" + val;
+                    }
+                    user.facebook = val;
+                  },
+                  controller: _fbController,
+                ),
+                Container(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: StandardButton("Salvar", _submitForm,
+                      Style.main.primaryColor, Style.lightGrey),
+                ),
+              ],
             ),
-            inputFormatters: [LengthLimitingTextInputFormatter(500)],
-            enabled: false,
-            controller: _emailController,
-          ),
-          TextFormField(
-            decoration: const InputDecoration(
-              icon: const Icon(
-                Icons.link,
-                color: Style.primaryColor,
-              ),
-              labelText: 'Site',
-            ),
-            inputFormatters: [LengthLimitingTextInputFormatter(50)],
-            validator: (val) => val.isEmpty
-                ? null
-                : Validators.url(val) ? null : 'Site inválido',
-            onSaved: (val) {
-              if (!val.startsWith("http") && val.isNotEmpty) {
-                val = "http://" + val;
-              }
-              user.site = val;
-            },
-            controller: _siteController,
-          ),
-          TextFormField(
-            decoration: const InputDecoration(
-              icon: const Icon(
-                FbIcon.facebook_official,
-                color: Style.primaryColor,
-              ),
-              labelText: 'Facebook',
-            ),
-            inputFormatters: [LengthLimitingTextInputFormatter(50)],
-            validator: (val) => val.isEmpty
-                ? null
-                : Validators.facebookUrl(val)
-                    ? null
-                    : 'Link do facebook inválido',
-            onSaved: (val) {
-              if (!val.startsWith("http") && val.isNotEmpty) {
-                val = "http://" + val;
-              }
-              user.facebook = val;
-            },
-            controller: _fbController,
-          ),
-          Container(
-            padding: const EdgeInsets.only(top: 20.0),
-            child: StandardButton("Salvar", _submitForm,
-                Style.main.primaryColor, Style.lightGrey),
           ),
         ],
       ),
@@ -548,144 +559,154 @@ class _InstitutionFormState extends State<_InstitutionForm> {
       key: _formKey,
       child: ListView(
         children: <Widget>[
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              GestureDetector(
-                onTap: () {
-                  getImage();
-                },
-                child: Container(
-                  width: 100.0,
-                  height: 100.0,
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: newImage == null
-                            ? currentImage == null
-                                ? AssetImage("images/perfil_placeholder.png")
-                                : MemoryImage(currentImage)
-                            : MemoryImage(newImage),
-                      )),
-                ),
-              ),
-            ],
-          ),
-          TextFormField(
-            decoration: const InputDecoration(
-              icon: const Icon(
-                Icons.people,
-                color: Style.primaryColor,
-              ),
-              labelText: 'Nome',
-            ),
-            validator: (val) => val.isEmpty ? 'Nome é obrigatório' : null,
-            inputFormatters: [LengthLimitingTextInputFormatter(50)],
-            controller: _nameController,
-            onSaved: (val) => institution.name = val,
-          ),
-          TextFormField(
-            decoration: const InputDecoration(
-              icon: const Icon(
-                Icons.description,
-                color: Style.primaryColor,
-              ),
-              labelText: 'Descrição',
-            ),
-            keyboardType: TextInputType.multiline,
-            maxLines: 4,
-            validator: (val) => val.isEmpty ? 'Descrição é obrigatório' : null,
-            inputFormatters: [LengthLimitingTextInputFormatter(500)],
-            controller: _descController,
-            onSaved: (val) => institution.description = val,
-          ),
-          TextFormField(
-            decoration: const InputDecoration(
-              icon: const Icon(Icons.email),
-              labelText: 'Email (não editável)',
-            ),
-            inputFormatters: [LengthLimitingTextInputFormatter(500)],
-            controller: _emailController,
-            enabled: false,
-          ),
-          _buildDropdownAccountType(),
-          TextFormField(
-            decoration: const InputDecoration(
-              icon: const Icon(
-                Icons.link,
-                color: Style.primaryColor,
-              ),
-              labelText: 'Site',
-            ),
-            inputFormatters: [LengthLimitingTextInputFormatter(50)],
-            validator: (val) => val.isEmpty
-                ? null
-                : Validators.url(val) ? null : 'Site inválido',
-            controller: _siteController,
-            onSaved: (val) {
-              if (!val.startsWith("http") && val.isNotEmpty) {
-                val = "http://" + val;
-              }
-              institution.site = val;
-            },
-          ),
-          TextFormField(
-            decoration: const InputDecoration(
-              icon: const Icon(
-                FbIcon.facebook_official,
-                color: Style.primaryColor,
-              ),
-              labelText: 'Facebook',
-            ),
-            inputFormatters: [LengthLimitingTextInputFormatter(50)],
-            validator: (val) => val.isEmpty
-                ? null
-                : Validators.facebookUrl(val)
-                    ? null
-                    : 'Link do facebook inválido',
-            controller: _fbController,
-            onSaved: (val) {
-              if (!val.startsWith("http") && val.isNotEmpty) {
-                val = "http://" + val;
-              }
-              institution.facebook = val;
-            },
-          ),
-          TextFormField(
-            decoration: const InputDecoration(
-              icon: const Icon(
-                Icons.location_on,
-                color: Style.primaryColor,
-              ),
-              labelText: 'Endereço (Rua, Número)',
-            ),
-            inputFormatters: [LengthLimitingTextInputFormatter(50)],
-            controller: _addrController,
-            onSaved: (val) {
-              if (val != institution.address) addressChanged = true;
-              institution.address = val;
-            },
-          ),
-          TextFormField(
-            decoration: const InputDecoration(
-              icon: const Icon(
-                Icons.location_city,
-                color: Style.primaryColor,
-              ),
-              labelText: 'Cidade',
-            ),
-            inputFormatters: [LengthLimitingTextInputFormatter(40)],
-            controller: _cityController,
-            onSaved: (val) {
-              if (val != institution.city) addressChanged = true;
-              institution.city = val;
-            },
-          ),
           Container(
-              padding: const EdgeInsets.only(top: 20.0),
-              child: StandardButton("Salvar", _submitForm,
-                  Style.main.primaryColor, Style.lightGrey)),
+            padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: Column(
+              children: <Widget>[
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: () {
+                        getImage();
+                      },
+                      child: Container(
+                        width: 100.0,
+                        height: 100.0,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: newImage == null
+                                ? currentImage == null
+                                    ? AssetImage(
+                                        "images/perfil_placeholder.png")
+                                    : MemoryImage(currentImage)
+                                : MemoryImage(newImage),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    icon: const Icon(
+                      Icons.people,
+                      color: Style.primaryColor,
+                    ),
+                    labelText: 'Nome',
+                  ),
+                  validator: (val) => val.isEmpty ? 'Nome é obrigatório' : null,
+                  inputFormatters: [LengthLimitingTextInputFormatter(50)],
+                  controller: _nameController,
+                  onSaved: (val) => institution.name = val,
+                ),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    icon: const Icon(
+                      Icons.description,
+                      color: Style.primaryColor,
+                    ),
+                    labelText: 'Descrição',
+                  ),
+                  keyboardType: TextInputType.multiline,
+                  maxLines: 4,
+                  validator: (val) =>
+                      val.isEmpty ? 'Descrição é obrigatório' : null,
+                  inputFormatters: [LengthLimitingTextInputFormatter(500)],
+                  controller: _descController,
+                  onSaved: (val) => institution.description = val,
+                ),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    icon: const Icon(Icons.email),
+                    labelText: 'Email (não editável)',
+                  ),
+                  inputFormatters: [LengthLimitingTextInputFormatter(500)],
+                  controller: _emailController,
+                  enabled: false,
+                ),
+                _buildDropdownAccountType(),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    icon: const Icon(
+                      Icons.link,
+                      color: Style.primaryColor,
+                    ),
+                    labelText: 'Site',
+                  ),
+                  inputFormatters: [LengthLimitingTextInputFormatter(50)],
+                  validator: (val) => val.isEmpty
+                      ? null
+                      : Validators.url(val) ? null : 'Site inválido',
+                  controller: _siteController,
+                  onSaved: (val) {
+                    if (!val.startsWith("http") && val.isNotEmpty) {
+                      val = "http://" + val;
+                    }
+                    institution.site = val;
+                  },
+                ),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    icon: const Icon(
+                      FbIcon.facebook_official,
+                      color: Style.primaryColor,
+                    ),
+                    labelText: 'Facebook',
+                  ),
+                  inputFormatters: [LengthLimitingTextInputFormatter(50)],
+                  validator: (val) => val.isEmpty
+                      ? null
+                      : Validators.facebookUrl(val)
+                          ? null
+                          : 'Link do facebook inválido',
+                  controller: _fbController,
+                  onSaved: (val) {
+                    if (!val.startsWith("http") && val.isNotEmpty) {
+                      val = "http://" + val;
+                    }
+                    institution.facebook = val;
+                  },
+                ),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    icon: const Icon(
+                      Icons.location_on,
+                      color: Style.primaryColor,
+                    ),
+                    labelText: 'Endereço (Rua, Número)',
+                  ),
+                  inputFormatters: [LengthLimitingTextInputFormatter(50)],
+                  controller: _addrController,
+                  onSaved: (val) {
+                    if (val != institution.address) addressChanged = true;
+                    institution.address = val;
+                  },
+                ),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    icon: const Icon(
+                      Icons.location_city,
+                      color: Style.primaryColor,
+                    ),
+                    labelText: 'Cidade',
+                  ),
+                  inputFormatters: [LengthLimitingTextInputFormatter(40)],
+                  controller: _cityController,
+                  onSaved: (val) {
+                    if (val != institution.city) addressChanged = true;
+                    institution.city = val;
+                  },
+                ),
+                Container(
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child: StandardButton("Salvar", _submitForm,
+                        Style.main.primaryColor, Style.lightGrey)),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -790,7 +811,9 @@ class _InstitutionFormState extends State<_InstitutionForm> {
             institution.address.isNotEmpty &&
             institution.city.isNotEmpty) {
           final query = institution.address + " - " + institution.city;
-          var addresses = await Geocoder.google(  ** API KEY **  ).findAddressesFromQuery(query);
+          var addresses =
+              await Geocoder.google("***REMOVED***")
+                  .findAddressesFromQuery(query);
           var first = addresses.first;
           institution.lat = first.coordinates.latitude;
           institution.lng = first.coordinates.longitude;
@@ -813,18 +836,24 @@ void showMessage(String message, [MaterialColor color = Colors.red]) {
 void loading(bool isLoading, {String message = "Aguarde"}) {
   blocked = isLoading;
   if (isLoading) {
-    _scaffoldKey.currentState.showSnackBar(SnackBar(
-      backgroundColor: Colors.amber,
-      content: Row(
-        children: <Widget>[
-          CircularProgressIndicator(),
-          Padding(
-            padding: const EdgeInsets.only(left: 4.0),
-            child: Text(message),
-          )
-        ],
+    _scaffoldKey.currentState.showSnackBar(
+      SnackBar(
+        backgroundColor: Style.primaryColor,
+        content: Row(
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            CircularProgressIndicator(
+              backgroundColor: Colors.black45,
+              valueColor: new AlwaysStoppedAnimation<Color>(Colors.white),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Text(message),
+            )
+          ],
+        ),
       ),
-    ));
+    );
   } else {
     _scaffoldKey.currentState.hideCurrentSnackBar();
   }
