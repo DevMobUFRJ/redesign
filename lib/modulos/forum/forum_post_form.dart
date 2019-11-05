@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,6 +10,7 @@ import 'package:redesign/modulos/forum/forum_topic.dart';
 import 'package:redesign/services/my_app.dart';
 import 'package:redesign/widgets/standard_button.dart';
 import 'package:redesign/widgets/base_screen.dart';
+import 'package:file_picker/file_picker.dart';
 
 FocusNode _focusDescription = FocusNode();
 
@@ -18,25 +21,29 @@ class ForumPostForm extends StatefulWidget {
   ForumPostForm({this.topic, this.editPost});
 
   @override
-  ForumPostFormState createState() => ForumPostFormState(topic, editPost);
+  ForumPostFormState createState() => ForumPostFormState();
 }
 
 class ForumPostFormState extends State<ForumPostForm> {
-  ForumTopic topic;
-  ForumPost edit;
+  
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   bool blocked = false;
-
   ForumPost post = ForumPost();
 
-  ForumPostFormState(this.topic, this.edit);
+  String filePath = 'nenhum';
+
+  void _openFileExplorer(FileType type) async {
+    filePath = await FilePicker.getFilePath(
+        type: type, fileExtension: 'pdf');
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      title: edit == null ? "Novo Problema" : "Editar post",
+      title: widget.editPost == null ? "Novo Problema" : "Editar post",
       body: Scaffold(
         key: _scaffoldKey,
         body: Stack(
@@ -59,16 +66,16 @@ class ForumPostFormState extends State<ForumPostForm> {
                           inputFormatters: [
                             LengthLimitingTextInputFormatter(50)
                           ],
-                          onSaved: (val) => edit == null
+                          onSaved: (val) => widget.editPost == null
                               ? post.title = val
-                              : edit.title = val,
+                              : widget.editPost.title = val,
                           textInputAction: TextInputAction.next,
                           onFieldSubmitted: (v) => FocusScope.of(context)
                               .requestFocus(_focusDescription),
-                          initialValue: edit == null ? '' : edit.title,
+                          initialValue: widget.editPost == null ? '' : widget.editPost.title,
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 70.0),
+                          padding: const EdgeInsets.only(bottom: 24.0),
                           child: TextFormField(
                             decoration: const InputDecoration(
                               icon: const Icon(Icons.description),
@@ -84,27 +91,66 @@ class ForumPostFormState extends State<ForumPostForm> {
                             inputFormatters: [
                               LengthLimitingTextInputFormatter(500)
                             ],
-                            onSaved: (val) => edit == null
+                            onSaved: (val) => widget.editPost == null
                                 ? post.description = val
-                                : edit.description = val,
+                                : widget.editPost.description = val,
                             focusNode: _focusDescription,
                             textInputAction: TextInputAction.send,
                             onFieldSubmitted: (v) => _submitForm,
-                            initialValue: edit == null ? '' : edit.description,
+                            initialValue: widget.editPost == null ? '' : widget.editPost.description,
                           ),
                         ),
+                        Row(
+                          children: <Widget>[
+                            Icon(Icons.attach_file),
+                            SizedBox(width: 16),
+                            GestureDetector(
+                              child: Container(
+                                padding: EdgeInsets.all(6),
+                                child: Text(
+                                  'Anexar imagem',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(4.0),
+                                  color: Style.primaryColor,
+                                ),
+                              ),
+                              onTap: () => _openFileExplorer(FileType.IMAGE),
+                            ),
+                            SizedBox(width: 16,),
+                            GestureDetector(
+                              child: Container(
+                                padding: EdgeInsets.all(6),
+                                child: Text(
+                                  'Anexar documento',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(4.0),
+                                  color: Style.primaryColor,
+                                ),
+                              ),
+                              onTap: () => _openFileExplorer(FileType.CUSTOM),
+                            )
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top:8.0),
+                          child: Text('Arquivo selecionado: ' + filePath.split('/').last),
+                        )
+
                       ],
                     ),
                   )
                 ],
               ),
             ),
-            Container(
-                child: StandardButton(
-                    "Salvar",
-                    edit == null ? _submitForm : _submitEdit,
-                    Style.main.primaryColor,
-                    Style.lightGrey)),
+            StandardButton(
+                "Salvar",
+                widget.editPost == null ? _submitForm : _submitEdit,
+                Style.main.primaryColor,
+                Style.lightGrey),
           ],
         ),
       ),
@@ -118,8 +164,8 @@ class ForumPostFormState extends State<ForumPostForm> {
       showMessage('Por favor, complete todos os campos.');
     } else {
       form.save();
-      edit.date = DateTime.now();
-      editPost(edit);
+      widget.editPost.date = DateTime.now();
+      editPost();
     }
   }
 
@@ -134,9 +180,9 @@ class ForumPostFormState extends State<ForumPostForm> {
     } else {
       form.save(); //Executa cada evento "onSaved" dos campos do formulário
       post.createdBy = MyApp.userId();
-      post.topicId = topic.reference.documentID;
+      post.topicId = widget.topic.reference.documentID;
       post.date = DateTime.now();
-      savePost(post);
+      post.savePost(filePath).then(saved);
     }
   }
 
@@ -146,19 +192,12 @@ class ForumPostFormState extends State<ForumPostForm> {
         .showSnackBar(SnackBar(backgroundColor: color, content: Text(message)));
   }
 
-  savePost(ForumPost post) {
-    Firestore.instance
-        .collection(ForumPost.collectionName)
-        .add(post.toJson())
-        .then(saved); //TODO pegar o erro
-  }
-
-  editPost(ForumPost post) {
-    post.updatePost();
+  void editPost() {
+    widget.editPost.updatePost();
     Navigator.pop(context);
   }
 
-  saved(DocumentReference doc) {
+  void saved(DocumentReference doc) {
     Navigator.pop(context);
   }
 }
