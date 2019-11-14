@@ -18,6 +18,8 @@ import 'package:redesign/styles/style.dart';
 import 'package:redesign/widgets/base_screen.dart';
 import 'package:redesign/widgets/standard_button.dart';
 
+import '../../api_keys.dart';
+
 GlobalKey<ScaffoldState> _scaffoldKey;
 final FirebaseStorage _storage = FirebaseStorage.instance;
 StorageReference reference =
@@ -811,9 +813,8 @@ class _InstitutionFormState extends State<_InstitutionForm> {
             institution.address.isNotEmpty &&
             institution.city.isNotEmpty) {
           final query = institution.address + " - " + institution.city;
-          var addresses =
-              await Geocoder.google("***REMOVED***")
-                  .findAddressesFromQuery(query);
+          var addresses = await Geocoder.google(Keys.maps_geocoding)
+              .findAddressesFromQuery(query);
           var first = addresses.first;
           institution.lat = first.coordinates.latitude;
           institution.lng = first.coordinates.longitude;
