@@ -16,4 +16,4 @@ gen/
 out/
 
 api_keys.txt
-passwords.txt
+lib/api_keys.dart
