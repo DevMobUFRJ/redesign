@@ -4,6 +4,7 @@ import 'package:redesign/modulos/events/event.dart';
 import 'package:redesign/modulos/events/event_display.dart';
 import 'package:redesign/modulos/events/event_form.dart';
 import 'package:redesign/modulos/user/favorite.dart';
+import 'package:redesign/services/helper.dart';
 import 'package:redesign/services/my_app.dart';
 import 'package:redesign/styles/style.dart';
 import 'package:redesign/widgets/async_data.dart';
@@ -23,8 +24,10 @@ class EventsList extends StatefulWidget {
 
 class _EventsListState extends State<EventsList> {
   bool searching = false;
-  TextEditingController _searchController = TextEditingController();
   String search = "";
+  TextEditingController _searchController = TextEditingController();
+
+  bool showPastEvents = false;
   List<Favorite> favorites;
 
   _EventsListState() {
@@ -46,7 +49,7 @@ class _EventsListState extends State<EventsList> {
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-        title: 'Eventos',
+        title: 'Eventos' + (showPastEvents ? ' Passados' : ''),
         body: _buildBody(context),
         fab: MyApp.isStudent()
             ? null
@@ -62,6 +65,10 @@ class _EventsListState extends State<EventsList> {
               ),
         actions: <IconButton>[
           IconButton(
+            icon: Icon(showPastEvents ? Icons.update : Icons.history),
+            onPressed: () => togglePastEvents(),
+          ),
+          IconButton(
             icon: const Icon(Icons.search, color: Colors.white),
             onPressed: () => toggleSearch(),
           ),
@@ -70,12 +77,19 @@ class _EventsListState extends State<EventsList> {
 
   Widget _buildBody(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance
-          .collection('evento')
-          .where("data", isGreaterThan: DateTime.now().toIso8601String())
-          .orderBy("data")
-          .limit(50)
-          .snapshots(),
+      stream: !showPastEvents
+          ? Firestore.instance
+              .collection('evento')
+              .where("data", isGreaterThan: DateTime.now().toIso8601String())
+              .orderBy("data")
+              .limit(50)
+              .snapshots()
+          : Firestore.instance
+              .collection('evento')
+              .where("data", isLessThan: DateTime.now().toIso8601String())
+              .orderBy("data", descending: true)
+              .limit(50)
+              .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return LinearProgressIndicator();
 
@@ -85,7 +99,7 @@ class _EventsListState extends State<EventsList> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Text("Não há eventos futuros cadastrados"),
+              const Text("Não há eventos futuros cadastrados"),
             ],
           );
 
@@ -178,7 +192,7 @@ class _EventsListState extends State<EventsList> {
                           ),
                         ),
                         Text(
-                          initialsMonth(record.date.month),
+                          Helper.initialsMonth(record.date.month),
                           style: const TextStyle(
                             color: Style.buttonBlue,
                             fontSize: 20,
@@ -283,27 +297,6 @@ class _EventsListState extends State<EventsList> {
     );
   }
 
-  //Retorna a sigla do mes em portugues
-  String initialsMonth(int numMonth) {
-    if (numMonth < 1 || numMonth > 12) return "";
-
-    List<String> initialsOfMonths = [
-      "JAN",
-      "FEV",
-      "MAR",
-      "ABR",
-      "MAI",
-      "JUN",
-      "JUL",
-      "AGO",
-      "SET",
-      "OUT",
-      "NOV",
-      "DEZ"
-    ];
-    return initialsOfMonths[numMonth - 1];
-  }
-
   toggleSearch() {
     setState(
       () {
@@ -316,11 +309,17 @@ class _EventsListState extends State<EventsList> {
     }
   }
 
-  searchTextChanged(String text) {
+  void searchTextChanged(String text) {
     setState(
       () {
         search = text.toLowerCase();
       },
     );
+  }
+
+  void togglePastEvents() {
+    setState(() {
+      showPastEvents = !showPastEvents;
+    });
   }
 }

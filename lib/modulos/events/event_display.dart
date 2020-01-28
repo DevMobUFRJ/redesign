@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:redesign/modulos/events/event.dart';
 import 'package:redesign/modulos/events/event_form.dart';
 import 'package:redesign/modulos/user/favorite.dart';
+import 'package:redesign/services/helper.dart';
 import 'package:redesign/services/my_app.dart';
 import 'package:redesign/styles/fb_icon_icons.dart';
 import 'package:redesign/styles/style.dart';
@@ -133,7 +134,7 @@ class _DisplayEvent extends State<EventForm> {
                       ),
                     ),
                     Text(
-                      initialsMonth(event.date.month),
+                      Helper.initialsMonth(event.date.month),
                       style: const TextStyle(
                           color: Style.buttonBlue, fontSize: 30),
                     ),
@@ -231,11 +232,11 @@ class _DisplayEvent extends State<EventForm> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  dayOfWeekPortuguese(event.date.weekday) +
+                  Helper.dayOfWeekPortuguese(event.date.weekday) +
                       ", " +
                       event.date.day.toString() +
                       " de " +
-                      monthPortuguese(event.date.month) +
+                      Helper.monthPortuguese(event.date.month) +
                       " de " +
                       event.date.year.toString() +
                       " às " +
@@ -317,64 +318,6 @@ class _DisplayEvent extends State<EventForm> {
         ],
       ),
     );
-  }
-
-  /// Retorna a nome do mês em portugues
-  String monthPortuguese(int numMonth) {
-    if (numMonth < 1 || numMonth > 12) return "";
-
-    List<String> monthsPortuguese = [
-      "Janeiro",
-      "Fevereiro",
-      "Março",
-      "Abril",
-      "Maio",
-      "Junho",
-      "Julho",
-      "Agosto",
-      "Setembro",
-      "Outubro",
-      "Novembro",
-      "Dezembro"
-    ];
-    return monthsPortuguese[numMonth - 1];
-  }
-
-  /// Retorna a sigla do mes em portugues
-  String initialsMonth(int numMonth) {
-    if (numMonth < 1 || numMonth > 12) return "";
-
-    List<String> initialsOfMonths = [
-      "JAN",
-      "FEV",
-      "MAR",
-      "ABR",
-      "MAI",
-      "JUN",
-      "JUL",
-      "AGO",
-      "SET",
-      "OUT",
-      "NOV",
-      "DEZ"
-    ];
-    return initialsOfMonths[numMonth - 1];
-  }
-
-  /// Retorna o dia da semana em portugues
-  String dayOfWeekPortuguese(int day) {
-    if (day < 1 || day > 7) return "";
-
-    List<String> dayOfWeek = [
-      "Segunda-feira",
-      "Terça-feira",
-      "Quarta-feira",
-      "Quinta-feira",
-      "Sexta-feira",
-      "Sábado",
-      "Domingo"
-    ];
-    return dayOfWeek[day - 1];
   }
 
   _launchURL(String url) async {
