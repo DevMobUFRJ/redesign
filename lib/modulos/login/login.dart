@@ -1,15 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:redesign/styles/style.dart';
-import 'package:redesign/modulos/registration/registration_options.dart';
 import 'package:redesign/modulos/login/forgot_password.dart';
-import 'package:redesign/modulos/user/user.dart';
+import 'package:redesign/modulos/registration/registration_options.dart';
 import 'package:redesign/modulos/user/institution.dart';
+import 'package:redesign/modulos/user/user.dart';
 import 'package:redesign/services/my_app.dart';
+import 'package:redesign/styles/style.dart';
 import 'package:redesign/widgets/standard_button.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 FirebaseUser mCurrentUser;
 FirebaseAuth _auth = FirebaseAuth.instance;
@@ -81,13 +81,12 @@ class _LoginState extends State<_LoginPage> {
                 Padding(
                     padding: EdgeInsets.only(bottom: 10),
                     child: StandardButton("Entrar", showLogin,
-                        Style.main.primaryColor, Style.lightGrey)
-                ),
+                        Style.main.primaryColor, Style.lightGrey)),
                 StandardButton("Cadastrar-se", openSignUpScreen,
-                  Style.buttonDarkGrey, Style.lightGrey),
+                    Style.buttonDarkGrey, Style.lightGrey),
               ],
             ),
-    );
+          );
   }
 
   showLogin() {
@@ -125,8 +124,7 @@ class _LoginFormState extends State<_LoginForm> {
             padding: EdgeInsets.only(bottom: 10),
             child: TextField(
               style: TextStyle(
-                decorationColor: Style.lightGrey, color: Colors.white
-              ),
+                  decorationColor: Style.lightGrey, color: Colors.white),
               cursorColor: Style.buttonBlue,
               decoration: InputDecoration(
                 labelText: 'E-mail',
@@ -137,15 +135,14 @@ class _LoginFormState extends State<_LoginForm> {
               ),
               controller: emailController,
               textInputAction: TextInputAction.next,
-              onSubmitted: (v){
+              onSubmitted: (v) {
                 FocusScope.of(context).requestFocus(focusPassword);
               },
             ),
           ),
           TextField(
             style: TextStyle(
-              decorationColor: Style.lightGrey, color: Colors.white
-            ),
+                decorationColor: Style.lightGrey, color: Colors.white),
             cursorColor: Style.buttonBlue,
             decoration: InputDecoration(
               labelText: 'Senha',
@@ -158,7 +155,7 @@ class _LoginFormState extends State<_LoginForm> {
             controller: passwordController,
             textInputAction: TextInputAction.send,
             focusNode: focusPassword,
-            onSubmitted: (v){
+            onSubmitted: (v) {
               login();
             },
           ),
@@ -169,13 +166,11 @@ class _LoginFormState extends State<_LoginForm> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
                   Text("Esqueci a senha",
-                    style: TextStyle(
-                      color: Style.primaryColorLighter,
-                      fontWeight: FontWeight.w300,
-                      fontSize: 12.0
-                    ),
-                    textAlign: TextAlign.end
-                  ),
+                      style: TextStyle(
+                          color: Style.primaryColorLighter,
+                          fontWeight: FontWeight.w300,
+                          fontSize: 12.0),
+                      textAlign: TextAlign.end),
                 ],
               ),
             ),
@@ -184,8 +179,7 @@ class _LoginFormState extends State<_LoginForm> {
           Padding(
             padding: EdgeInsets.only(top: 8),
             child: StandardButton(
-              "Entrar", login, Style.main.primaryColor, Style.lightGrey
-            ),
+                "Entrar", login, Style.main.primaryColor, Style.lightGrey),
           ),
         ],
       ),
@@ -198,7 +192,7 @@ class _LoginFormState extends State<_LoginForm> {
     if (blocked) return;
     blocked = true;
 
-    if(emailController.text.isEmpty || passwordController.text.isEmpty){
+    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
       _showMessageError("Preencha todos os campos.");
       blocked = false;
       return;
@@ -207,8 +201,9 @@ class _LoginFormState extends State<_LoginForm> {
     _logging(true);
     await _auth
         .signInWithEmailAndPassword(
-            email: emailController.text.trim(), password: passwordController.text)
-        .then(authSuccess)
+            email: emailController.text.trim(),
+            password: passwordController.text)
+        .then((result) => authSuccess(result.user))
         .catchError(findUserError);
   }
 
@@ -226,8 +221,7 @@ class _LoginFormState extends State<_LoginForm> {
   void findUser(DocumentSnapshot snapshot) {
     if (snapshot.data['tipo'] == UserType.institution.index) {
       MyApp.setUser(
-          Institution.fromMap(snapshot.data, reference: snapshot.reference)
-      );
+          Institution.fromMap(snapshot.data, reference: snapshot.reference));
     } else {
       MyApp.setUser(User.fromMap(snapshot.data, reference: snapshot.reference));
     }
@@ -252,10 +246,10 @@ class _LoginFormState extends State<_LoginForm> {
     print(e);
     _logging(false);
 
-    if(e.runtimeType == PlatformException){
+    if (e.runtimeType == PlatformException) {
       print("Exceção plataforma");
       PlatformException exc = e;
-      switch(exc.code){
+      switch (exc.code) {
         case "ERROR_INVALID_EMAIL":
           _showMessageError("Erro. Email Inválido.");
           break;

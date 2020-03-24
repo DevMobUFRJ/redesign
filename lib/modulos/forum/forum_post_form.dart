@@ -116,7 +116,7 @@ class ForumPostFormState extends State<ForumPostForm> {
                                   color: Style.primaryColor,
                                 ),
                               ),
-                              onTap: () => _openFileExplorer(FileType.IMAGE),
+                              onTap: () => _openFileExplorer(FileType.image),
                             ),
                             SizedBox(width: 16,),
                             GestureDetector(
@@ -131,7 +131,7 @@ class ForumPostFormState extends State<ForumPostForm> {
                                   color: Style.primaryColor,
                                 ),
                               ),
-                              onTap: () => _openFileExplorer(FileType.CUSTOM),
+                              onTap: () => _openFileExplorer(FileType.custom),
                             )
                           ],
                         ),

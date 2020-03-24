@@ -2,11 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:redesign/modulos/user/institution.dart';
+import 'package:redesign/modulos/user/user.dart';
 import 'package:redesign/services/my_app.dart';
 import 'package:redesign/services/validators.dart';
-import 'package:redesign/widgets/standard_button.dart';
-import 'package:redesign/modulos/user/user.dart';
 import 'package:redesign/styles/style.dart';
+import 'package:redesign/widgets/standard_button.dart';
 
 User _user;
 FirebaseAuth _auth = FirebaseAuth.instance;
@@ -89,49 +89,51 @@ class _RegistrationFormState extends State<_RegistrationForm> {
   @override
   Widget build(BuildContext context) {
     return registerPassword
-        ? WillPopScope(child: _PasswordForm(), onWillPop: _onWillPop,)
+        ? WillPopScope(
+            child: _PasswordForm(),
+            onWillPop: _onWillPop,
+          )
         : Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.only(bottom: 10),
-              child: TextField(
-                style: TextStyle(
-                  decorationColor: Style.lightGrey, color: Colors.white
-                ),
-                cursorColor: Style.buttonBlue,
-                decoration: InputDecoration(
-                  labelText: 'Nome',
-                  labelStyle: TextStyle(color: Colors.white54),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white54),
-                  ),
-                ),
-                controller: _nameController,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(bottom: 10),
-              child: TextFormField(
-                style: TextStyle(
-                  decorationColor: Style.lightGrey, color: Colors.white),
-                decoration: InputDecoration(
-                  labelText: 'E-mail',
-                  labelStyle: TextStyle(color: Colors.white54),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white54),
-                  ),
-                ),
-                controller: _emailController,
-                validator: (val) =>
-                    Validators.email(val) ? null : 'Email inválido',
-              ),
-            ),
-            Padding(
+            children: [
+              Padding(
                 padding: EdgeInsets.only(bottom: 10),
-                child: StandardButton("Próximo", showPassword,
-                    Style.main.primaryColor, Style.lightGrey)),
-          ],
-        );
+                child: TextField(
+                  style: TextStyle(
+                      decorationColor: Style.lightGrey, color: Colors.white),
+                  cursorColor: Style.buttonBlue,
+                  decoration: InputDecoration(
+                    labelText: 'Nome',
+                    labelStyle: TextStyle(color: Colors.white54),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white54),
+                    ),
+                  ),
+                  controller: _nameController,
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 10),
+                child: TextFormField(
+                  style: TextStyle(
+                      decorationColor: Style.lightGrey, color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: 'E-mail',
+                    labelStyle: TextStyle(color: Colors.white54),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white54),
+                    ),
+                  ),
+                  controller: _emailController,
+                  validator: (val) =>
+                      Validators.email(val) ? null : 'Email inválido',
+                ),
+              ),
+              Padding(
+                  padding: EdgeInsets.only(bottom: 10),
+                  child: StandardButton("Próximo", showPassword,
+                      Style.main.primaryColor, Style.lightGrey)),
+            ],
+          );
   }
 
   showPassword() {
@@ -223,7 +225,7 @@ class _PasswordFormState extends State<_PasswordForm> {
       _auth
           .createUserWithEmailAndPassword(
               email: _user.email, password: _passwordController.text)
-          .then(addIntoBank)
+          .then((result) => addIntoBank(result.user))
           .catchError(errorSignUp);
     } else {
       showMessage("Confirmação incorreta");
@@ -255,7 +257,6 @@ class _PasswordFormState extends State<_PasswordForm> {
   }
 
   Future<void> _waitActivationDialog() async {
-
     return showDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -265,7 +266,8 @@ class _PasswordFormState extends State<_PasswordForm> {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text('Sua conta foi criada, mas ainda precisará ser ativada pela'
+                Text(
+                    'Sua conta foi criada, mas ainda precisará ser ativada pela'
                     ' nossa equipe.'),
               ],
             ),
@@ -284,8 +286,7 @@ class _PasswordFormState extends State<_PasswordForm> {
   }
 }
 
-showMessage(String message,
-    {Color cor = Colors.red, bool loading = false}) {
+showMessage(String message, {Color cor = Colors.red, bool loading = false}) {
   hideMessage();
   _scaffoldKey.currentState.showSnackBar(SnackBar(
     content: Row(
